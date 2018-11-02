@@ -47,25 +47,12 @@ class xzh_userprofile(models.Model):
 
     # userid = models.CharField(verbose_name="企业微信id", max_length=64, null=True, blank=True)
 
+
 #公众号-文章表
 class zgld_article(models.Model):
     user = models.ForeignKey('xzh_userprofile', verbose_name='文章作者', null=True)
-    company = models.ForeignKey('xzh_company',verbose_name='文章所属公司',null=True)
     title = models.CharField(verbose_name='文章标题', max_length=128)
-    summary = models.CharField(verbose_name='文章摘要', max_length=255)
-    status_choices = ( (1,'已发'),
-                       (2,'未发'),
-                     )
-    status = models.SmallIntegerField(default=2, verbose_name='文章状态', choices=status_choices)
-    source_choices = ( (1,'原创'),
-                       (2,'转载'),
-                     )
-    source = models.SmallIntegerField(default=1, verbose_name='文章来源', choices=source_choices)
+    summary = models.CharField(verbose_name='文章摘要', max_length=256)
     content = models.TextField(verbose_name='文章内容', null=True)
-    cover_picture  = models.CharField(verbose_name="封面图片URL",max_length=128)
-    read_count = models.IntegerField(verbose_name="文章阅读数量",default=0)
-    forward_count = models.IntegerField(verbose_name="文章转发个数",default=0)
-    comment_count = models.IntegerField(default=0,verbose_name="被评论数量")
-    insert_ads = models.TextField(verbose_name='插入广告语',null=True)
-    qrcode_url = models.CharField(verbose_name="二维码URL", max_length=128, null=True)
-    create_date = models.DateTimeField(verbose_name="创建时间",auto_now_add=True)
+    TheColumn = models.CharField(verbose_name='栏目', max_length=256, null=True, blank=True)
+

@@ -111,6 +111,7 @@ def role_oper(request, oper_type, o_id):
                 obj.save()
                 response.code = 200
                 response.msg = "添加成功"
+                response.data = {'testCase': obj.id}
             else:
                 print("验证不通过")
                 # print(forms_obj.errors)
@@ -150,7 +151,7 @@ def role_oper(request, oper_type, o_id):
                     response.msg = "修改成功"
                 else:
                     response.code = 303
-                    response.msg = json.loads(forms_obj.errors.as_json())
+                    response.msg = '修改数据不存在'
 
             else:
                 print("验证不通过")
@@ -160,21 +161,22 @@ def role_oper(request, oper_type, o_id):
                 #  字符串转换 json 字符串
                 response.msg = json.loads(forms_obj.errors.as_json())
 
-    elif oper_type == "delete":
-        # 删除 ID
-        objs = models.xzh_role.objects.filter(id=o_id)
-        if objs:
-            obj = objs[0]
-            if obj.xzh_userprofile_set.all().count() > 0:
-                response.code = 304
-                response.msg = '含有子级数据,请先删除或转移子级数据'
+        elif oper_type == "delete":
+            # 删除 ID
+            objs = models.xzh_role.objects.filter(id=o_id)
+            if objs:
+                print('=======')
+                obj = objs[0]
+                if obj.xzh_userprofile_set.all().count() > 0:
+                    response.code = 304
+                    response.msg = '含有子级数据,请先删除或转移子级数据'
+                else:
+                    objs.delete()
+                    response.code = 200
+                    response.msg = "删除成功"
             else:
-                objs.delete()
-                response.code = 200
-                response.msg = "删除成功"
-        else:
-            response.code = 302
-            response.msg = '删除ID不存在'
+                response.code = 302
+                response.msg = '删除ID不存在'
 
     else:
         # 获取角色对应的权限

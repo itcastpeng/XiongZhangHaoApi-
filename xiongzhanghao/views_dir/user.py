@@ -38,7 +38,7 @@ def user(request):
                 q.add(Q(**{'role_id': get_role_id}), Q.AND)
 
             print('q -->', q)
-            objs = models.xzh_userprofile.objects.select_related('xzh_role', 'xzh_company').filter(q).order_by(order)
+            objs = models.xzh_userprofile.objects.select_related('role', 'company').filter(q).order_by(order)
             count = objs.count()
 
             if length != 0:
