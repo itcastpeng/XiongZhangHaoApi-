@@ -49,10 +49,11 @@ class xzh_userprofile(models.Model):
 
 
 #公众号-文章表
-class zgld_article(models.Model):
+class xzh_article(models.Model):
     user = models.ForeignKey('xzh_userprofile', verbose_name='文章作者', null=True)
     title = models.CharField(verbose_name='文章标题', max_length=128)
     summary = models.CharField(verbose_name='文章摘要', max_length=256)
     content = models.TextField(verbose_name='文章内容', null=True)
     TheColumn = models.CharField(verbose_name='栏目', max_length=256, null=True, blank=True)
+    create_date = models.DateTimeField(verbose_name="创建时间", auto_now_add=True)
 

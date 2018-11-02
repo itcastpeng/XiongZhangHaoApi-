@@ -76,7 +76,7 @@ wenzhang = """
 data_list = []
 for wen in wenzhang.split('\n'):
     if wen.strip():
-        class_id = wen.split(' ')[0]
+        class_id = wen.split(' ')[2]
         class_name = wen.split(' ')[1]
         level = class_name.count('--')
 

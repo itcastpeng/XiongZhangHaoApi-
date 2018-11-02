@@ -305,3 +305,85 @@ http请求url:http://127.0.0.1:8000/xiong/company?user_id=1&timestamp=123&rand_s
     }
 }
 ```
+
+#### 文章管理 添加说明
+``` 
+http请求：POST
+http请求url:http://127.0.0.1:8000/xiong/article/add/0?user_id=1&timestamp=123&rand_str=7e0fc6b6833ebe0347ab6a5945d519ea
+参数                      请求方式           必须                     说明
+title                       POST            是                       文章标题
+summary                     POST            是                       文章摘要
+content                     POST            是                       文章内容
+TheColumn                   POST            是                       栏目 （暂时随便写）
+
+返回说明 （正常时返回的json数据 示例）
+{
+    "msg": "添加成功",
+    "data": {},
+    "code": 200
+}
+```
+
+
+#### 文章管理 修改说明
+``` 
+http请求：POST
+http请求url:http://127.0.0.1:8000/xiong/article/update/1?user_id=1&timestamp=123&rand_str=7e0fc6b6833ebe0347ab6a5945d519ea
+参数                      请求方式           必须                     说明
+title                       POST            否                       文章标题
+summary                     POST            否                       文章摘要
+content                     POST            否                       文章内容
+TheColumn                   POST            否                       栏目 （暂时随便写）
+
+返回说明 （正常时返回的json数据 示例）
+{
+    "msg": "修改成功",
+    "data": {},
+    "code": 200
+}
+```
+
+#### 文章管理 修改说明
+``` 
+http请求：POST
+http请求url:http://127.0.0.1:8000/xiong/article/delete/1?user_id=1&timestamp=123&rand_str=7e0fc6b6833ebe0347ab6a5945d519ea
+参数                      请求方式           必须                     说明
+
+返回说明 （正常时返回的json数据 示例）
+{
+    "msg": "删除成功",
+    "data": {},
+    "code": 200
+}
+```
+
+#### 文章管理 查询说明
+``` 
+http请求：POST
+http请求url：http://127.0.0.1:8000/xiong/article?user_id=1&timestamp=123&rand_str=7e0fc6b6833ebe0347ab6a5945d519ea
+
+返回说明 （正常时返回的json数据 示例）
+{
+    "msg": "查询成功",
+    "data": {
+        "data_count": 1,
+        "ret_data": [
+            {
+                "id": 5,
+                "create_date": "2018-11-02T19:33:20",
+                "content": "文章内容",
+                "summary": "文章摘要",
+                "TheColumn": "1",
+                "title": "文章标题",
+                "user_name": "赵欣鹏",
+                "user_id": 1
+            }
+        ]
+    },
+    "code": 200
+}
+```
+
+
+
+
