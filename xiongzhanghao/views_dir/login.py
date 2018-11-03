@@ -13,7 +13,6 @@ def login(request):
     response = Response.ResponseObj()
     username = request.POST.get('username')
     password = request.POST.get('password')
-
     # 查询数据库
     userprofile_objs = models.xzh_userprofile.objects.filter(
         username=username,
@@ -42,8 +41,8 @@ def login(request):
             'token': token,
             'user_id': userprofile_obj.id,
             'set_avator': userprofile_obj.set_avator,
-            'role_id': userprofile_obj.role_id,
-            'company_id': company_id
+            # 'role_id': userprofile_obj.role_id,
+            # 'company_id': company_id
         }
 
         userprofile_obj.last_login_date = datetime.datetime.now()
@@ -51,6 +50,5 @@ def login(request):
     else:
         response.code = 401
         response.msg = "账号或密码错误"
-
     return JsonResponse(response.__dict__)
 

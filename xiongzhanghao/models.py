@@ -44,7 +44,12 @@ class xzh_userprofile(models.Model):
     role = models.ForeignKey('xzh_role', verbose_name='所属角色', null=True, blank=True)
     company = models.ForeignKey('xzh_company', verbose_name='所属公司', null=True, blank=True)      # 超级管理员没有所属公司
     set_avator = models.CharField(verbose_name='头像', default='http://api.zhugeyingxiao.com/statics/imgs/setAvator.jpg', max_length=128)
-
+    admintype = (
+        (1, '织梦'),
+    )
+    userAdminType = models.SmallIntegerField(verbose_name='客户后台类型', choices=admintype, default=1)
+    userAdminAccount = models.CharField(verbose_name='客户后台账号', max_length=64, null=True, blank=True)
+    userAdminPwd = models.CharField(verbose_name='客户后台密码', max_length=64, null=True, blank=True)
     # userid = models.CharField(verbose_name="企业微信id", max_length=64, null=True, blank=True)
 
 

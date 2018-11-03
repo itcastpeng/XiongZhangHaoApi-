@@ -107,6 +107,9 @@ def user_oper(request, oper_type, o_id):
                 'role_id': request.POST.get('role_id'),
                 'company_id': request.GET.get('company_id'),
                 'password': request.POST.get('password'),
+                'userAdminType': request.POST.get('userAdminType'),
+                'userAdminAccount': request.POST.get('userAdminAccount'),
+                'userAdminPwd': request.POST.get('userAdminPwd'),
             }
             #  创建 form验证 实例（参数默认转成字典）
             forms_obj = AddForm(form_data)
@@ -131,7 +134,10 @@ def user_oper(request, oper_type, o_id):
                 'o_id': o_id,
                 'username': request.POST.get('username'),
                 'role_id': request.POST.get('role_id'),
-                'company_id': request.POST.get('company_id')
+                'company_id': request.POST.get('company_id'),
+                'userAdminType': request.POST.get('userAdminType'),
+                'userAdminAccount': request.POST.get('userAdminAccount'),
+                'userAdminPwd': request.POST.get('userAdminPwd'),
             }
 
             forms_obj = UpdateForm(form_data)
@@ -158,7 +164,7 @@ def user_oper(request, oper_type, o_id):
                     response.msg = "修改成功"
                 else:
                     response.code = 303
-                    response.msg = json.loads(forms_obj.errors.as_json())
+                    response.msg = '修改ID不存在'
 
             else:
                 print("验证不通过")
@@ -194,7 +200,20 @@ def user_oper(request, oper_type, o_id):
                 response.msg = "用户ID不存在"
 
     else:
-        response.code = 402
-        response.msg = "请求异常"
+        if oper_type == 'selectAdminType':
+            objs = models.xzh_userprofile.admintype
+            retData = []
+            for obj in objs:
+                retData.append({
+                    'typeId': obj[0],
+                    'typeName':obj[1]
+                })
+            response.code = 200
+            response.msg = '查询成功'
+            response.data = retData
+
+        else:
+            response.code = 402
+            response.msg = "请求异常"
 
     return JsonResponse(response.__dict__)

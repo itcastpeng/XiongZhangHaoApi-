@@ -1,6 +1,14 @@
 
 
+#### 登录 说明
+```
+http请求：POST
+http请求url：http://127.0.0.1:8003/xiong/login
 
+参数                      请求方式           必须                     说明
+username                    POST            是                       用户名
+password                    POST            是                       用户密码
+```
 
 #### 角色管理 添加说明
 ``` 
@@ -384,6 +392,23 @@ http请求url：http://127.0.0.1:8000/xiong/article?user_id=1&timestamp=123&rand
 }
 ```
 
+#### 用户后台类型查询 说明
+``` 
+http请求：GET
+http请求url：http://127.0.0.1:8003/user/selectAdminType/8?user_id=1&timestamp=123&rand_str=7e0fc6b6833ebe0347ab6a5945d519ea&company_id=1&role_id=1
+
+返回说明 （正常时返回的json数据 示例）
+{
+    "code": 200,
+    "data": [
+        {
+            "typeId": 1,
+            "typeName": "织梦"
+        }
+    ],
+    "msg": "查询成功"
+}
+```
 
 
 

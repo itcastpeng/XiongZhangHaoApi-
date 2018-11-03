@@ -40,6 +40,24 @@ class AddForm(forms.Form):
             'required': "公司ID不能为空"
         }
     )
+    userAdminType = forms.IntegerField(
+        required=False,
+        error_messages={
+            'required': "后台类型,类型错误"
+        }
+    )
+    userAdminAccount = forms.IntegerField(
+        required=True,
+        error_messages={
+            'required': "客户后台账号不能为空"
+        }
+    )
+    userAdminPwd = forms.IntegerField(
+        required=True,
+        error_messages={
+            'required': "客户后台密码不能为空"
+        }
+    )
 
     token = forms.IntegerField(
         required=False
@@ -97,6 +115,24 @@ class UpdateForm(forms.Form):
         }
     )
 
+    userAdminType = forms.IntegerField(
+        required=False,
+        error_messages={
+            'required': "后台类型,类型错误"
+        }
+    )
+    userAdminAccount = forms.IntegerField(
+        required=True,
+        error_messages={
+            'required': "客户后台账号不能为空"
+        }
+    )
+    userAdminPwd = forms.IntegerField(
+        required=True,
+        error_messages={
+            'required': "客户后台密码不能为空"
+        }
+    )
     # 判断名称是否存在
     def clean_username(self):
         o_id = self.data['o_id']
@@ -130,19 +166,19 @@ class SelectForm(forms.Form):
         }
     )
 
-    company_id = forms.IntegerField(
-        required=False,
-        error_messages={
-            'required': "公司ID不能为空"
-        }
-    )
-
-    role_id = forms.IntegerField(
-        required=True,
-        error_messages={
-            'required': "角色ID不能为空"
-        }
-    )
+    # company_id = forms.IntegerField(
+    #     required=False,
+    #     error_messages={
+    #         'required': "公司ID不能为空"
+    #     }
+    # )
+    #
+    # role_id = forms.IntegerField(
+    #     required=True,
+    #     error_messages={
+    #         'required': "角色ID不能为空"
+    #     }
+    # )
 
     def clean_current_page(self):
         if 'current_page' not in self.data:
@@ -158,12 +194,12 @@ class SelectForm(forms.Form):
             length = int(self.data['length'])
         return length
 
-    def clean_company_id(self):
-        role_id = self.data.get('role_id')
-        company_id = self.data.get('company_id')
-        print('role_id -->', role_id)
-        print('company_id -->', company_id)
-        if role_id != '1' and not company_id:
-            self.add_error('company_id', '公司id不能为空')
-        else:
-            return company_id
+    # def clean_company_id(self):
+    #     role_id = self.data.get('role_id')
+    #     company_id = self.data.get('company_id')
+    #     print('role_id -->', role_id)
+    #     print('company_id -->', company_id)
+    #     if role_id != '1' and not company_id:
+    #         self.add_error('company_id', '公司id不能为空')
+    #     else:
+    #         return company_id
