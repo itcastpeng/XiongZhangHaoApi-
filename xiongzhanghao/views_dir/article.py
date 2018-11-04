@@ -4,15 +4,15 @@ from xiongzhanghao.publicFunc import account
 from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt, csrf_protect
 from xiongzhanghao.publicFunc.condition_com import conditionCom
-from xiongzhanghao.forms.role import AddForm, UpdateForm, SelectForm
-from xiongzhanghao.views_dir.permissions import init_data
-import json
+from xiongzhanghao.forms.article import AddForm, UpdateForm, SelectForm
+import json, datetime
+from django.db.models import Q
 
 
 # cerf  token验证 用户展示模块
 @csrf_exempt
 @account.is_token(models.xzh_userprofile)
-def role(request):
+def article(request):
     response = Response.ResponseObj()
     if request.method == "GET":
         forms_obj = SelectForm(request.GET)
@@ -23,13 +23,17 @@ def role(request):
             order = request.GET.get('order', '-create_date')
             field_dict = {
                 'id': '',
-                'name': '__contains',
+                'title': '__contains',
+                'user_id': '',
                 'create_date': '',
-                'oper_user__username': '__contains',
+                'summary': '__contains',
+                'content': '__contains',
+                'TheColumn': '__contains',
             }
             q = conditionCom(request, field_dict)
+
             print('q -->', q)
-            objs = models.xzh_role.objects.filter(q).order_by(order)
+            objs = models.xzh_article.objects.select_related('user').filter(q).order_by(order)
             count = objs.count()
 
             if length != 0:
@@ -41,26 +45,17 @@ def role(request):
             ret_data = []
 
             for obj in objs:
-                # 获取选中的id，然后组合成前端能用的数据
-                permissionsList = []
-                permissionsData = []
-                if obj.permissions:
-                    permissionsList = [i['id'] for i in obj.permissions.values('id')]
-                    permissionsData = init_data(selected_list=permissionsList)
-
-                #  如果有oper_user字段 等于本身名字
-                if obj.oper_user:
-                    oper_user_username = obj.oper_user.username
-                else:
-                    oper_user_username = ''
-                # print('oper_user_username -->', oper_user_username)
+                print('obj.id--------------> ',obj.id)
                 #  将查询出来的数据 加入列表
                 ret_data.append({
                     'id': obj.id,
-                    'name': obj.name,
-                    'create_date': obj.create_date.strftime('%Y-%m-%d %H:%M:%S'),
-                    'oper_user__username': oper_user_username,
-                    'permissionsData': json.dumps(permissionsData)
+                    'title':obj.title,
+                    'summary':obj.summary,
+                    'content':obj.content,
+                    'TheColumn':obj.TheColumn,
+                    'create_date':obj.create_date,
+                    'user_id':obj.user.id,
+                    'user_name':obj.user.username,
                 })
             #  查询成功 返回200 状态码
             response.code = 200
@@ -80,15 +75,18 @@ def role(request):
 #  csrf  token验证
 @csrf_exempt
 @account.is_token(models.xzh_userprofile)
-def role_oper(request, oper_type, o_id):
+def article_oper(request, oper_type, o_id):
     response = Response.ResponseObj()
     if request.method == "POST":
+        form_data = {
+            'user_id': request.GET.get('user_id'),
+            'title': request.POST.get('title'),
+            'summary': request.POST.get('summary'),
+            'content': request.POST.get('content'),
+            'TheColumn': request.POST.get('TheColumn'),
+            'create_date': datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')
+        }
         if oper_type == "add":
-            form_data = {
-                'oper_user_id': request.GET.get('user_id'),
-                'name': request.POST.get('name'),
-                'permissionsList': request.POST.get('permissionsList'),
-            }
             #  创建 form验证 实例（参数默认转成字典）
             forms_obj = AddForm(form_data)
             if forms_obj.is_valid():
@@ -96,22 +94,9 @@ def role_oper(request, oper_type, o_id):
                 # print(forms_obj.cleaned_data)
                 #  添加数据库
                 # print('forms_obj.cleaned_data-->',forms_obj.cleaned_data)
-                print({
-                    'name': forms_obj.cleaned_data.get('name'),
-                    'oper_user_id': forms_obj.cleaned_data.get('oper_user_id'),
-                })
-                obj = models.xzh_role.objects.create(**{
-                    'name': forms_obj.cleaned_data.get('name'),
-                    'oper_user_id': forms_obj.cleaned_data.get('oper_user_id'),
-                })
-
-                permissionsList = forms_obj.cleaned_data.get('permissionsList')
-                print('permissionsList -->', permissionsList)
-                obj.permissions = permissionsList
-                obj.save()
+                models.xzh_article.objects.create(**forms_obj.cleaned_data)
                 response.code = 200
                 response.msg = "添加成功"
-                response.data = {'testCase': obj.id}
             else:
                 print("验证不通过")
                 # print(forms_obj.errors)
@@ -119,39 +104,31 @@ def role_oper(request, oper_type, o_id):
                 # print(forms_obj.errors.as_json())
                 response.msg = json.loads(forms_obj.errors.as_json())
 
-
         elif oper_type == "update":
             # 获取需要修改的信息
-            form_data = {
-                'o_id': o_id,
-                'name': request.POST.get('name'),
-                'permissionsList': request.POST.get('permissionsList'),
-            }
-
             forms_obj = UpdateForm(form_data)
             if forms_obj.is_valid():
                 print("验证通过")
-                print(forms_obj.cleaned_data)
-                o_id = forms_obj.cleaned_data['o_id']
-                name = forms_obj.cleaned_data['name']
-                permissionsList = forms_obj.cleaned_data['permissionsList']
                 #  查询数据库  用户id
-                objs = models.xzh_role.objects.filter(
+                objs = models.xzh_article.objects.filter(
                     id=o_id
                 )
                 #  更新 数据
                 if objs:
+                    objForm = forms_obj.cleaned_data
                     objs.update(
-                        name=name
+                        user_id =objForm.get('user_id'),
+                        title = objForm.get('title'),
+                        summary = objForm.get('summary'),
+                        content = objForm.get('content'),
+                        TheColumn= objForm.get('TheColumn')
                     )
-
-                    objs[0].permissions = permissionsList
 
                     response.code = 200
                     response.msg = "修改成功"
                 else:
                     response.code = 303
-                    response.msg = '修改数据不存在'
+                    response.msg = json.loads(forms_obj.errors.as_json())
 
             else:
                 print("验证不通过")
@@ -163,37 +140,18 @@ def role_oper(request, oper_type, o_id):
 
         elif oper_type == "delete":
             # 删除 ID
-            objs = models.xzh_role.objects.filter(id=o_id)
+            company_id = request.GET.get('company_id')
+            objs = models.xzh_article.objects.filter(id=o_id)
             if objs:
-                print('=======')
-                obj = objs[0]
-                if obj.xzh_userprofile_set.all().count() > 0:
-                    response.code = 304
-                    response.msg = '含有子级数据,请先删除或转移子级数据'
-                else:
-                    objs.delete()
-                    response.code = 200
-                    response.msg = "删除成功"
+                objs.delete()
+                response.code = 200
+                response.msg = "删除成功"
             else:
                 response.code = 302
                 response.msg = '删除ID不存在'
 
     else:
-        # 获取角色对应的权限
-        if oper_type == "get_rules":
-            objs = models.xzh_role.objects.filter(id=o_id)
-            if objs:
-                obj = objs[0]
-                rules_list = [i['name'] for i in obj.permissions.values('name')]
-                print('dataList -->', rules_list)
-                response.data = {
-                    'rules_list': rules_list
-                }
-
-                response.code = 200
-                response.msg = "查询成功"
-        else:
-            response.code = 402
-            response.msg = "请求异常"
+        response.code = 402
+        response.msg = "请求异常"
 
     return JsonResponse(response.__dict__)
