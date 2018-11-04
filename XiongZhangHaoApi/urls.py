@@ -22,9 +22,9 @@ urlpatterns = [
     # 登录
     url(r'^login$', login.login),
 
-    # 公司管理
-    url(r'^company/(?P<oper_type>\w+)/(?P<o_id>\d+)$', company.company_oper),
-    url(r'^company', company.company),
+    # # 公司管理
+    # url(r'^company/(?P<oper_type>\w+)/(?P<o_id>\d+)$', company.company_oper),
+    # url(r'^company', company.company),
 
     # 权限管理
     url(r'^permissions/(?P<oper_type>\w+)/(?P<o_id>\d+)$', permissions.permissions_oper),

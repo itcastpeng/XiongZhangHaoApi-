@@ -24,21 +24,15 @@ def user(request):
             order = request.GET.get('order', '-create_date')
             field_dict = {
                 'id': '',
+                'role_id': '',
                 'name': '__contains',
                 'create_date': '',
                 'oper_user__username': '__contains',
             }
-            role_id = forms_obj.cleaned_data.get('role_id')
-            if role_id != 1:  # 超级管理员角色
-                field_dict['company_id'] = ''
             q = conditionCom(request, field_dict)
 
-            get_role_id = request.GET.get('get_role_id')
-            if get_role_id:
-                q.add(Q(**{'role_id': get_role_id}), Q.AND)
-
             print('q -->', q)
-            objs = models.xzh_userprofile.objects.select_related('role', 'company').filter(q).order_by(order)
+            objs = models.xzh_userprofile.objects.select_related('role').filter(q).order_by(order)
             count = objs.count()
 
             if length != 0:
@@ -56,12 +50,6 @@ def user(request):
                 else:
                     oper_user_username = ''
                 # print('oper_user_username -->', oper_user_username)
-
-                # 如果有 company_id 则显示公司名称
-                company_name = ''
-                if obj.company:
-                    company_name = obj.company.name
-
                 role_name = ''
                 if obj.role:
                     role_name = obj.role.name
@@ -73,9 +61,9 @@ def user(request):
                     'get_status_display': obj.get_status_display(),
                     'status': obj.status,
                     'role_name': role_name,
-                    'company_name': company_name,
-                    'role_id': obj.role_id,
-                    'company_id': obj.company_id,
+                    'website_backstage': obj.website_backstage,
+                    'website_backstage_username': obj.website_backstage_username,
+                    'website_backstage_password': obj.website_backstage_password,
                     'create_date': obj.create_date.strftime('%Y-%m-%d %H:%M:%S'),
                     'oper_user__username': oper_user_username,
                 })
@@ -85,6 +73,7 @@ def user(request):
             response.data = {
                 'ret_data': ret_data,
                 'data_count': count,
+                'website_backstage_choices': models.xzh_userprofile.website_backstage_choices
             }
         else:
             response.code = 402
@@ -105,7 +94,6 @@ def user_oper(request, oper_type, o_id):
                 'oper_user_id': request.GET.get('user_id'),
                 'username': request.POST.get('username'),
                 'role_id': request.POST.get('role_id'),
-                'company_id': request.GET.get('company_id'),
                 'password': request.POST.get('password'),
                 'userAdminType': request.POST.get('userAdminType'),
                 'userAdminAccount': request.POST.get('userAdminAccount'),

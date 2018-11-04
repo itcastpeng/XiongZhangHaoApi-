@@ -62,7 +62,11 @@ def is_token(table_obj):
 
 
 
-
+if __name__ == '__main__':
+    # pwd = str_encrypt("123")
+    # print(pwd)
+    token = get_token("123" + str(int(time.time()) * 1000))
+    print(token)
 
 
 

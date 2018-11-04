@@ -34,14 +34,8 @@ class AddForm(forms.Form):
         }
     )
 
-    company_id = forms.IntegerField(
-        required=True,
-        error_messages={
-            'required': "公司ID不能为空"
-        }
-    )
     userAdminType = forms.IntegerField(
-        required=False,
+        required=True,
         error_messages={
             'required': "后台类型,类型错误"
         }

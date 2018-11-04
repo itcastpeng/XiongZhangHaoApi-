@@ -1,13 +1,13 @@
 from django.db import models
 
 
-
-# 公司表
-class xzh_company(models.Model):
-    name = models.CharField(verbose_name="公司名称", max_length=128)
-    create_date = models.DateTimeField(verbose_name="创建时间", auto_now_add=True)
-    oper_user = models.ForeignKey('xzh_userprofile', verbose_name="创建用户", related_name='company_userprofile')
-
+#
+# # 公司表
+# class xzh_company(models.Model):
+#     name = models.CharField(verbose_name="公司名称", max_length=128)
+#     create_date = models.DateTimeField(verbose_name="创建时间", auto_now_add=True)
+#     oper_user = models.ForeignKey('xzh_userprofile', verbose_name="创建用户", related_name='company_userprofile')
+#
 
 # 角色表
 class xzh_role(models.Model):
@@ -42,18 +42,18 @@ class xzh_userprofile(models.Model):
     status = models.SmallIntegerField(verbose_name="状态", choices=status_choices, default=1)
 
     role = models.ForeignKey('xzh_role', verbose_name='所属角色', null=True, blank=True)
-    company = models.ForeignKey('xzh_company', verbose_name='所属公司', null=True, blank=True)      # 超级管理员没有所属公司
+    # company = models.ForeignKey('xzh_company', verbose_name='所属公司', null=True, blank=True)      # 超级管理员没有所属公司
     set_avator = models.CharField(verbose_name='头像', default='http://api.zhugeyingxiao.com/statics/imgs/setAvator.jpg', max_length=128)
-    admintype = (
+
+    website_backstage_choices = (
         (1, '织梦'),
     )
-    userAdminType = models.SmallIntegerField(verbose_name='客户后台类型', choices=admintype, default=1)
-    userAdminAccount = models.CharField(verbose_name='客户后台账号', max_length=64, null=True, blank=True)
-    userAdminPwd = models.CharField(verbose_name='客户后台密码', max_length=64, null=True, blank=True)
-    # userid = models.CharField(verbose_name="企业微信id", max_length=64, null=True, blank=True)
+    website_backstage = models.SmallIntegerField(verbose_name='网站后台类型', choices=website_backstage_choices, default=1)
+    website_backstage_username = models.CharField(verbose_name='客户后台账号', max_length=64, null=True, blank=True)
+    website_backstage_password = models.CharField(verbose_name='客户后台密码', max_length=64, null=True, blank=True)
 
 
-#公众号-文章表
+# 公众号-文章表
 class xzh_article(models.Model):
     user = models.ForeignKey('xzh_userprofile', verbose_name='文章作者', null=True)
     title = models.CharField(verbose_name='文章标题', max_length=128)
