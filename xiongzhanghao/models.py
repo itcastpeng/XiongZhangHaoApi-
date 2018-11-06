@@ -39,7 +39,7 @@ class xzh_userprofile(models.Model):
         (1, '启用'),
         (2, '不启用'),
     )
-    status = models.SmallIntegerField(verbose_name="状态", choices=status_choices, default=1)
+    status = models.SmallIntegerField(verbose_name="状态", choices=status_choices, default=2)
 
     role = models.ForeignKey('xzh_role', verbose_name='所属角色', null=True, blank=True)
     # company = models.ForeignKey('xzh_company', verbose_name='所属公司', null=True, blank=True)      # 超级管理员没有所属公司
