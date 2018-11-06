@@ -15,7 +15,7 @@ Including another URLconf
 """
 from django.conf.urls import url, include
 from django.contrib import admin
-from xiongzhanghao.views_dir import login, company, permissions, role, user, article
+from xiongzhanghao.views_dir import login, company, permissions, role, user, article, img_upload
 
 
 urlpatterns = [
@@ -41,6 +41,9 @@ urlpatterns = [
     # 文章管理
     url(r'^article/(?P<oper_type>\w+)/(?P<o_id>\d+)$', article.article_oper),
     url(r'^article', article.article),
+
+    # 上传文件
+    url(r'^image_upload', img_upload.image_upload),
 
 ]
 

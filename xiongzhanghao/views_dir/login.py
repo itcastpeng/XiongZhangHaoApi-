@@ -34,9 +34,9 @@ def login(request):
         response.code = 200
         response.msg = '登录成功'
         time.time()
-        company_id = ''
-        if userprofile_obj.company_id:
-            company_id = userprofile_obj.company_id
+        # company_id = ''
+        # if userprofile_obj.company_id:
+        #     company_id = userprofile_obj.company_id
         response.data = {
             'token': token,
             'user_id': userprofile_obj.id,

@@ -51,7 +51,9 @@ def user(request):
                     oper_user_username = ''
                 # print('oper_user_username -->', oper_user_username)
                 role_name = ''
+                role_id = ''
                 if obj.role:
+                    role_id = obj.role_id
                     role_name = obj.role.name
 
                 #  将查询出来的数据 加入列表
@@ -60,6 +62,7 @@ def user(request):
                     'username': obj.username,
                     'get_status_display': obj.get_status_display(),
                     'status': obj.status,
+                    'role_id':role_id,
                     'role_name': role_name,
                     'website_backstage': obj.website_backstage,
                     'website_backstage_username': obj.website_backstage_username,
@@ -73,7 +76,7 @@ def user(request):
             response.data = {
                 'ret_data': ret_data,
                 'data_count': count,
-                'website_backstage_choices': models.xzh_userprofile.website_backstage_choices
+                'website_backstage_choices': models.xzh_userprofile.website_backstage_choices,
             }
         else:
             response.code = 402
@@ -95,10 +98,12 @@ def user_oper(request, oper_type, o_id):
                 'username': request.POST.get('username'),
                 'role_id': request.POST.get('role_id'),
                 'password': request.POST.get('password'),
-                'userAdminType': request.POST.get('userAdminType'),
-                'userAdminAccount': request.POST.get('userAdminAccount'),
-                'userAdminPwd': request.POST.get('userAdminPwd'),
+                'website_backstage': request.POST.get('website_backstage'),
+                'website_backstage_username': request.POST.get('website_backstage_username'),
+                'website_backstage_password': request.POST.get('website_backstage_password'),
             }
+
+            print('form_data----->',form_data)
             #  创建 form验证 实例（参数默认转成字典）
             forms_obj = AddForm(form_data)
             if forms_obj.is_valid():
@@ -122,10 +127,10 @@ def user_oper(request, oper_type, o_id):
                 'o_id': o_id,
                 'username': request.POST.get('username'),
                 'role_id': request.POST.get('role_id'),
-                'company_id': request.POST.get('company_id'),
-                'userAdminType': request.POST.get('userAdminType'),
-                'userAdminAccount': request.POST.get('userAdminAccount'),
-                'userAdminPwd': request.POST.get('userAdminPwd'),
+                # 'company_id': request.POST.get('company_id'),
+                'website_backstage': request.POST.get('website_backstage'),
+                'website_backstage_username': request.POST.get('website_backstage_username'),
+                'website_backstage_password': request.POST.get('website_backstage_password'),
             }
 
             forms_obj = UpdateForm(form_data)
@@ -135,7 +140,7 @@ def user_oper(request, oper_type, o_id):
                 o_id = forms_obj.cleaned_data['o_id']
                 username = forms_obj.cleaned_data['username']
                 role_id = forms_obj.cleaned_data['role_id']
-                company_id = forms_obj.cleaned_data['company_id']
+                # company_id = forms_obj.cleaned_data['company_id']
                 #  查询数据库  用户id
                 objs = models.xzh_userprofile.objects.filter(
                     id=o_id
@@ -145,7 +150,7 @@ def user_oper(request, oper_type, o_id):
                     objs.update(
                         username=username,
                         role_id=role_id,
-                        company_id=company_id
+                        # company_id=company_id
                     )
 
                     response.code = 200
@@ -164,8 +169,8 @@ def user_oper(request, oper_type, o_id):
 
         elif oper_type == "delete":
             # 删除 ID
-            company_id = request.GET.get('company_id')
-            objs = models.xzh_userprofile.objects.filter(id=o_id, company_id=company_id)
+            # company_id = request.GET.get('company_id')
+            objs = models.xzh_userprofile.objects.filter(id=o_id)
             if objs:
                 objs.delete()
                 response.code = 200
@@ -188,20 +193,7 @@ def user_oper(request, oper_type, o_id):
                 response.msg = "用户ID不存在"
 
     else:
-        if oper_type == 'selectAdminType':
-            objs = models.xzh_userprofile.admintype
-            retData = []
-            for obj in objs:
-                retData.append({
-                    'typeId': obj[0],
-                    'typeName':obj[1]
-                })
-            response.code = 200
-            response.msg = '查询成功'
-            response.data = retData
-
-        else:
-            response.code = 402
-            response.msg = "请求异常"
+        response.code = 402
+        response.msg = "请求异常"
 
     return JsonResponse(response.__dict__)

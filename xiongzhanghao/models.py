@@ -55,7 +55,8 @@ class xzh_userprofile(models.Model):
 
 # 公众号-文章表
 class xzh_article(models.Model):
-    user = models.ForeignKey('xzh_userprofile', verbose_name='文章作者', null=True)
+    user = models.ForeignKey('xzh_userprofile', verbose_name='文章创建人', null=True)
+    belongToUser = models.ForeignKey('xzh_userprofile', verbose_name='文章属于谁', null=True, related_name='belongToUser')
     title = models.CharField(verbose_name='文章标题', max_length=128)
     summary = models.CharField(verbose_name='文章摘要', max_length=256)
     content = models.TextField(verbose_name='文章内容', null=True)

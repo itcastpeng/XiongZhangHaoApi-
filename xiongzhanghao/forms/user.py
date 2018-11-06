@@ -20,6 +20,7 @@ class AddForm(forms.Form):
             'required': "用户名不能为空"
         }
     )
+
     password = forms.CharField(
         required=True,
         error_messages={
@@ -34,19 +35,19 @@ class AddForm(forms.Form):
         }
     )
 
-    userAdminType = forms.IntegerField(
+    website_backstage = forms.IntegerField(
         required=True,
         error_messages={
             'required': "后台类型,类型错误"
         }
     )
-    userAdminAccount = forms.IntegerField(
+    website_backstage_username = forms.CharField(
         required=True,
         error_messages={
             'required': "客户后台账号不能为空"
         }
     )
-    userAdminPwd = forms.IntegerField(
+    website_backstage_password = forms.CharField(
         required=True,
         error_messages={
             'required': "客户后台密码不能为空"
@@ -102,26 +103,26 @@ class UpdateForm(forms.Form):
         }
     )
 
-    company_id = forms.IntegerField(
-        required=True,
-        error_messages={
-            'required': "公司ID不能为空"
-        }
-    )
+    # company_id = forms.IntegerField(
+    #     required=True,
+    #     error_messages={
+    #         'required': "公司ID不能为空"
+    #     }
+    # )
 
-    userAdminType = forms.IntegerField(
+    website_backstage = forms.IntegerField(
         required=False,
         error_messages={
             'required': "后台类型,类型错误"
         }
     )
-    userAdminAccount = forms.IntegerField(
+    website_backstage_username = forms.CharField(
         required=True,
         error_messages={
             'required': "客户后台账号不能为空"
         }
     )
-    userAdminPwd = forms.IntegerField(
+    website_backstage_password = forms.CharField(
         required=True,
         error_messages={
             'required': "客户后台密码不能为空"
@@ -131,10 +132,10 @@ class UpdateForm(forms.Form):
     def clean_username(self):
         o_id = self.data['o_id']
         username = self.data['username']
-        company_id = self.data['company_id']
+        # company_id = self.data['company_id']
         objs = models.xzh_userprofile.objects.filter(
             username=username,
-            company_id=company_id
+            # company_id=company_id
         ).exclude(
             id=o_id
         )

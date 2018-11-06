@@ -10,7 +10,7 @@ class AddForm(forms.Form):
     user_id = forms.CharField(
         required=True,
         error_messages={
-            'required': "文章作者不能为空"
+            'required': "文章创建人不能为空"
         }
     )
 
@@ -42,6 +42,12 @@ class AddForm(forms.Form):
         }
     )
 
+    belongToUser_id = forms.IntegerField(
+        required=True,
+        error_messages={
+            'required': '归属用户不能为空'
+        }
+    )
 
 
 # 更新
@@ -49,7 +55,7 @@ class UpdateForm(forms.Form):
     user_id = forms.CharField(
         required=False,
         error_messages={
-            'required': "文章作者不能为空"
+            'required': "文章创建人不能为空"
         }
     )
 
@@ -88,6 +94,12 @@ class UpdateForm(forms.Form):
         }
     )
 
+    belongToUser_id = forms.IntegerField(
+        required=True,
+        error_messages={
+            'required': '归属用户不能为空'
+        }
+    )
 
 
 # 判断是否是数字

@@ -53,9 +53,10 @@ def article(request):
                     'summary':obj.summary,
                     'content':obj.content,
                     'TheColumn':obj.TheColumn,
-                    'create_date':obj.create_date,
+                    'create_date':obj.create_date.strftime('%Y-%m-%d %H:%M:%S'),
                     'user_id':obj.user.id,
                     'user_name':obj.user.username,
+                    'belongToUser':obj.belongToUser_id,
                 })
             #  查询成功 返回200 状态码
             response.code = 200
@@ -63,6 +64,7 @@ def article(request):
             response.data = {
                 'ret_data': ret_data,
                 'data_count': count,
+                # 'website_backstage_choices': models.xzh_userprofile.website_backstage_choices
             }
         else:
             response.code = 402
@@ -84,7 +86,8 @@ def article_oper(request, oper_type, o_id):
             'summary': request.POST.get('summary'),
             'content': request.POST.get('content'),
             'TheColumn': request.POST.get('TheColumn'),
-            'create_date': datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')
+            'create_date': datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S'),
+            'belongToUser_id':request.POST.get('belongToUser'),
         }
         if oper_type == "add":
             #  创建 form验证 实例（参数默认转成字典）
@@ -121,7 +124,8 @@ def article_oper(request, oper_type, o_id):
                         title = objForm.get('title'),
                         summary = objForm.get('summary'),
                         content = objForm.get('content'),
-                        TheColumn= objForm.get('TheColumn')
+                        TheColumn= objForm.get('TheColumn'),
+                        belongToUser = objForm.get('belongToUser'),
                     )
 
                     response.code = 200
