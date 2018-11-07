@@ -37,10 +37,12 @@ urlpatterns = [
     # 用户管理
     url(r'^user/(?P<oper_type>\w+)/(?P<o_id>\d+)$', user.user_oper),
     url(r'^user$', user.user),
+    url(r'^getTheDebugUser$', user.getTheDebugUser),
 
     # 文章管理
     url(r'^article/(?P<oper_type>\w+)/(?P<o_id>\d+)$', article.article_oper),
     url(r'^article', article.article),
+    url(r'^script_oper', article.script_oper),
 
     # 上传文件
     url(r'^image_upload', img_upload.image_upload),

@@ -73,23 +73,23 @@ wenzhang = """
 100 ─营养科 1
 
 """
-data_list = []
-for wen in wenzhang.split('\n'):
-    if wen.strip():
-        class_id = wen.split(' ')[2]
-        class_name = wen.split(' ')[1]
-        level = class_name.count('--')
-
-        if len(data_list) - 1 >= level:
-            data_list[level] = class_id
-        else:
-            data_list.append(class_id)
-
-        parent_data = {}
-        if level == 0:
-            print(class_id, class_name)
-        else:
-            print(class_id, class_name, data_list[level -1])
+# data_list = []
+# for wen in wenzhang.split('\n'):
+#     if wen.strip():
+#         class_id = wen.split(' ')[2]
+#         class_name = wen.split(' ')[1]
+#         level = class_name.count('--')
+#
+#         if len(data_list) - 1 >= level:
+#             data_list[level] = class_id
+#         else:
+#             data_list.append(class_id)
+#
+#         parent_data = {}
+#         if level == 0:
+#             print(class_id, class_name)
+#         else:
+#             print(class_id, class_name, data_list[level -1])
         # parent_data[class_id] = {
         #     'class_name':class_name,
         #     'children':{}
@@ -99,8 +99,15 @@ for wen in wenzhang.split('\n'):
 
 
 
+cookie_data = 'BAIDUID=7209E6BE5B5689600FE80DE10A797DD8:FG=1;BDUSS=lLVGdXLVJhRzkxMHdHcVNEUWZJRVV-WnN5VTVEUVdGRER5SkY3bjk3eGNnWVphQVFBQUFBJCQAAAAAAAAAAAEAAADiEgLOwLTEoG63odrEAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAFz0Xlpc9F5aWF;PTOKEN=41275f1ce69be19d1c8074c1e5488dc8;STOKEN=7153c8aaed2e53282a76e6f1f28a8b847442fdfcd38c4a850fee7e058e3f913a'
 
+cookie_dict = {}
+for i in cookie_data.split(';'):
+    # print(i)
+    k, v = i.split('=', maxsplit=1)
+    # print(k, v )
+    cookie_dict[k] = v
 
-
+print(cookie_dict)
 
 

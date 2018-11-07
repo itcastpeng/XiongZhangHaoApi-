@@ -49,8 +49,12 @@ class xzh_userprofile(models.Model):
         (1, '织梦'),
     )
     website_backstage = models.SmallIntegerField(verbose_name='网站后台类型', choices=website_backstage_choices, default=1)
+    website_backstage_url = models.CharField(verbose_name='客户后台网站地址', max_length=128, null=True, blank=True)
     website_backstage_username = models.CharField(verbose_name='客户后台账号', max_length=64, null=True, blank=True)
     website_backstage_password = models.CharField(verbose_name='客户后台密码', max_length=64, null=True, blank=True)
+    is_debug = models.BooleanField(verbose_name='是否调试', default=False) # 为True 才可以发布文章
+    cookies = models.TextField(verbose_name='cookies', null=True, blank=True)
+    column_all = models.TextField(verbose_name='所有栏目', null=True, blank=True)
 
 
 # 公众号-文章表
@@ -60,6 +64,13 @@ class xzh_article(models.Model):
     title = models.CharField(verbose_name='文章标题', max_length=128)
     summary = models.CharField(verbose_name='文章摘要', max_length=256)
     content = models.TextField(verbose_name='文章内容', null=True)
-    TheColumn = models.CharField(verbose_name='栏目', max_length=256, null=True, blank=True)
+    column_id = models.IntegerField(verbose_name='栏目', null=True, blank=True)
     create_date = models.DateTimeField(verbose_name="创建时间", auto_now_add=True)
-
+    article_status_choices = (
+        (1, '未发布'),
+        (2, '发布成功'),
+        (3, '发布失败'),
+        (4, '标题存在'),
+    )
+    article_status = models.SmallIntegerField(verbose_name='文章状态',choices=article_status_choices, default=1)
+    back_url = models.CharField(verbose_name='回链地址', max_length=128, null=True, blank=True)
