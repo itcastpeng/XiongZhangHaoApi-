@@ -35,10 +35,10 @@ class AddForm(forms.Form):
         }
     )
 
-    TheColumn = forms.CharField(
-        required=True,
+    column_id = forms.IntegerField(
+        required=False,
         error_messages={
-            'required': '栏目不能为空'
+            'required': '栏目类型错误'
         }
     )
 
@@ -80,10 +80,10 @@ class UpdateForm(forms.Form):
         }
     )
 
-    TheColumn = forms.CharField(
+    column_id = forms.IntegerField(
         required=False,
         error_messages={
-            'required': '栏目不能为空'
+            'required': '栏目类型错误'
         }
     )
 
@@ -131,3 +131,36 @@ class SelectForm(forms.Form):
         else:
             length = int(self.data['length'])
         return length
+
+
+# 脚本修改文章
+# class ScriptUpdateForm(forms.Form):
+#     articleId = forms.IntegerField(
+#         required=True,
+#         error_messages={
+#             'required': "文章ID不能为空"
+#         }
+#     )
+#     articleStatus = forms.IntegerField(
+#         required=True,
+#         error_messages={
+#             'required': "文章状态不能为空"
+#         }
+#     )
+#     backUrl = forms.CharField(
+#         required=False,
+#         error_messages={
+#             'required': "回链地址类型错误"
+#         }
+#     )
+#     def clean_articleId(self):
+#         articleId = self.data.get('articleId')
+#         articleStatus = self.data.get('articleStatus')
+#         backUrl = self.data.get('backUrl')
+#         objs = models.xzh_article.objects.filter(id=articleId)
+#         if objs:
+#             objs.update(article_status=articleStatus)
+#             if backUrl:
+#                 objs.update(back_url=backUrl)
+#         else:
+#             self.add_error('articleId', '修改ID不存在')

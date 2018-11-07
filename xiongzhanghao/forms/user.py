@@ -53,6 +53,12 @@ class AddForm(forms.Form):
             'required': "客户后台密码不能为空"
         }
     )
+    website_backstage_url = forms.CharField(
+        required=True,
+        error_messages={
+            'required': "客户后台链接不能为空"
+        }
+    )
 
     token = forms.IntegerField(
         required=False
@@ -117,6 +123,12 @@ class UpdateForm(forms.Form):
         required=True,
         error_messages={
             'required': "客户后台密码不能为空"
+        }
+    )
+    website_backstage_url = forms.CharField(
+        required=True,
+        error_messages={
+            'required': "客户后台链接不能为空"
         }
     )
     # 判断名称是否存在
