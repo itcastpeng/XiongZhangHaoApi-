@@ -115,7 +115,6 @@ def user_oper(request, oper_type, o_id):
                 'website_backstage_url': request.POST.get('website_backstage_url'),
                 'website_backstage_password': request.POST.get('website_backstage_password'),
             }
-
             print('form_data----->',form_data)
             #  创建 form验证 实例（参数默认转成字典）
             forms_obj = AddForm(form_data)
@@ -140,7 +139,6 @@ def user_oper(request, oper_type, o_id):
                 'o_id': o_id,
                 'username': request.POST.get('username'),
                 'role_id': request.POST.get('role_id'),
-                # 'company_id': request.POST.get('company_id'),
                 'website_backstage': request.POST.get('website_backstage'),
                 'website_backstage_url': request.POST.get('website_backstage_url'),
                 'website_backstage_username': request.POST.get('website_backstage_username'),
@@ -154,7 +152,10 @@ def user_oper(request, oper_type, o_id):
                 o_id = forms_obj.cleaned_data['o_id']
                 username = forms_obj.cleaned_data['username']
                 role_id = forms_obj.cleaned_data['role_id']
-                # company_id = forms_obj.cleaned_data['company_id']
+                website_backstage = forms_obj.cleaned_data['website_backstage']
+                website_backstage_url = forms_obj.cleaned_data['website_backstage_url']
+                website_backstage_username = forms_obj.cleaned_data['website_backstage_username']
+                website_backstage_password = forms_obj.cleaned_data['website_backstage_password']
                 #  查询数据库  用户id
                 objs = models.xzh_userprofile.objects.filter(
                     id=o_id
@@ -164,9 +165,11 @@ def user_oper(request, oper_type, o_id):
                     objs.update(
                         username=username,
                         role_id=role_id,
-                        # company_id=company_id
+                        website_backstage=website_backstage,
+                        website_backstage_url=website_backstage_url,
+                        website_backstage_username=website_backstage_username,
+                        website_backstage_password=website_backstage_password
                     )
-
                     response.code = 200
                     response.msg = "修改成功"
                 else:
@@ -183,7 +186,6 @@ def user_oper(request, oper_type, o_id):
 
         elif oper_type == "delete":
             # 删除 ID
-            # company_id = request.GET.get('company_id')
             objs = models.xzh_userprofile.objects.filter(id=o_id)
             if objs:
                 objs.delete()
@@ -205,12 +207,15 @@ def user_oper(request, oper_type, o_id):
             else:
                 response.code = 301
                 response.msg = "用户ID不存在"
-
     else:
         response.code = 402
         response.msg = "请求异常"
 
     return JsonResponse(response.__dict__)
+
+
+
+
 
 # 供脚本查询 用户
 @csrf_exempt
