@@ -64,6 +64,7 @@ class AddForm(forms.Form):
         required=False
     )
 
+
     # 查询名称是否存在
     def clean_username(self):
         username = self.data['username']

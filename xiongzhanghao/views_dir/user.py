@@ -103,6 +103,7 @@ def user(request):
 @account.is_token(models.xzh_userprofile)
 def user_oper(request, oper_type, o_id):
     response = Response.ResponseObj()
+    user_id = request.GET.get('user_id')
     if request.method == "POST":
         if oper_type == "add":
             form_data = {
@@ -208,8 +209,15 @@ def user_oper(request, oper_type, o_id):
                 response.code = 301
                 response.msg = "用户ID不存在"
     else:
-        response.code = 402
-        response.msg = "请求异常"
+        # 查询该用户所有栏目
+        if oper_type == 'getColumn':
+            objs = models.xzh_userprofile.objects.get(id=user_id)
+            response.code = 200
+            response.msg = '查询成功'
+            response.data = eval(objs.column_all)
+        else:
+            response.code = 402
+            response.msg = "请求异常"
 
     return JsonResponse(response.__dict__)
 

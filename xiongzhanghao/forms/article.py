@@ -2,7 +2,7 @@ from django import forms
 
 from xiongzhanghao import models
 from xiongzhanghao.publicFunc import account
-import datetime
+import datetime, json
 
 
 # 添加
@@ -36,9 +36,9 @@ class AddForm(forms.Form):
     )
 
     column_id = forms.IntegerField(
-        required=False,
+        required=True,
         error_messages={
-            'required': '栏目类型错误'
+            'required': '栏目不能为空'
         }
     )
 
@@ -49,6 +49,21 @@ class AddForm(forms.Form):
         }
     )
 
+    def clean_column_id(self):
+        column_id = self.data.get('column_id')
+        belongToUser_id = self.data.get('belongToUser_id')
+        objs = models.xzh_userprofile.objects.get(id=belongToUser_id)
+        if objs.column_all:
+            for i in eval(objs.column_all):
+                if int(column_id) == int(i[0]):
+                    data_dict = {
+                        'Id':i[0],
+                        'name':i[1]
+                    }
+                    print('data_dict--> ',data_dict)
+                    return data_dict
+        else:
+            self.add_error('column_id', '该归属用户无栏目')
 
 # 更新
 class UpdateForm(forms.Form):
@@ -81,16 +96,9 @@ class UpdateForm(forms.Form):
     )
 
     column_id = forms.IntegerField(
-        required=False,
+        required=True,
         error_messages={
-            'required': '栏目类型错误'
-        }
-    )
-
-    create_date = forms.DateTimeField(
-        required=False,
-        error_messages={
-            'required': '时间不能为空'
+            'required': '栏目不能为空'
         }
     )
 
@@ -100,6 +108,23 @@ class UpdateForm(forms.Form):
             'required': '归属用户不能为空'
         }
     )
+
+    def clean_column_id(self):
+        column_id = self.data.get('column_id')
+        belongToUser_id = self.data.get('belongToUser_id')
+        print('column_id--------->', column_id, belongToUser_id)
+        objs = models.xzh_userprofile.objects.filter(id=belongToUser_id)
+        if objs[0].column_all:
+            for i in eval(objs[0].column_all):
+                if int(column_id) == int(i[0]):
+                    data_dict = {
+                        'Id': i[0],
+                        'name': i[1]
+                    }
+                    print('data_dict--> ', data_dict)
+                    return data_dict
+        else:
+            self.add_error('column_id', '该归属用户无栏目')
 
 
 # 判断是否是数字
