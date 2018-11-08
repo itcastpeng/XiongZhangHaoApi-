@@ -29,6 +29,7 @@ def article(request):
                 'summary': '__contains',
                 'content': '__contains',
                 'user_id': '',
+                'article_status': '',
             }
             q = conditionCom(request, field_dict)
             print('q -->', q)
@@ -60,7 +61,8 @@ def article(request):
                     'user_id':obj.user.id,
                     'user_name':obj.user.username,
                     'belongToUser_id':obj.belongToUser_id,
-                    'belongToUser_name': obj.belongToUser.username
+                    'belongToUser_name': obj.belongToUser.username,
+                    'article_status': obj.get_article_status_display()
                 })
             #  查询成功 返回200 状态码
             response.code = 200
@@ -68,7 +70,7 @@ def article(request):
             response.data = {
                 'ret_data': ret_data,
                 'data_count': count,
-                # 'website_backstage_choices': models.xzh_userprofile.website_backstage_choices
+                'article_status':models.xzh_article.article_status_choices,
             }
         else:
             response.code = 402
