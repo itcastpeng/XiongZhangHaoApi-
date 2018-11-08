@@ -21,17 +21,16 @@ def article(request):
             length = forms_obj.cleaned_data['length']
             print('forms_obj.cleaned_data -->', forms_obj.cleaned_data)
             order = request.GET.get('order', '-create_date')
+            user_id = request.GET.get('user_id')
             field_dict = {
                 'id': '',
                 'title': '__contains',
-                'user_id': '',
                 'create_date': '',
                 'summary': '__contains',
                 'content': '__contains',
-                'TheColumn': '__contains',
+                'user_id': '',
             }
             q = conditionCom(request, field_dict)
-
             print('q -->', q)
             objs = models.xzh_article.objects.select_related('user').filter(q).order_by(order)
             count = objs.count()
@@ -47,16 +46,21 @@ def article(request):
             for obj in objs:
                 print('obj.id--------------> ',obj.id)
                 #  将查询出来的数据 加入列表
+                column = {}
+                if obj.column_id:
+                    column = eval(obj.column_id)
                 ret_data.append({
                     'id': obj.id,
                     'title':obj.title,
                     'summary':obj.summary,
                     'content':obj.content,
-                    'column_id':obj.column_id,
+                    'column_id':column.get('Id'),
+                    'column_name':column.get('name'),
                     'create_date':obj.create_date.strftime('%Y-%m-%d %H:%M:%S'),
                     'user_id':obj.user.id,
                     'user_name':obj.user.username,
-                    'belongToUser':obj.belongToUser_id,
+                    'belongToUser_id':obj.belongToUser_id,
+                    'belongToUser_name': obj.belongToUser.username
                 })
             #  查询成功 返回200 状态码
             response.code = 200
@@ -87,24 +91,20 @@ def article_oper(request, oper_type, o_id):
             'content': request.POST.get('content'),
             'column_id': request.POST.get('column_id'),
             'create_date': datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S'),
-            'belongToUser_id':request.POST.get('belongToUser'),
+            'belongToUser_id':request.POST.get('belongToUser_id'),
         }
         if oper_type == "add":
             #  创建 form验证 实例（参数默认转成字典）
             forms_obj = AddForm(form_data)
             if forms_obj.is_valid():
                 print("验证通过")
-                # print(forms_obj.cleaned_data)
-                #  添加数据库
-                # print('forms_obj.cleaned_data-->',forms_obj.cleaned_data)
+                print("forms_obj.data.get('column_id')========> ",forms_obj.cleaned_data.get('column_id'))
                 models.xzh_article.objects.create(**forms_obj.cleaned_data)
                 response.code = 200
                 response.msg = "添加成功"
             else:
                 print("验证不通过")
-                # print(forms_obj.errors)
                 response.code = 301
-                # print(forms_obj.errors.as_json())
                 response.msg = json.loads(forms_obj.errors.as_json())
 
         elif oper_type == "update":
@@ -124,8 +124,8 @@ def article_oper(request, oper_type, o_id):
                         title = objForm.get('title'),
                         summary = objForm.get('summary'),
                         content = objForm.get('content'),
-                        TheColumn= objForm.get('TheColumn'),
-                        belongToUser = objForm.get('belongToUser'),
+                        belongToUser_id = objForm.get('belongToUser_id'),
+                        column_id = objForm.get('column_id')
                     )
 
                     response.code = 200
@@ -153,7 +153,6 @@ def article_oper(request, oper_type, o_id):
             else:
                 response.code = 302
                 response.msg = '删除ID不存在'
-
     else:
         response.code = 402
         response.msg = "请求异常"

@@ -64,7 +64,7 @@ class xzh_article(models.Model):
     title = models.CharField(verbose_name='文章标题', max_length=128)
     summary = models.CharField(verbose_name='文章摘要', max_length=256)
     content = models.TextField(verbose_name='文章内容', null=True)
-    column_id = models.IntegerField(verbose_name='栏目', null=True, blank=True)
+    column_id = models.CharField(verbose_name='栏目', max_length=64, null=True, blank=True)
     create_date = models.DateTimeField(verbose_name="创建时间", auto_now_add=True)
     article_status_choices = (
         (1, '未发布'),
