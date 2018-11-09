@@ -48,6 +48,7 @@ def article(request):
                 print('obj.id--------------> ',obj.id)
                 #  将查询出来的数据 加入列表
                 column = eval(obj.column_id) if obj.column_id else {}
+
                 back_url = obj.back_url if obj.back_url else ''
                 ret_data.append({
                     'id': obj.id,
