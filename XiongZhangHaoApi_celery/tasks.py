@@ -11,7 +11,10 @@ import requests, datetime, os, sys
 @app.task
 def celeryGetDebugUser(user_id=None):
     # url = '127.0.0.1:8003/getTheDebugUser'
-    url = 'http://xiongzhanghao.zhugeyingxiao.com:8003/getTheDebugUser'
+    if user_id:
+        url = 'http://xiongzhanghao.zhugeyingxiao.com:8003/getTheDebugUser?user_id={}'.format(user_id)
+    else:
+        url = 'http://xiongzhanghao.zhugeyingxiao.com:8003/getTheDebugUser'
     requests.get(url)
 
 
