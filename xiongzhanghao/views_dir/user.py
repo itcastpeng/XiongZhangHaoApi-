@@ -9,6 +9,7 @@ from xiongzhanghao.forms.user import AddForm, UpdateForm, SelectForm
 from django.db.models import Q
 from backend.articlePublish import DeDe
 from XiongZhangHaoApi_celery.tasks import celeryGetDebugUser
+
 import json
 
 
@@ -23,14 +24,18 @@ def init_data(request):
         order = request.GET.get('order', '-create_date')
         field_dict = {
             'id': '',
-            'role_id': '',
+            # 'role_id': '',
             'name': '__contains',
             'create_date': '',
             'oper_user__username': '__contains',
             'is_debug': '',
         }
         q = conditionCom(request, field_dict)
-
+        role_id = request.GET.get('role_id')
+        if role_id:
+            q.add(Q(role_id=role_id), Q.AND)
+        else:
+            q.add(Q(role_id=61), Q.AND)
         print('q -->', q)
         objs = models.xzh_userprofile.objects.select_related('role').filter(q).order_by(order)
         count = objs.count()
@@ -56,12 +61,15 @@ def init_data(request):
                 role_id = obj.role_id
                 role_name = obj.role.name
 
+            is_debug = '已调试' if obj.is_debug else '未调试'
+            status = '已启用' if obj.status == 1 else '未启用'
+
             #  将查询出来的数据 加入列表
             ret_data.append({
                 'id': obj.id,
                 'username': obj.username,
                 'get_status_display': obj.get_status_display(),
-                'status': obj.status,
+                'status': status,
                 'role_id': role_id,
                 'role_name': role_name,
                 'website_backstage_id': obj.website_backstage,
@@ -70,7 +78,8 @@ def init_data(request):
                 'website_backstage_password': obj.website_backstage_password,
                 'create_date': obj.create_date.strftime('%Y-%m-%d %H:%M:%S'),
                 'oper_user__username': oper_user_username,
-                'website_backstage_url':obj.website_backstage_url
+                'website_backstage_url':obj.website_backstage_url,
+                'is_debug':is_debug
             })
         #  查询成功 返回200 状态码
         response.code = 200
@@ -189,14 +198,19 @@ def user_oper(request, oper_type, o_id):
 
         elif oper_type == "delete":
             # 删除 ID
-            objs = models.xzh_userprofile.objects.filter(id=o_id)
+            objs = models.xzh_userprofile.objects.get(id=o_id)
             if objs:
-                objs.delete()
-                response.code = 200
-                response.msg = "删除成功"
+                if objs.id == user_id:
+                    response.code = 301
+                    response.msg = '不可删除自己'
+                else:
+                    objs.delete()
+                    response.code = 200
+                    response.msg = "删除成功"
             else:
                 response.code = 302
                 response.msg = '删除ID不存在'
+            response.data = {}
 
         elif oper_type == "update_status":
             status = request.POST.get('status')
@@ -238,6 +252,9 @@ def script_user(request):
         response.msg = '请求异常'
     return JsonResponse(response.__dict__)
 
+
+
+
 # 登录
 def login_website_backstage(user_id, domain, home_path, userid, pwd, flag_num):
     # 创建dede 实例及 登录
@@ -261,22 +278,57 @@ def login_website_backstage(user_id, domain, home_path, userid, pwd, flag_num):
         print('===========登录失败')
         return 500
 
+# 判断
+def objLogin(obj):
+    website_backstage_url = obj.website_backstage_url
+    home_path = website_backstage_url.split('/')[-1]
+    domain = website_backstage_url.split(website_backstage_url.split('/')[-1])[0]
+    userid = obj.website_backstage_username
+    pwd = obj.website_backstage_password
+    flag_num = 1# 判断登录几次 大于五次不登录
+    login_website_backstage(obj.id, domain, home_path, userid, pwd, flag_num)
+
+
 # 定时刷新 调试用户 获取cookies和所有栏目
-@csrf_exempt
-def getTheDebugUser(request):
+def getTheDebugUser(request, user_id):
     response = Response.ResponseObj()
-    objs = models.xzh_userprofile.objects.filter(status=1, is_debug=0)
-    if objs:
-        for obj in objs:
-            website_backstage_url = obj.website_backstage_url
-            home_path = website_backstage_url.split('/')[-1]
-            domain = website_backstage_url.split(website_backstage_url.split('/')[-1])[0]
-            userid = obj.website_backstage_username
-            pwd = obj.website_backstage_password
-            flag_num = 1# 判断登录几次 大于五次不登录
-            login_website_backstage(obj.id, domain, home_path, userid, pwd, flag_num)
-        response.code = 200
+    if user_id:
+        objs = models.xzh_userprofile.objects.get(id=user_id)
+        if objs:
+            objLogin(objs)
+        else:
+            response.code = 200
+            response.msg = '无该用户'
     else:
-        response.code = 200
-        response.msg = '无数据'
+        objs = models.xzh_userprofile.objects.filter(status=1, is_debug=0)
+        if objs:
+            for obj in objs:
+                objLogin(obj)
+            response.code = 200
+        else:
+            response.code = 200
+            response.msg = '无数据'
     return JsonResponse(response.__dict__)
+
+
+# 用户手动触发当前账号是否调试成功
+@csrf_exempt
+@account.is_token(models.xzh_userprofile)
+def deBugLoginAndGetCookie(request):
+    user_id = request.POST.get('user_id')
+    response = Response.ResponseObj()
+    celeryGetDebugUser.delay(user_id)
+    response.code = 200
+    response.msg = '正在调试,请等待'
+    return JsonResponse(response.__dict__)
+
+
+
+
+
+
+
+
+
+
+
