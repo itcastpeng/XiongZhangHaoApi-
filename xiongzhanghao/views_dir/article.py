@@ -8,6 +8,8 @@ from xiongzhanghao.forms.article import AddForm, UpdateForm, SelectForm
 import json, datetime
 from django.db.models import Q
 from backend.articlePublish import DeDe
+from xiongzhanghao.views_dir.user import objLogin
+
 
 # cerf  token验证 用户展示模块
 @csrf_exempt
@@ -243,70 +245,71 @@ def login_website_backstage(result_dict, userid=None, pwd=None, objCookies=None)
 @csrf_exempt
 def script_oper(request):
     response = Response.ResponseObj()
-    retData = []
     objs = models.xzh_article.objects.select_related('belongToUser').filter(
         article_status=1,
-        belongToUser__status=1,
         belongToUser__is_debug=1
     ).order_by('create_date')
     for obj in objs:
-        print('obj.id----------------> ',obj.id)
-        if obj.belongToUser:
-            website_backstage_url = obj.belongToUser.website_backstage_url
-            website_backstage = obj.belongToUser.status
-            userid = obj.belongToUser.website_backstage_username
-            pwd = obj.belongToUser.website_backstage_password
-            home_path = website_backstage_url.split('/')[-1]
-            domain = website_backstage_url.split(website_backstage_url.split('/')[-1])[0]
+        operType = 'sendArticle'
+        objLogin(obj, operType)
 
-            if obj.title and obj.column_id and obj.summary and obj.content:
-                article_data = {
-                    "channelid": "1",  # 表示普通文章
-                    "dopost": "save",  # 隐藏写死属性
-                    "title": obj.title,  # 文章标题
-                    "weight": "1033",  # 权重
-                    "typeid": obj.column_id,  # 栏目id
-                    "autokey": "1",  # 关键字自动获取
-                    "description": obj.summary,  # 描述
-                    "remote": "1",  # 下载远程图片和资源
-                    "autolitpic": "1",  # 提取第一个图片为缩略图
-                    "sptype": "hand",  # 分页方式 手动
-                    "spsize": "5",
-                    "body": obj.content,
-                    "notpost": "0",
-                    "click": "63",
-                    "sortup": "0",
-                    "arcrank": "0",
-                    "money": "0",
-                    "pubdate": datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
-                    "ishtml": 1,
-                    "imageField.x": "30",
-                    "imageField.y": "12"
-                }
-                flag_num = 1
-                result_dict = {
-                    'user_id':obj.id,
-                    'flag_num':flag_num,
-                    'article_data':article_data,
-                    'domain':domain,
-                    'home_path':home_path,
-                }
-
-                if obj.belongToUser.cookies:
-                    objCookies = obj.belongToUser.cookies
-                    print('objCookies--> ',objCookies)
-                    try:
-                        login_website_backstage(result_dict, objCookies=eval(objCookies))
-                    except Exception as e:
-                        print('报错-------------', e )
-                        login_website_backstage(result_dict, userid=userid, pwd=pwd)
-                else:
-                    print('登录用户名')
-                    login_website_backstage(result_dict, userid=userid, pwd=pwd)
-            else:
-                pass
-
+        # print('obj.id----------------> ',obj.id)
+        # if obj.belongToUser:
+        #     website_backstage_url = obj.belongToUser.website_backstage_url
+        #     website_backstage = obj.belongToUser.status
+        #     userid = obj.belongToUser.website_backstage_username
+        #     pwd = obj.belongToUser.website_backstage_password
+        #     home_path = website_backstage_url.split('/')[-1]
+        #     domain = website_backstage_url.split(website_backstage_url.split('/')[-1])[0]
+        #
+        #     if obj.title and obj.column_id and obj.summary and obj.content:
+        #         article_data = {
+        #             "channelid": "1",  # 表示普通文章
+        #             "dopost": "save",  # 隐藏写死属性
+        #             "title": obj.title,  # 文章标题
+        #             "weight": "1033",  # 权重
+        #             "typeid": obj.column_id,  # 栏目id
+        #             "autokey": "1",  # 关键字自动获取
+        #             "description": obj.summary,  # 描述
+        #             "remote": "1",  # 下载远程图片和资源
+        #             "autolitpic": "1",  # 提取第一个图片为缩略图
+        #             "sptype": "hand",  # 分页方式 手动
+        #             "spsize": "5",
+        #             "body": obj.content,
+        #             "notpost": "0",
+        #             "click": "63",
+        #             "sortup": "0",
+        #             "arcrank": "0",
+        #             "money": "0",
+        #             "pubdate": datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
+        #             "ishtml": 1,
+        #             "imageField.x": "30",
+        #             "imageField.y": "12"
+        #         }
+        #         flag_num = 1
+        #         result_dict = {
+        #             'user_id':obj.id,
+        #             'flag_num':flag_num,
+        #             'article_data':article_data,
+        #             'domain':domain,
+        #             'home_path':home_path,
+        #         }
+        #
+        #         if obj.belongToUser.cookies:
+        #             objCookies = obj.belongToUser.cookies
+        #             print('objCookies--> ',objCookies)
+        #             try:
+        #                 login_website_backstage(result_dict, objCookies=eval(objCookies))
+        #             except Exception as e:
+        #                 print('报错-------------', e )
+        #                 login_website_backstage(result_dict, userid=userid, pwd=pwd)
+        #         else:
+        #             print('登录用户名')
+        #             login_website_backstage(result_dict, userid=userid, pwd=pwd)
+        #     else:
+        #         pass
+    #
     response.code = 200
-    response.msg = '查询成功'
-    response.data = retData
+    # response.msg = '查询成功'
+    # response.data = retData
     return JsonResponse(response.__dict__)

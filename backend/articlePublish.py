@@ -12,7 +12,13 @@ class DeDe(object):
         self.domain = domain
         self.home_url = self.domain + home_path
 
-    def login(self, userid, pwd):
+    def login(self, obj, operType):
+        if operType == 'getcolumn':
+            userid = obj.website_backstage_username
+            pwd = obj.website_backstage_password
+        else:
+            userid = obj.belongToUser.website_backstage_username
+            pwd = obj.belongToUser.website_backstage_password
         login_url = self.home_url + '/login.php'
 
         url = self.home_url + '/login.php?gotopage=%2Fdrqaz%2F'
@@ -52,8 +58,8 @@ class DeDe(object):
             'pwd': pwd,
         }
         self.requests_obj.post(login_url, data=post_data)
-        print('self.requests_obj.cookies---------> ',self.requests_obj.cookies)
-        print('self.requests_obj.cookies---------> ',self.requests_obj.headers)
+        # print('self.requests_obj.cookies---------> ',self.requests_obj.cookies)
+        # print('self.requests_obj.cookies---------> ',self.requests_obj.headers)
         cookies = requests.utils.dict_from_cookiejar(self.requests_obj.cookies)
 
         print('cookies -------------->', cookies)
@@ -62,10 +68,12 @@ class DeDe(object):
         #     print(i, type(i))
 
     # 获取栏目信息
-    def getClassInfo(self):
+    def getClassInfo(self, objCookies=None):
         url = self.home_url + '/article_add.php'
-        ret = self.requests_obj.get(url)
-
+        if objCookies:
+            ret = self.requests_obj.get(url, cookies=objCookies)
+        else:
+            ret = self.requests_obj.get(url)
         soup = BeautifulSoup(ret.text, 'lxml')
 
         select_tag = soup.find('select', id='typeid')
@@ -97,9 +105,6 @@ class DeDe(object):
             # print('增加文章')
             url = self.home_url + '/article_add.php'
             if objCookies:
-                headers = {
-                    'cookies':objCookies
-                }
                 print('-----------------增加文章', objCookies)
                 ret = self.requests_obj.post(url, data=data, cookies=objCookies)
             else:
@@ -144,11 +149,15 @@ class DeDe(object):
                      'code':200
                     }
             else:
-                print('发布失败')
-                return 500
+                return {
+                    'huilian':'',
+                     'code':500
+                    }
         else:
-            return 300
-
+            return {
+                    'huilian':'',
+                     'code':300
+                    }
 # if __name__ == '__main__':
 #     domain = 'http://www.bjwletyy.com'
 #     home_path = '/wladmin'
