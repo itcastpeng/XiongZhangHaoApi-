@@ -9,7 +9,7 @@ import requests, datetime, os, sys
 
 # 获取cookie 以及栏目
 @app.task
-def celeryGetDebugUser(user_id):
+def celeryGetDebugUser(user_id=None):
     # url = '127.0.0.1:8003/getTheDebugUser'
     url = 'http://xiongzhanghao.zhugeyingxiao.com:8003/getTheDebugUser'
     requests.get(url)
