@@ -47,9 +47,8 @@ def article(request):
             for obj in objs:
                 print('obj.id--------------> ',obj.id)
                 #  将查询出来的数据 加入列表
-                column = {}
-                if obj.column_id:
-                    column = eval(obj.column_id)
+                column = eval(obj.column_id) if obj.column_id else {}
+                back_url = obj.back_url if obj.back_url else ''
                 ret_data.append({
                     'id': obj.id,
                     'title':obj.title,
@@ -64,7 +63,7 @@ def article(request):
                     'belongToUser_name': obj.belongToUser.username,
                     'article_status': obj.get_article_status_display(),
                     'note_content':obj.note_content,
-                    'back_url':obj.back_url
+                    'back_url':back_url
                 })
             #  查询成功 返回200 状态码
             response.code = 200
