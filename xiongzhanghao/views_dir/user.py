@@ -34,8 +34,7 @@ def init_data(request):
         role_id = request.GET.get('role_id')
         if role_id:
             q.add(Q(role_id=role_id), Q.AND)
-        else:
-            q.add(Q(role_id=61), Q.AND)
+
         print('q -->', q)
         objs = models.xzh_userprofile.objects.select_related('role').filter(q).order_by(order)
         count = objs.count()
