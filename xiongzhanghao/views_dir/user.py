@@ -293,7 +293,8 @@ def objLogin(obj):
 
 
 # 定时刷新 调试用户 获取cookies和所有栏目
-def getTheDebugUser(request, user_id):
+def getTheDebugUser(request):
+    user_id = request.GET.get('user_id')
     response = Response.ResponseObj()
     if user_id:
         objs = models.xzh_userprofile.objects.get(id=user_id)
