@@ -8,6 +8,7 @@ from xiongzhanghao.publicFunc.condition_com import conditionCom
 from xiongzhanghao.forms.user import AddForm, UpdateForm, SelectForm
 from django.db.models import Q
 from backend.articlePublish import DeDe
+from XiongZhangHaoApi_celery.tasks import celeryGetDebugUser
 import json
 
 
@@ -127,6 +128,7 @@ def user_oper(request, oper_type, o_id):
                 models.xzh_userprofile.objects.create(**forms_obj.cleaned_data)
                 response.code = 200
                 response.msg = "添加成功"
+                celeryGetDebugUser.delay()  # 异步调用
             else:
                 print("验证不通过")
                 # print(forms_obj.errors)

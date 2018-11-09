@@ -62,15 +62,15 @@ class xzh_article(models.Model):
     user = models.ForeignKey('xzh_userprofile', verbose_name='文章创建人', null=True)
     belongToUser = models.ForeignKey('xzh_userprofile', verbose_name='文章属于谁', null=True, related_name='belongToUser')
     title = models.CharField(verbose_name='文章标题', max_length=128)
-    summary = models.CharField(verbose_name='文章摘要', max_length=256)
-    content = models.TextField(verbose_name='文章内容', null=True)
+    summary = models.TextField(verbose_name='文章摘要', null=True, blank=True)
+    content = models.TextField(verbose_name='文章内容', null=True, blank=True)
     column_id = models.CharField(verbose_name='栏目', max_length=64, null=True, blank=True)
     create_date = models.DateTimeField(verbose_name="创建时间", auto_now_add=True)
     article_status_choices = (
         (1, '未发布'),
         (2, '发布成功'),
         (3, '发布失败'),
-        (4, '标题存在'),
     )
     article_status = models.SmallIntegerField(verbose_name='文章状态',choices=article_status_choices, default=1)
     back_url = models.CharField(verbose_name='回链地址', max_length=128, null=True, blank=True)
+    note_content = models.CharField(verbose_name='错误备注', max_length=256, default='无')

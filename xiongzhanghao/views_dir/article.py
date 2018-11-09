@@ -28,7 +28,8 @@ def article(request):
                 'create_date': '',
                 'summary': '__contains',
                 'content': '__contains',
-                'user_id': '',
+                'article_status': '',
+                'belongToUser__username': '__contains',
             }
             q = conditionCom(request, field_dict)
             print('q -->', q)
@@ -60,7 +61,9 @@ def article(request):
                     'user_id':obj.user.id,
                     'user_name':obj.user.username,
                     'belongToUser_id':obj.belongToUser_id,
-                    'belongToUser_name': obj.belongToUser.username
+                    'belongToUser_name': obj.belongToUser.username,
+                    'article_status': obj.get_article_status_display(),
+                    'note_content':obj.note_content
                 })
             #  查询成功 返回200 状态码
             response.code = 200
@@ -68,7 +71,7 @@ def article(request):
             response.data = {
                 'ret_data': ret_data,
                 'data_count': count,
-                # 'website_backstage_choices': models.xzh_userprofile.website_backstage_choices
+                'article_status':models.xzh_article.article_status_choices,
             }
         else:
             response.code = 402
@@ -162,23 +165,31 @@ def article_oper(request, oper_type, o_id):
 
 
 
-
+# 更改状态和备注
 def models_article(class_data, user_id):
-    print('class_data-----------================> ',class_data)
-    if class_data.get('code') == 200:
-        models.xzh_article.objects.filter(id=user_id).update(
+    code = class_data.get('code')
+    huilian = class_data.get('huilian')
+    objs = models.xzh_article.objects.filter(id=user_id)
+    if code == 200:                 # 发布成功
+        objs.update(
             article_status=2,
-            back_url=class_data.get('huilian')
+            back_url=huilian
         )
-    elif class_data.get('code') == 300:
-        models.xzh_article.objects.filter(id=user_id).update(
-            article_status=4
+    elif code == 300:               # 标题重复
+        objs.update(
+            article_status=3,
+            note_content='标题重复'
         )
-    else:
-        models.xzh_article.objects.filter(id=user_id).update(
-            article_status=3
+    elif code == 302:               # 登录失败
+        objs.update(
+            article_status=3,
+            note_content='登录失败'
         )
-    return 200
+    else:                           # 发布失败
+        objs.update(
+            article_status=3,
+            note_content='发布失败'
+        )
 
 
 #  登录用户名 密码 发送文章
@@ -198,9 +209,13 @@ def send_article(data_dict, userid=None, pwd=None):
             send_article(data_dict, userid=userid, pwd=pwd)
     else:  # 如果登录超过五次 则登录失败
         print('===========登录失败')
-        return 500
+        class_data = {
+                    'huilian':'',
+                     'code':302
+                    }
+        models_article(class_data, user_id)
 
-# 登录
+# 判断 是否有 cookie  没有则 用户名 密码登录
 def login_website_backstage(result_dict, userid=None, pwd=None, objCookies=None):
     domain = result_dict.get('domain')
     home_path = result_dict.get('home_path')
@@ -277,7 +292,6 @@ def script_oper(request):
                 }
 
                 if obj.belongToUser.cookies:
-                    print('=======')
                     objCookies = obj.belongToUser.cookies
                     print('objCookies--> ',objCookies)
                     try:
