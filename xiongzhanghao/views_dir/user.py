@@ -197,18 +197,22 @@ def user_oper(request, oper_type, o_id):
 
         elif oper_type == "delete":
             # 删除 ID
-            objs = models.xzh_userprofile.objects.get(id=o_id)
-            if objs:
-                if objs.id == user_id:
-                    response.code = 301
-                    response.msg = '不可删除自己'
-                else:
-                    objs.delete()
-                    response.code = 200
-                    response.msg = "删除成功"
+            if o_id == user_id:
+                response.code = 301
+                response.msg = '不能删除自己'
             else:
-                response.code = 302
-                response.msg = '删除ID不存在'
+                objs = models.xzh_userprofile.objects.get(id=o_id)
+                if objs:
+                    if objs.id == user_id:
+                        response.code = 301
+                        response.msg = '不可删除自己'
+                    else:
+                        objs.delete()
+                        response.code = 200
+                        response.msg = "删除成功"
+                else:
+                    response.code = 302
+                    response.msg = '删除ID不存在'
             response.data = {}
 
         elif oper_type == "update_status":
