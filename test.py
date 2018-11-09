@@ -29,8 +29,17 @@
 # print(customer_username)
 
 
-p = 'http://www.scgcyy.com/drqaz/'
+website_backstage_url = 'http://www.scgcyy.com/drqaz/'
 
-if p[-1] == '/':
-    print('--------')
+home_path = website_backstage_url.split('/')[-2]
+
+# domain = website_backstage_url.split()
+domain = website_backstage_url.split(website_backstage_url.split('/')[-2] + '/')[0]
+
+
+# home_path = website_backstage_url.split('/')[-1]
+# domain = website_backstage_url.split(website_backstage_url.split('/')[-1])[0]
+# drqaz http://www.scgcyy.com/
+# drqaz http://www.scgcyy.com/
+print(home_path, domain)
 

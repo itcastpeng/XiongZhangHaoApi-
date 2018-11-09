@@ -284,11 +284,12 @@ def login_website_backstage(user_id, domain, home_path, userid, pwd, flag_num):
 # 判断
 def objLogin(obj):
     website_backstage_url = obj.website_backstage_url
-    home_path = website_backstage_url.split('/')[-1]
-    if home_path[-1] == '/':
-        domain = website_backstage_url.split(website_backstage_url.split('/')[0].split('/')[-1])[0]
+    if website_backstage_url[-1] == '/':
+        domain = website_backstage_url.split(website_backstage_url.split('/')[-2] + '/')[0]
+        home_path = website_backstage_url.split('/')[-2]
     else:
         domain = website_backstage_url.split(website_backstage_url.split('/')[-1])[0]
+        home_path = website_backstage_url.split('/')[-1]
     userid = obj.website_backstage_username
     pwd = obj.website_backstage_password
     flag_num = 1# 判断登录几次 大于五次不登录
