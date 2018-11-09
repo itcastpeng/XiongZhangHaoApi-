@@ -83,6 +83,7 @@ def role(request):
 def role_oper(request, oper_type, o_id):
     response = Response.ResponseObj()
     if request.method == "POST":
+        user_id = request.GET.get('user_id')
         if oper_type == "add":
             form_data = {
                 'oper_user_id': request.GET.get('user_id'),
@@ -165,15 +166,19 @@ def role_oper(request, oper_type, o_id):
             # 删除 ID
             objs = models.xzh_role.objects.filter(id=o_id)
             if objs:
-                print('=======')
                 obj = objs[0]
-                if obj.xzh_userprofile_set.all().count() > 0:
-                    response.code = 304
-                    response.msg = '含有子级数据,请先删除或转移子级数据'
+                userObj = models.xzh_userprofile.objects.get(id=user_id)
+                if userObj.role_id == obj.id:
+                    response.code = 301
+                    response.msg = '当前角色不能删除该角色'
                 else:
-                    objs.delete()
-                    response.code = 200
-                    response.msg = "删除成功"
+                    if obj.xzh_userprofile_set.all().count() > 0:
+                        response.code = 304
+                        response.msg = '含有子级数据,请先删除或转移子级数据'
+                    else:
+                        objs.delete()
+                        response.code = 200
+                        response.msg = "删除成功"
             else:
                 response.code = 302
                 response.msg = '删除ID不存在'

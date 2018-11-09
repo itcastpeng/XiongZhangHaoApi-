@@ -29,7 +29,7 @@ def article(request):
                 'summary': '__contains',
                 'content': '__contains',
                 'article_status': '',
-                'belongToUser__username': '__contains',
+                'belongToUser_id': '',
             }
             q = conditionCom(request, field_dict)
             print('q -->', q)

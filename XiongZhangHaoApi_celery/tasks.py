@@ -1,10 +1,15 @@
 from __future__ import absolute_import, unicode_literals
 from .celery import app
-import requests, datetime
+import requests, datetime, os, sys
+
+
+
+
+
 
 # 获取cookie 以及栏目
 @app.task
-def celeryGetDebugUser():
+def celeryGetDebugUser(user_id):
     # url = '127.0.0.1:8003/getTheDebugUser'
     url = 'http://xiongzhanghao.zhugeyingxiao.com:8003/getTheDebugUser'
     requests.get(url)

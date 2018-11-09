@@ -37,7 +37,8 @@ urlpatterns = [
     # 用户管理
     url(r'^user/(?P<oper_type>\w+)/(?P<o_id>\d+)$', user.user_oper),
     url(r'^user$', user.user),
-    url(r'^getTheDebugUser$', user.getTheDebugUser),
+    url(r'^deBugLoginAndGetCookie$', user.deBugLoginAndGetCookie),
+    url(r'^getTheDebugUser', user.getTheDebugUser),
 
     # 文章管理
     url(r'^article/(?P<oper_type>\w+)/(?P<o_id>\d+)$', article.article_oper),
