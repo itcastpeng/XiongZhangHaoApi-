@@ -10,7 +10,7 @@ from django.db.models import Q
 from backend.articlePublish import DeDe
 from XiongZhangHaoApi_celery.tasks import celeryGetDebugUser
 
-import json
+import json, requests
 
 
 
@@ -235,7 +235,7 @@ def user_oper(request, oper_type, o_id):
             objs = models.xzh_userprofile.objects.get(id=Id)
             response.code = 200
             response.msg = '查询成功'
-            response.data = eval(objs.column_all)
+            response.data = objs.column_all
         else:
             response.code = 402
             response.msg = "请求异常"
@@ -270,7 +270,7 @@ def login_website_backstage(user_id, domain, home_path, userid, pwd, flag_num):
         if len(cookies) > 1:
             class_data = DeDeObj.getClassInfo()
             models.xzh_userprofile.objects.filter(id=user_id).update(
-                column_all=str(class_data),
+                column_all=json.dumps(class_data),
                 is_debug=1,
                 cookies=cookies
             )
@@ -328,6 +328,8 @@ def deBugLoginAndGetCookie(request):
     user_id = request.POST.get('user_id')
     response = Response.ResponseObj()
     celeryGetDebugUser.delay(user_id)
+    # url = 'http://127.0.0.1:8003/getTheDebugUser?user_id={}'.format(user_id)
+    # requests.get(url)
     response.code = 200
     response.msg = '正在调试,请等待'
     return JsonResponse(response.__dict__)
