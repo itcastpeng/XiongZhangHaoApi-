@@ -63,7 +63,8 @@ def article(request):
                     'belongToUser_id':obj.belongToUser_id,
                     'belongToUser_name': obj.belongToUser.username,
                     'article_status': obj.get_article_status_display(),
-                    'note_content':obj.note_content
+                    'note_content':obj.note_content,
+                    'back_url':obj.back_url
                 })
             #  查询成功 返回200 状态码
             response.code = 200

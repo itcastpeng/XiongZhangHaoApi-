@@ -78,7 +78,8 @@ def init_data(request):
                 'create_date': obj.create_date.strftime('%Y-%m-%d %H:%M:%S'),
                 'oper_user__username': oper_user_username,
                 'website_backstage_url':obj.website_backstage_url,
-                'is_debug':is_debug
+                'is_debug':is_debug,
+
             })
         #  查询成功 返回200 状态码
         response.code = 200
@@ -230,7 +231,8 @@ def user_oper(request, oper_type, o_id):
     else:
         # 查询该用户所有栏目
         if oper_type == 'getColumn':
-            objs = models.xzh_userprofile.objects.get(id=user_id)
+            Id = request.GET.get('Id')
+            objs = models.xzh_userprofile.objects.get(id=Id)
             response.code = 200
             response.msg = '查询成功'
             response.data = eval(objs.column_all)
