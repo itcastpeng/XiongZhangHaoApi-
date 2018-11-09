@@ -286,6 +286,8 @@ def objLogin(obj):
     website_backstage_url = obj.website_backstage_url
     home_path = website_backstage_url.split('/')[-1]
     domain = website_backstage_url.split(website_backstage_url.split('/')[-1])[0]
+    if home_path[-1] == '/':
+        domain = website_backstage_url.split(website_backstage_url.split('/')[0].split('/')[-1])[0]
     userid = obj.website_backstage_username
     pwd = obj.website_backstage_password
     flag_num = 1# 判断登录几次 大于五次不登录
