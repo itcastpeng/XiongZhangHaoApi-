@@ -104,60 +104,66 @@ class DeDe(object):
         if self.article_test_title(data.get('title')):
             # print('增加文章')
             url = self.home_url + '/article_add.php'
+            print('发布url------------------> ', url)
             if objCookies:
-                print('-----------------增加文章', objCookies)
                 ret = self.requests_obj.post(url, data=data, cookies=objCookies)
             else:
                 ret = self.requests_obj.post(url, data=data)
+            # print('========> ', ret.text.strip())
+            if '无法解析文档' not in ret.text.strip():
+                if '成功发布文章' in ret.text:
+                    soup = BeautifulSoup(ret.text, 'lxml')
+                    aid_href = soup.find('a', text='更改文章').get('href')    # 文章id
+                    aid = aid_href.split('?')[1].split('&')[0].split('aid=')[-1]
+                    huilian = self.home_url + '/news/{}.html'.format(aid)
 
-            print(ret.text)
-            if '成功发布文章' in ret.text:
-                soup = BeautifulSoup(ret.text, 'lxml')
-                aid_href = soup.find('a', text='更改文章').get('href')    # 文章id
-                aid = aid_href.split('?')[1].split('&')[0].split('aid=')[-1]
-                huilian = self.home_url + '/news/{}.html'.format(aid)
+                    # 更新文档url
+                    # updateWordUrl = '{home_url}/task_do.php?typeid={cid}&aid={aid}&dopost=makeprenext&nextdo=makeindex,makeparenttype'.format(
+                    #     home_url=self.home_url,
+                    #     aid=aid,
+                    #     cid=cid
+                    # )
+                    # # 更新主页url
+                    # updateIndexUrl = '{home_url}/task_do.php?f=0&typeid={cid}&aid={aid}&dopost=makeindex&nextdo=makeparenttype'.format(
+                    #     home_url=self.home_url,
+                    #     aid=aid,
+                    #     cid=cid
+                    # )
 
-                # 更新文档url
-                # updateWordUrl = '{home_url}/task_do.php?typeid={cid}&aid={aid}&dopost=makeprenext&nextdo=makeindex,makeparenttype'.format(
-                #     home_url=self.home_url,
-                #     aid=aid,
-                #     cid=cid
-                # )
-                # # 更新主页url
-                # updateIndexUrl = '{home_url}/task_do.php?f=0&typeid={cid}&aid={aid}&dopost=makeindex&nextdo=makeparenttype'.format(
-                #     home_url=self.home_url,
-                #     aid=aid,
-                #     cid=cid
-                # )
+                    # if objCookies:
+                    #     ret1 = self.requests_obj.get(updateWordUrl, cookies=objCookies)
+                    #     print('ret1--> ',ret1, ret1.url)
+                    #
+                    #     ret2 = self.requests_obj.get(updateIndexUrl, cookies=objCookies)
+                    #     print('ret2-=--> ',ret2, ret2.url)
+                    #
+                    # else:
+                    #     print('===============else=============else')
+                    #     ret1 = self.requests_obj.get(updateWordUrl)
+                    #     print('ret1--> ', ret1, ret1.url)
+                    #     ret2 = self.requests_obj.get(updateIndexUrl)
+                    #     print('ret2-=--> ', ret2, ret2.url)
 
-                # if objCookies:
-                #     ret1 = self.requests_obj.get(updateWordUrl, cookies=objCookies)
-                #     print('ret1--> ',ret1, ret1.url)
-                #
-                #     ret2 = self.requests_obj.get(updateIndexUrl, cookies=objCookies)
-                #     print('ret2-=--> ',ret2, ret2.url)
-                #
-                # else:
-                #     print('===============else=============else')
-                #     ret1 = self.requests_obj.get(updateWordUrl)
-                #     print('ret1--> ', ret1, ret1.url)
-                #     ret2 = self.requests_obj.get(updateIndexUrl)
-                #     print('ret2-=--> ', ret2, ret2.url)
-
-                return {
-                    'huilian':huilian,
-                     'code':200
-                    }
+                    return {
+                        'huilian':huilian,
+                         'code':200
+                        }
+                else:
+                    return {
+                        'huilian':'',
+                         'code':500
+                        }
             else:
                 return {
-                    'huilian':'',
-                     'code':500
-                    }
+                    'huilian': '',
+                    'code': 305
+                }
         else:
             return {
                     'huilian':'',
                      'code':300
                     }
+
 # if __name__ == '__main__':
 #     domain = 'http://www.bjwletyy.com'
 #     home_path = '/wladmin'

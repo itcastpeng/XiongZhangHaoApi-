@@ -134,10 +134,10 @@ def user_oper(request, oper_type, o_id):
                 # print(forms_obj.cleaned_data)
                 #  添加数据库
                 # print('forms_obj.cleaned_data-->',forms_obj.cleaned_data)
+                celeryGetDebugUser.delay()  # 异步调用
                 models.xzh_userprofile.objects.create(**forms_obj.cleaned_data)
                 response.code = 200
                 response.msg = "添加成功"
-                celeryGetDebugUser.delay()  # 异步调用
             else:
                 print("验证不通过")
                 # print(forms_obj.errors)
@@ -267,7 +267,8 @@ def models_article(class_data, user_id):
     if code == 200:                 # 发布成功
         objs.update(
             article_status=2,
-            back_url=huilian
+            back_url=huilian,
+            note_content='无'
         )
     elif code == 300:               # 标题重复
         objs.update(
@@ -278,6 +279,11 @@ def models_article(class_data, user_id):
         objs.update(
             article_status=3,
             note_content='登录失败'
+        )
+    elif code == 305:  # 登录失败
+        objs.update(
+            article_status=3,
+            note_content='模板文件不存在, 请选择子级菜单'
         )
     else:                           # 发布失败
         objs.update(
@@ -305,6 +311,7 @@ def login_website_backstage(DeDeObj, obj, flag_num, operType, article_data=None)
             else:
                 print('article_data=================>', type(article_data))
                 class_data = DeDeObj.sendArticle(article_data)
+                print('=-=====')
                 models_article(class_data, obj.id)
             return 200
         else:
@@ -351,7 +358,7 @@ def objLogin(obj, operType):
                 "dopost": "save",  # 隐藏写死属性
                 "title": obj.title,  # 文章标题
                 "weight": "1033",  # 权重
-                "typeid": obj.column_id,  # 栏目id
+                "typeid": eval(obj.column_id).get('Id'),  # 栏目id
                 "autokey": "1",  # 关键字自动获取
                 "description": obj.summary,  # 描述
                 "remote": "1",  # 下载远程图片和资源
@@ -416,10 +423,10 @@ def getTheDebugUser(request):
 def deBugLoginAndGetCookie(request):
     userLoginId = request.POST.get('userLoginId')
     response = Response.ResponseObj()
-    # celeryGetDebugUser.delay(userLoginId)
-    print('userLoginId=====---------------===> ',userLoginId)
-    url = 'http://127.0.0.1:8003/getTheDebugUser?userLoginId={}'.format(userLoginId)
-    requests.get(url)
+    celeryGetDebugUser.delay(userLoginId)
+    # print('userLoginId=====---------------===> ',userLoginId)
+    # url = 'http://127.0.0.1:8003/getTheDebugUser?userLoginId={}'.format(userLoginId)
+    # requests.get(url)
     response.code = 200
     response.msg = '正在调试,请等待'
     return JsonResponse(response.__dict__)

@@ -124,18 +124,23 @@ def article_oper(request, oper_type, o_id):
                 )
                 #  更新 数据
                 if objs:
-                    objForm = forms_obj.cleaned_data
-                    objs.update(
-                        user_id =objForm.get('user_id'),
-                        title = objForm.get('title'),
-                        summary = objForm.get('summary'),
-                        content = objForm.get('content'),
-                        belongToUser_id = objForm.get('belongToUser_id'),
-                        column_id = objForm.get('column_id')
-                    )
+                    print('objs[0].article_status===============> ',objs[0].article_status)
+                    if objs[0].article_status != 2:
+                        objForm = forms_obj.cleaned_data
+                        objs.update(
+                            user_id =objForm.get('user_id'),
+                            title = objForm.get('title'),
+                            summary = objForm.get('summary'),
+                            content = objForm.get('content'),
+                            belongToUser_id = objForm.get('belongToUser_id'),
+                            column_id = objForm.get('column_id')
+                        )
 
-                    response.code = 200
-                    response.msg = "修改成功"
+                        response.code = 200
+                        response.msg = "修改成功"
+                    else:
+                        response.code = 301
+                        response.msg = '发布成功, 不可修改'
                 else:
                     response.code = 303
                     response.msg = json.loads(forms_obj.errors.as_json())
