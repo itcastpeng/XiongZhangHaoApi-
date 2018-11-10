@@ -17,7 +17,6 @@ def image_upload(request):
             return JsonResponse(UEditorUploadConfig.UEditorUploadSettings)
         else:
             return_str = "{0}({1})".format(request.GET["callback"], json.dumps(UEditorUploadConfig.UEditorUploadSettings, ensure_ascii=False))
-            print('====')
             print('return_str -->', return_str)
             return HttpResponse(return_str)
 

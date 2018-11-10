@@ -259,6 +259,8 @@ def script_user(request):
 
 
 
+
+
 # 更改状态和备注
 def models_article(class_data, user_id):
     code = class_data.get('code')
@@ -290,9 +292,6 @@ def models_article(class_data, user_id):
             article_status=3,
             note_content='发布失败'
         )
-
-
-
 
 # 登录
 def login_website_backstage(DeDeObj, obj, flag_num, operType, article_data=None):
@@ -388,8 +387,6 @@ def objLogin(obj, operType):
                 print('*********************************sendArticle判断没有cookie*********************************')
                 login_website_backstage(DeDeObj, obj, flag_num, operType, article_data=article_data)
 
-
-
 # 定时刷新 调试用户 获取cookies和所有栏目
 @csrf_exempt
 def getTheDebugUser(request):
@@ -415,7 +412,6 @@ def getTheDebugUser(request):
             response.code = 200
             response.msg = '无数据'
     return JsonResponse(response.__dict__)
-
 
 # 用户手动触发当前账号是否调试成功
 @csrf_exempt

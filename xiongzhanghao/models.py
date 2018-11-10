@@ -74,3 +74,4 @@ class xzh_article(models.Model):
     article_status = models.SmallIntegerField(verbose_name='文章状态',choices=article_status_choices, default=1)
     back_url = models.CharField(verbose_name='回链地址', max_length=128, null=True, blank=True)
     note_content = models.CharField(verbose_name='错误备注', max_length=256, default='无')
+    send_time = models.DateTimeField(verbose_name='定时发送文章', null=True, blank=True)

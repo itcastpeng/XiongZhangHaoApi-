@@ -66,7 +66,8 @@ def article(request):
                     'belongToUser_name': obj.belongToUser.username,
                     'article_status': obj.get_article_status_display(),
                     'note_content':obj.note_content,
-                    'back_url':back_url
+                    'back_url':back_url,
+                    'send_time':obj.send_time.strftime('%Y-%m-%d %H:%M:%S')
                 })
             #  查询成功 返回200 状态码
             response.code = 200
@@ -98,6 +99,7 @@ def article_oper(request, oper_type, o_id):
             'column_id': request.POST.get('column_id'),
             'create_date': datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S'),
             'belongToUser_id':request.POST.get('belongToUser_id'),
+            'send_time': request.POST.get('send_time')
         }
         if oper_type == "add":
             #  创建 form验证 实例（参数默认转成字典）
@@ -127,6 +129,7 @@ def article_oper(request, oper_type, o_id):
                     print('objs[0].article_status===============> ',objs[0].article_status)
                     if objs[0].article_status != 2:
                         objForm = forms_obj.cleaned_data
+                        send_time = objForm.get('send_time')
                         objs.update(
                             user_id =objForm.get('user_id'),
                             title = objForm.get('title'),
@@ -135,6 +138,8 @@ def article_oper(request, oper_type, o_id):
                             belongToUser_id = objForm.get('belongToUser_id'),
                             column_id = objForm.get('column_id')
                         )
+                        if send_time:
+                            objs.update(send_time=send_time)
 
                         response.code = 200
                         response.msg = "修改成功"
@@ -240,6 +245,7 @@ def login_website_backstage(result_dict, userid=None, pwd=None, objCookies=None)
         'article_data':article_data,
     }
     if objCookies: # 有cookies 请求
+        print('article_data-------------->',article_data)
         class_data = DeDeObj.sendArticle(article_data, objCookies=objCookies)
         models_article(class_data, user_id)
     else: # 用户名密码登录
@@ -256,7 +262,13 @@ def script_oper(request):
     ).order_by('create_date')
     for obj in objs:
         operType = 'sendArticle'
-        objLogin(obj, operType)
+        if obj.send_time:  # 如果有定时
+            now_date = datetime.datetime.now()
+            if obj.send_time <= now_date:
+                print('=================定时发送文章 ----------- ', obj.send_time)
+                objLogin(obj, operType)
+        else:               # 没有定时
+            objLogin(obj, operType)
 
         # print('obj.id----------------> ',obj.id)
         # if obj.belongToUser:
@@ -313,7 +325,7 @@ def script_oper(request):
         #             login_website_backstage(result_dict, userid=userid, pwd=pwd)
         #     else:
         #         pass
-    #
+
     response.code = 200
     # response.msg = '查询成功'
     # response.data = retData
