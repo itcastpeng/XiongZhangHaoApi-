@@ -52,6 +52,8 @@ def article(request):
                 column = eval(obj.column_id) if obj.column_id else {}
                 print('column============> ', column)
                 back_url = obj.back_url if obj.back_url else ''
+
+                send_time = obj.send_time.strftime('%Y-%m-%d %H:%M:%S') if obj.send_time else ''
                 ret_data.append({
                     'id': obj.id,
                     'title':obj.title,
@@ -67,7 +69,7 @@ def article(request):
                     'article_status': obj.get_article_status_display(),
                     'note_content':obj.note_content,
                     'back_url':back_url,
-                    'send_time':obj.send_time.strftime('%Y-%m-%d %H:%M:%S')
+                    'send_time':send_time
                 })
             #  查询成功 返回200 状态码
             response.code = 200
@@ -269,6 +271,8 @@ def script_oper(request):
                 objLogin(obj, operType)
         else:               # 没有定时
             objLogin(obj, operType)
+    response.code = 200
+
 
         # print('obj.id----------------> ',obj.id)
         # if obj.belongToUser:
@@ -325,8 +329,6 @@ def script_oper(request):
         #             login_website_backstage(result_dict, userid=userid, pwd=pwd)
         #     else:
         #         pass
-
-    response.code = 200
     # response.msg = '查询成功'
     # response.data = retData
     return JsonResponse(response.__dict__)

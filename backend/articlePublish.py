@@ -109,7 +109,7 @@ class DeDe(object):
                 ret = self.requests_obj.post(url, data=data, cookies=objCookies)
             else:
                 ret = self.requests_obj.post(url, data=data)
-            # print('========> ', ret.text.strip())
+            print('========> ', ret.text.strip())
             if '无法解析文档' not in ret.text.strip():
                 if '成功发布文章' in ret.text:
                     soup = BeautifulSoup(ret.text, 'lxml')
@@ -143,22 +143,25 @@ class DeDe(object):
                     #     print('ret1--> ', ret1, ret1.url)
                     #     ret2 = self.requests_obj.get(updateIndexUrl)
                     #     print('ret2-=--> ', ret2, ret2.url)
-
+                    print('’发布成功=========================发布成功===================发布成功')
                     return {
                         'huilian':huilian,
                          'code':200
                         }
                 else:
+                    print('’发布失败=========================发布失败===================发布失败 500')
                     return {
                         'huilian':'',
                          'code':500
                         }
             else:
+                print('’发布失败=========================发布失败===================发布失败 305')
                 return {
                     'huilian': '',
                     'code': 305
                 }
         else:
+            print('’发布失败=========================发布失败===================发布失败 300')
             return {
                     'huilian':'',
                      'code':300
