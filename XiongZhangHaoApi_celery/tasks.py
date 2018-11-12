@@ -15,6 +15,7 @@ def celeryGetDebugUser(userLoginId=None):
         url = 'http://xiongzhanghao.zhugeyingxiao.com:8003/getTheDebugUser?userLoginId={}'.format(userLoginId)
     else:
         url = 'http://xiongzhanghao.zhugeyingxiao.com:8003/getTheDebugUser'
+    print('url -->', url)
     requests.get(url)
 
 
