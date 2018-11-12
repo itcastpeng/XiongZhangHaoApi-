@@ -352,6 +352,7 @@ def login_website_backstage(DeDeObj, obj, flag_num, operType, article_data=None)
 
 # 判断
 def objLogin(obj, operType):
+    print('obj.website_backstage_url -->', obj.website_backstage_url)
     if operType == 'getcolumn': # 获取栏目
         website_backstage_url = obj.website_backstage_url.strip()
     else:
