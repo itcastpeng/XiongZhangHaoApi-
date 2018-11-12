@@ -450,6 +450,7 @@ def getTheDebugUser(request):
 @csrf_exempt
 @account.is_token(models.xzh_userprofile)
 def deBugLoginAndGetCookie(request):
+    print('request.POST -->', request.POST)
     userLoginId = request.POST.get('userLoginId')
     response = Response.ResponseObj()
     celeryGetDebugUser.delay(userLoginId)
