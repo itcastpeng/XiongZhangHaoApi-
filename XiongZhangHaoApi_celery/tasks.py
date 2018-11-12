@@ -12,7 +12,7 @@ import requests, datetime, os, sys
 def celeryGetDebugUser(userLoginId=None):
     # url = '127.0.0.1:8003/getTheDebugUser'
     if userLoginId:
-        url = 'http://xiongzhanghao.zhugeyingxiao.com:8003/getTheDebugUser?user_id={}'.format(userLoginId)
+        url = 'http://xiongzhanghao.zhugeyingxiao.com:8003/getTheDebugUser?userLoginId={}'.format(userLoginId)
     else:
         url = 'http://xiongzhanghao.zhugeyingxiao.com:8003/getTheDebugUser'
     requests.get(url)
