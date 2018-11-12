@@ -49,6 +49,13 @@ class AddForm(forms.Form):
         }
     )
 
+    send_time = forms.DateTimeField(
+        required=False,
+        error_messages={
+            'required': '发送时间格式错误'
+        }
+    )
+
     def clean_column_id(self):
         column_id = self.data.get('column_id')
         belongToUser_id = self.data.get('belongToUser_id')
@@ -109,6 +116,12 @@ class UpdateForm(forms.Form):
         }
     )
 
+    send_time = forms.DateTimeField(
+        required=False,
+        error_messages={
+            'required': '发送时间格式错误'
+        }
+    )
     def clean_column_id(self):
         column_id = self.data.get('column_id')
         belongToUser_id = self.data.get('belongToUser_id')
