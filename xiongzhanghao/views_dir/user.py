@@ -422,7 +422,7 @@ def objLogin(obj, operType):
 # 定时刷新 调试用户 获取cookies和所有栏目
 @csrf_exempt
 def getTheDebugUser(request):
-    userLoginId = request.GET.get('userLoginId')
+    userLoginId = request.POST.get('userLoginId')
     response = Response.ResponseObj()
     print('userLoginId========>',userLoginId)
     operType = 'getcolumn'
