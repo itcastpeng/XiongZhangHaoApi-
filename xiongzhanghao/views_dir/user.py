@@ -5,7 +5,7 @@ from xiongzhanghao.publicFunc import account
 from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt, csrf_protect
 from xiongzhanghao.publicFunc.condition_com import conditionCom
-from xiongzhanghao.forms.user import AddForm, UpdateForm, SelectForm
+from xiongzhanghao.forms.user import AddForm, UpdateForm, SelectForm, AdminAddForm, AdminUpdateForm
 from django.db.models import Q
 from backend.articlePublish import DeDe
 from XiongZhangHaoApi_celery.tasks import celeryGetDebugUser
@@ -79,6 +79,8 @@ def init_data(request):
                 'oper_user__username': oper_user_username,
                 'website_backstage_url':obj.website_backstage_url,
                 'is_debug':is_debug,
+                'website_backstage_token':obj.website_backstage_token,
+                'website_backstage_appid':obj.website_backstage_appid
 
             })
         #  查询成功 返回200 状态码
@@ -125,16 +127,25 @@ def user_oper(request, oper_type, o_id):
                 'website_backstage_username': request.POST.get('website_backstage_username'),
                 'website_backstage_url': request.POST.get('website_backstage_url'),
                 'website_backstage_password': request.POST.get('website_backstage_password'),
+                'website_backstage_token': request.POST.get('website_backstage_token'),
+                'website_backstage_appid': request.POST.get('website_backstage_appid'),
             }
             print('form_data----->',form_data)
             #  创建 form验证 实例（参数默认转成字典）
-            forms_obj = AddForm(form_data)
+
+            if int(form_data.get('role_id')) == 64 or int(form_data.get('role_id')) == 66:
+                forms_obj = AdminAddForm(form_data)
+            else:
+                forms_obj = AddForm(form_data)
             if forms_obj.is_valid():
                 print("验证通过")
                 # print(forms_obj.cleaned_data)
                 #  添加数据库
-                # print('forms_obj.cleaned_data-->',forms_obj.cleaned_data)
                 celeryGetDebugUser.delay()  # 异步调用
+
+                # url = 'http://xiongzhanghao.zhugeyingxiao.com:8003/getTheDebugUser'
+                # requests.get(url)
+
                 models.xzh_userprofile.objects.create(**forms_obj.cleaned_data)
                 response.code = 200
                 response.msg = "添加成功"
@@ -155,33 +166,52 @@ def user_oper(request, oper_type, o_id):
                 'website_backstage_url': request.POST.get('website_backstage_url'),
                 'website_backstage_username': request.POST.get('website_backstage_username'),
                 'website_backstage_password': request.POST.get('website_backstage_password'),
+                'website_backstage_token': request.POST.get('website_backstage_token'),
+                'website_backstage_appid': request.POST.get('website_backstage_appid'),
             }
-
-            forms_obj = UpdateForm(form_data)
+            flag = False
+            if int(form_data.get('role_id')) == 64 or int(form_data.get('role_id')) ==  66:
+                forms_obj = AdminUpdateForm(form_data)
+            else:
+                flag = True
+                forms_obj = UpdateForm(form_data)
             if forms_obj.is_valid():
                 print("验证通过")
                 print(forms_obj.cleaned_data)
                 o_id = forms_obj.cleaned_data['o_id']
                 username = forms_obj.cleaned_data['username']
                 role_id = forms_obj.cleaned_data['role_id']
-                website_backstage = forms_obj.cleaned_data['website_backstage']
-                website_backstage_url = forms_obj.cleaned_data['website_backstage_url']
-                website_backstage_username = forms_obj.cleaned_data['website_backstage_username']
-                website_backstage_password = forms_obj.cleaned_data['website_backstage_password']
-                #  查询数据库  用户id
                 objs = models.xzh_userprofile.objects.filter(
                     id=o_id
                 )
                 #  更新 数据
                 if objs:
-                    objs.update(
-                        username=username,
-                        role_id=role_id,
-                        website_backstage=website_backstage,
-                        website_backstage_url=website_backstage_url,
-                        website_backstage_username=website_backstage_username,
-                        website_backstage_password=website_backstage_password
-                    )
+                    print('===========================================')
+                    if flag:
+                        website_backstage = forms_obj.cleaned_data['website_backstage']
+                        website_backstage_url = forms_obj.cleaned_data['website_backstage_url']
+                        website_backstage_username = forms_obj.cleaned_data['website_backstage_username']
+                        website_backstage_password = forms_obj.cleaned_data['website_backstage_password']
+                        website_backstage_token = forms_obj.cleaned_data['website_backstage_token']
+                        website_backstage_appid = forms_obj.cleaned_data['website_backstage_appid']
+
+                        print('website_backstage_token, website_backstage_appid---------------> ',website_backstage_token, website_backstage_appid)
+                        #  查询数据库  用户id
+                        objs.update(
+                            username=username,
+                            role_id=role_id,
+                            website_backstage=website_backstage,
+                            website_backstage_url=website_backstage_url,
+                            website_backstage_username=website_backstage_username,
+                            website_backstage_password=website_backstage_password,
+                            website_backstage_appid=website_backstage_appid,
+                            website_backstage_token=website_backstage_token
+                        )
+                    else:
+                        objs.update(
+                            username=username,
+                            role_id=role_id,
+                        )
                     response.code = 200
                     response.msg = "修改成功"
                 else:
@@ -323,11 +353,12 @@ def login_website_backstage(DeDeObj, obj, flag_num, operType, article_data=None)
 # 判断
 def objLogin(obj, operType):
     if operType == 'getcolumn': # 获取栏目
-        website_backstage_url = obj.website_backstage_url
+        website_backstage_url = obj.website_backstage_url.strip()
     else:
-        website_backstage_url = obj.belongToUser.website_backstage_url
-
+        website_backstage_url = obj.belongToUser.website_backstage_url.strip()
+    print('website_backstage_url--------> ',website_backstage_url)
     url = urlparse(website_backstage_url)
+    print('url.hostname===========> ',url.hostname)
     domain = 'http://' + url.hostname + '/'
     home_path = website_backstage_url.split(domain)[1].replace('/', '')
 
