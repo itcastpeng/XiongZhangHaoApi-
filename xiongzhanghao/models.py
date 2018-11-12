@@ -55,7 +55,8 @@ class xzh_userprofile(models.Model):
     is_debug = models.BooleanField(verbose_name='是否调试', default=False) # 为True 才可以发布文章
     cookies = models.TextField(verbose_name='cookies', null=True, blank=True)
     column_all = models.TextField(verbose_name='所有栏目', null=True, blank=True)
-
+    website_backstage_token = models.CharField(verbose_name='熊掌号token', max_length=64, null=True, blank=True)
+    website_backstage_appid = models.CharField(verbose_name='熊掌号appid', max_length=64, null=True, blank=True)
 
 # 公众号-文章表
 class xzh_article(models.Model):
