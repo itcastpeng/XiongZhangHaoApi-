@@ -24,7 +24,7 @@ def init_data(request):
         order = request.GET.get('order', '-create_date')
         field_dict = {
             'id': '',
-            # 'role_id': '',
+            'role_id': '',
             'name': '__contains',
             'create_date': '',
             'oper_user__username': '__contains',
@@ -262,10 +262,12 @@ def user_oper(request, oper_type, o_id):
         # 查询该用户所有栏目
         if oper_type == 'getColumn':
             Id = request.GET.get('Id')
-            objs = models.xzh_userprofile.objects.get(id=Id)
+            obj = models.xzh_userprofile.objects.get(id=Id)
             response.code = 200
             response.msg = '查询成功'
-            response.data = objs.column_all
+            response.data = obj.column_all
+            if not response.data:
+                response.data = json.dumps([])
         else:
             response.code = 402
             response.msg = "请求异常"
