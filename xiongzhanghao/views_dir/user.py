@@ -28,7 +28,7 @@ def init_data(request):
             'name': '__contains',
             'create_date': '',
             'oper_user__username': '__contains',
-            'is_debug': '',
+            'is_debug': 'bool',
         }
         q = conditionCom(request, field_dict)
         role_id = request.GET.get('role_id')

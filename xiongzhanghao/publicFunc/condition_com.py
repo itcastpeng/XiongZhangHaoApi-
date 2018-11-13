@@ -23,6 +23,12 @@ def conditionCom(request, field_dict):
                 if value == '1':
                     flag = True
                 q.add(Q(**{k + '__isnull': flag}), Q.AND)
+            elif v == 'bool':
+                # 是否为空
+                flag = False
+                if value == '1':
+                    flag = True
+                q.add(Q(**{k: flag}), Q.AND)
             else:
                 q.add(Q(**{k: value}), Q.AND)
 
