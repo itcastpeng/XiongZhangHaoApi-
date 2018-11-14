@@ -139,14 +139,14 @@ def user_oper(request, oper_type, o_id):
                 forms_obj = AddForm(form_data)
             if forms_obj.is_valid():
                 print("验证通过")
+                models.xzh_userprofile.objects.create(**forms_obj.cleaned_data)
                 # print(forms_obj.cleaned_data)
                 #  添加数据库
-                celeryGetDebugUser.delay()  # 异步调用
 
                 # url = 'http://xiongzhanghao.zhugeyingxiao.com:8003/getTheDebugUser'
                 # requests.get(url)
 
-                models.xzh_userprofile.objects.create(**forms_obj.cleaned_data)
+                celeryGetDebugUser.delay()  # 异步调用
                 response.code = 200
                 response.msg = "添加成功"
             else:
@@ -305,7 +305,7 @@ def getTheDebugUser(request):
 @csrf_exempt
 @account.is_token(models.xzh_userprofile)
 def deBugLoginAndGetCookie(request):
-    print('request.POST -->', request.POST)
+    # print('request.POST -->', request.POST)
     userLoginId = request.POST.get('userLoginId')
     response = Response.ResponseObj()
     celeryGetDebugUser.delay(userLoginId)
