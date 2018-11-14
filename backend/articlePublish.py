@@ -14,7 +14,7 @@ class DeDe(object):
 
     def login(self, userid, pwd):
         login_url = self.home_url + '/login.php'
-        print('login_url=====================> ',login_url)
+        # print('login_url=====================> ',login_url)
         url = self.home_url + '/login.php?gotopage=%2Fdrqaz%2F'
         ret = self.requests_obj.get(url)
 
@@ -52,7 +52,7 @@ class DeDe(object):
             'pwd': pwd,
         }
         ret = self.requests_obj.post(login_url, data=post_data)
-        print('ret.text----------->',ret.text)
+        # print('ret.text----------->',ret.text)
         # print('self.requests_obj.cookies---------> ',self.requests_obj.cookies)
         # print('self.requests_obj.cookies---------> ',self.requests_obj.headers)
         cookies = requests.utils.dict_from_cookiejar(self.requests_obj.cookies)
@@ -65,9 +65,9 @@ class DeDe(object):
     # 获取栏目信息
     def getClassInfo(self, objCookies=None):
         url = self.home_url + '/article_add.php'
-        print('url==========------> ',url)
+        # print('url==========------> ',url)
         if objCookies:
-            print('objCookies==> ', objCookies)
+            # print('objCookies==> ', objCookies)
             ret = self.requests_obj.get(url, cookies=objCookies)
         else:
             ret = self.requests_obj.get(url)
@@ -106,7 +106,7 @@ class DeDe(object):
                 ret = self.requests_obj.post(url, data=data, cookies=objCookies)
             else:
                 ret = self.requests_obj.post(url, data=data)
-            print('========> ', ret.text.strip())
+            # print('========> ', ret.text.strip())
             if '无法解析文档' not in ret.text.strip():
                 if '成功发布文章' in ret.text:
                     soup = BeautifulSoup(ret.text, 'lxml')
