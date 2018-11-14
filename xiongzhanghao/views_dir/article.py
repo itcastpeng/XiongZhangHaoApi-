@@ -179,7 +179,7 @@ def article_oper(request, oper_type, o_id):
         elif oper_type == 'redistribution':
             objs = models.xzh_article.objects.filter(id=o_id)
             if objs[0].article_status != 2:
-                objs.update(article_status=1)
+                objs.update(article_status=1,note_content='')
             response.code = 200
             response.msg = '重新发布成功'
 
