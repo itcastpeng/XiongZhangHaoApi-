@@ -12,15 +12,9 @@ class DeDe(object):
         self.domain = domain
         self.home_url = self.domain + home_path
 
-    def login(self, obj, operType):
-        if operType == 'getcolumn':
-            userid = obj.website_backstage_username
-            pwd = obj.website_backstage_password
-        else:
-            userid = obj.belongToUser.website_backstage_username
-            pwd = obj.belongToUser.website_backstage_password
+    def login(self, userid, pwd):
         login_url = self.home_url + '/login.php'
-
+        print('login_url=====================> ',login_url)
         url = self.home_url + '/login.php?gotopage=%2Fdrqaz%2F'
         ret = self.requests_obj.get(url)
 
@@ -57,12 +51,13 @@ class DeDe(object):
             'userid': userid,
             'pwd': pwd,
         }
-        self.requests_obj.post(login_url, data=post_data)
+        ret = self.requests_obj.post(login_url, data=post_data)
+        print('ret.text----------->',ret.text)
         # print('self.requests_obj.cookies---------> ',self.requests_obj.cookies)
         # print('self.requests_obj.cookies---------> ',self.requests_obj.headers)
         cookies = requests.utils.dict_from_cookiejar(self.requests_obj.cookies)
 
-        print('cookies -------------->', cookies)
+        # print('cookies -------------->', cookies)
         return cookies
         # for i in self.requests_obj.cookies:
         #     print(i, type(i))
@@ -70,7 +65,9 @@ class DeDe(object):
     # 获取栏目信息
     def getClassInfo(self, objCookies=None):
         url = self.home_url + '/article_add.php'
+        print('url==========------> ',url)
         if objCookies:
+            print('objCookies==> ', objCookies)
             ret = self.requests_obj.get(url, cookies=objCookies)
         else:
             ret = self.requests_obj.get(url)
@@ -167,6 +164,8 @@ class DeDe(object):
                      'code':300
                     }
 
+
+
 # if __name__ == '__main__':
 #     domain = 'http://www.bjwletyy.com'
 #     home_path = '/wladmin'
@@ -174,5 +173,5 @@ class DeDe(object):
 #     pwd = 'zhidao2018'
 #     obj = DeDe(domain, home_path)
 #     obj.login(userid, pwd)
-#     class_data = obj.getClassInfo()
+    # class_data = obj.getClassInfo()
 

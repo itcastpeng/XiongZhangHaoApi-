@@ -20,7 +20,7 @@ app.conf.beat_schedule = {
  'celeryPublishedArticles':{
         'task':'XiongZhangHaoApi_celery.tasks.celeryPublishedArticles',
         # 'schedule':30                                   # 秒
-        'schedule': crontab("*/5", '*', '*', '*', '*'),  # 此处跟 linux 中 crontab 的格式一样
+        'schedule': crontab("*/1", '*', '*', '*', '*'),  # 此处跟 linux 中 crontab 的格式一样
         # 'schedule': crontab("5", '9, 11', '*', '*', '*'),  # 9点一次  11点一次
         # 'schedule': crontab(hour=8, minute=30),
     },

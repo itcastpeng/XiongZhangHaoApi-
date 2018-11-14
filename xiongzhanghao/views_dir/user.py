@@ -11,7 +11,7 @@ from backend.articlePublish import DeDe
 from XiongZhangHaoApi_celery.tasks import celeryGetDebugUser
 from urllib.parse import urlparse
 import json, requests, datetime
-
+from backend.getCookieAndColumn import getCookies
 
 
 def init_data(request):
@@ -279,174 +279,26 @@ def user_oper(request, oper_type, o_id):
 
 
 # 供脚本查询 用户
-@csrf_exempt
-def script_user(request):
-    response = Response.ResponseObj()
-    if request.method == "GET":
-        response = init_data(request)
-    else:
-        response.code = 402
-        response.msg = '请求异常'
-    return JsonResponse(response.__dict__)
+# @csrf_exempt
+# def script_user(request):
+#     response = Response.ResponseObj()
+#     if request.method == "GET":
+#         response = init_data(request)
+#     else:
+#         response.code = 402
+#         response.msg = '请求异常'
+#     return JsonResponse(response.__dict__)
 
 
 
 
-
-# 更改状态和备注
-def models_article(class_data, user_id):
-    code = class_data.get('code')
-    huilian = class_data.get('huilian')
-    objs = models.xzh_article.objects.filter(id=user_id)
-    if code == 200:                 # 发布成功
-        objs.update(
-            article_status=2,
-            back_url=huilian,
-            note_content='无'
-        )
-    elif code == 300:               # 标题重复
-        objs.update(
-            article_status=3,
-            note_content='标题重复'
-        )
-    elif code == 302:               # 登录失败
-        objs.update(
-            article_status=3,
-            note_content='登录失败'
-        )
-    elif code == 305:  # 登录失败
-        objs.update(
-            article_status=3,
-            note_content='模板文件不存在, 请选择子级菜单'
-        )
-    else:                           # 发布失败
-        objs.update(
-            article_status=3,
-            note_content='发布失败'
-        )
-
-# 登录
-def login_website_backstage(DeDeObj, obj, flag_num, operType, article_data=None):
-    # 创建dede 实例及 登录
-    print('******///////////////////********创建登录实例 判断登录次数///////*****************////////////')
-    if flag_num <= 5:
-        cookies = DeDeObj.login(obj, operType)
-        if len(cookies) > 1:
-            if operType == 'getcolumn':  # 获取栏目
-                class_data = DeDeObj.getClassInfo()
-                models.xzh_userprofile.objects.filter(id=obj.id).update(
-                    column_all=json.dumps(class_data),
-                    is_debug=1,
-                    cookies=cookies
-                )
-            else:
-                print('article_data=================>', type(article_data))
-                class_data = DeDeObj.sendArticle(article_data)
-                print('=-=====')
-                models_article(class_data, obj.id)
-            return 200
-        else:
-            flag_num += 1
-            login_website_backstage(DeDeObj, obj, flag_num, operType)
-    else:   # 如果登录超过五次 则登录失败
-        print('===========登录失败')
-        return 500
-
-# 判断
-def objLogin(obj, operType):
-    if operType == 'getcolumn': # 获取栏目
-        website_backstage_url = obj.website_backstage_url.strip()
-        print('obj.website_backstage_url -->', obj.website_backstage_url)
-
-    else:
-        website_backstage_url = obj.belongToUser.website_backstage_url.strip()
-    print('website_backstage_url--------> ',website_backstage_url)
-    url = urlparse(website_backstage_url)
-    print('url.hostname===========> ',url.hostname)
-    domain = 'http://' + url.hostname + '/'
-    home_path = website_backstage_url.split(domain)[1].replace('/', '')
-
-    print('---------------------------> 域名---------------> ', domain, home_path)
-
-    DeDeObj = DeDe(domain=domain, home_path=home_path)
-    flag_num = 1
-    if operType == 'getcolumn': # 获取栏目
-        if obj.cookies:
-            print('================================getcolumn判断有cookie-==============================>')
-            try:
-                class_data = DeDeObj.getClassInfo(eval(obj.cookies))
-                models.xzh_userprofile.objects.filter(id=obj.id).update(
-                    column_all=json.dumps(class_data),
-                    is_debug=1,
-                )
-            except Exception:
-                login_website_backstage(DeDeObj, obj, flag_num, operType)
-        else:
-            print('*********************************getcolumn判断没有cookie*********************************')
-            if operType == 'getcolumn': # 无cookie获取栏目
-                login_website_backstage(DeDeObj, obj, flag_num, operType)
-    else:
-        if obj.title and obj.column_id and obj.summary and obj.content:
-            article_data = {
-                "channelid": "1",  # 表示普通文章
-                "dopost": "save",  # 隐藏写死属性
-                "title": obj.title,  # 文章标题
-                "weight": "1033",  # 权重
-                "typeid": eval(obj.column_id).get('Id'),  # 栏目id
-                "autokey": "1",  # 关键字自动获取
-                "description": obj.summary,  # 描述
-                "remote": "1",  # 下载远程图片和资源
-                "autolitpic": "1",  # 提取第一个图片为缩略图
-                "sptype": "hand",  # 分页方式 手动
-                "spsize": "5",
-                "body": obj.content,
-                "notpost": "0",
-                "click": "63",
-                "sortup": "0",
-                "arcrank": "0",
-                "money": "0",
-                "pubdate": datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
-                "ishtml": 1,
-                "imageField.x": "30",
-                "imageField.y": "12"
-            }
-            if obj.belongToUser.cookies:
-                print('-----------------------------发送文章cookie==================================')
-                objCookies = obj.belongToUser.cookies
-                try:
-                    class_data = DeDeObj.sendArticle(article_data, objCookies=objCookies)
-                    models_article(class_data, obj.id)
-                except Exception:
-                    login_website_backstage(DeDeObj, obj, flag_num, operType, article_data=article_data)
-            else:
-                print('*********************************sendArticle判断没有cookie*********************************')
-                login_website_backstage(DeDeObj, obj, flag_num, operType, article_data=article_data)
 
 # 定时刷新 调试用户 获取cookies和所有栏目
 @csrf_exempt
+@getCookies(models.xzh_userprofile)
 def getTheDebugUser(request):
-    print('request.GET -->', request.GET)
-    userLoginId = request.GET.get('userLoginId')
     response = Response.ResponseObj()
-    print('userLoginId========>',userLoginId)
-    operType = 'getcolumn'
-    if userLoginId:
-        objs = models.xzh_userprofile.objects.get(id=userLoginId)
-        if objs:
-            objLogin(objs, operType)
-        else:
-            response.code = 200
-            response.msg = '无该用户'
-    else:
-        print('--------------------------')
-        objs = models.xzh_userprofile.objects.filter(status=1, is_debug=0)
-        if objs:
-            for obj in objs:
-                objLogin(obj, operType)
-            response.code = 200
-        else:
-            response.code = 200
-            response.msg = '无数据'
+    response.code = 200
     return JsonResponse(response.__dict__)
 
 # 用户手动触发当前账号是否调试成功
@@ -463,6 +315,10 @@ def deBugLoginAndGetCookie(request):
     response.code = 200
     response.msg = '正在调试,请等待'
     return JsonResponse(response.__dict__)
+
+
+
+
 
 
 

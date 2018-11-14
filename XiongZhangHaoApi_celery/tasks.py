@@ -19,7 +19,7 @@ def celeryGetDebugUser(userLoginId=None):
     requests.get(url)
 
 
-# 定时发布文章(5分钟一次)
+# 定时发布文章(1分钟一次)
 @app.task
 def celeryPublishedArticles():
     url = 'http://xiongzhanghao.zhugeyingxiao.com:8003/script_oper'
