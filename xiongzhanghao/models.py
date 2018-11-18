@@ -76,4 +76,5 @@ class xzh_article(models.Model):
     back_url = models.CharField(verbose_name='回链地址', max_length=128, null=True, blank=True)
     note_content = models.CharField(verbose_name='错误备注', max_length=256, default='无')
     send_time = models.DateTimeField(verbose_name='定时发送文章', null=True, blank=True)
+    aid = models.IntegerField(verbose_name='文章发布id', null=True, blank=True)
     is_audit = models.BooleanField(verbose_name='是否审核', default=False)

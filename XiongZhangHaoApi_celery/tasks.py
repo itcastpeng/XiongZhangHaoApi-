@@ -1,7 +1,7 @@
 from __future__ import absolute_import, unicode_literals
 from .celery import app
 import requests, datetime, os, sys
-
+from backend.getCookieAndColumn import celeryTimedRefreshAudit
 
 
 
@@ -22,7 +22,9 @@ def celeryGetDebugUser(userLoginId=None):
 # 定时发布文章(1分钟一次)
 @app.task
 def celeryPublishedArticles():
+    # url = 'http://127.0.0.1:8003/celeryTimed'
+    urlAudit = 'http://xiongzhanghao.zhugeyingxiao.com:8003/celeryTimed'  # 查询审核
     url = 'http://xiongzhanghao.zhugeyingxiao.com:8003/script_oper'
     requests.get(url)
-
+    requests.get(urlAudit)
 
