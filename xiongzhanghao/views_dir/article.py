@@ -333,13 +333,13 @@ def submitXiongZhangHao(request):
                 if json.loads(ret.text).get('error'):
                     print('ret.text------------------->',ret.text)
                     note_content = json.loads(ret.text).get('message')
-                    continue
                 else:
                     obj.article_status = 5
             else:
                 note_content = 'appid 或 token 有问题, 建议重新获取token'
             obj.note_content = note_content
             obj.save()
+            continue
         response.code = 200
     return JsonResponse(response.__dict__)
 
