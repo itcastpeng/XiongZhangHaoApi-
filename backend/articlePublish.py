@@ -1,17 +1,25 @@
 import requests, json
 from bs4 import BeautifulSoup
 from backend.lianzhongDama import LianZhongDama
-from xiongzhanghao import models
+
+
 class DeDe(object):
-    def __init__(self, domain, home_path):
+    def __init__(self, domain, home_path, userid, pwd, cookies=None):
         self.requests_obj = requests.session()
         # self.domain = 'http://www.scgcyy.com'
         # self.home_url = self.domain + '/drqaz'
 
+        self.userid = userid
+        self.pwd = pwd
         self.domain = domain
         self.home_url = self.domain + home_path
+        self.cookies = cookies
 
-    def login(self, userid, pwd):
+    def login(self):
+        if self.cookies:
+            self.is_login()
+            return self.cookies
+
         login_url = self.home_url + '/login.php'
         # print('login_url=====================> ',login_url)
         url = self.home_url + '/login.php?gotopage=%2Fdrqaz%2F'
@@ -24,55 +32,61 @@ class DeDe(object):
 
         soup = BeautifulSoup(ret.text, 'lxml')
         yzm = ''
-        try:
-            img_src = soup.find('img', id='vdimgck').attrs.get('src')
-            img_url = self.domain + img_src.replace('..', '')
+        while True:
+            try:
+                img_src = soup.find('img', id='vdimgck').attrs.get('src')
+                img_url = self.domain + img_src.replace('..', '')
 
-            ret = self.requests_obj.get(img_url)
+                ret = self.requests_obj.get(img_url)
 
-            # ret.encoding = 'utf8'
-            with open('yzm.jpg', 'wb') as f:
-                f.write(ret.content)
+                # ret.encoding = 'utf8'
+                with open('yzm.jpg', 'wb') as f:
+                    f.write(ret.content)
 
-            obj = LianZhongDama()
-            yzm = obj.get_yzm('yzm.jpg')
-            print('yzm -->', yzm)
-            # yzm = input('输入验证码 >>>')
+                obj = LianZhongDama()
+                yzm = obj.get_yzm('yzm.jpg')
+                print('yzm -->', yzm)
+                # yzm = input('输入验证码 >>>')
 
-        except AttributeError:
-            pass
+                break
+
+            except AttributeError:
+                pass
 
         post_data = {
             'gotopage': gotopage,
             'dopost': dopost,
             'adminstyle': adminstyle,
             'validate': yzm,
-            'userid': userid,
-            'pwd': pwd,
+            'userid': self.userid,
+            'pwd': self.pwd,
         }
         ret = self.requests_obj.post(login_url, data=post_data)
         # print('ret.text----------->',ret.text)
         # print('self.requests_obj.cookies---------> ',self.requests_obj.cookies)
         # print('self.requests_obj.cookies---------> ',self.requests_obj.headers)
         cookies = requests.utils.dict_from_cookiejar(self.requests_obj.cookies)
+        self.cookies = cookies
 
-        # print('cookies -------------->', cookies)
-        return cookies
-        # for i in self.requests_obj.cookies:
-        #     print(i, type(i))
+    # 判断是否登录
+    def is_login(self):
+        print("判断是否登录")
+        url = 'http://www.bjwletyy.com/wladmin/index.php'
+        ret = self.requests_obj.get(url, cookies=self.cookies)
+        # print(ret.text)
+        if "登录" in ret.text:
+            self.cookies = ''    # cookie清除掉
+            self.login()
 
     # 获取栏目信息
-    def getClassInfo(self, objCookies=None):
+    def getClassInfo(self):
         url = self.home_url + '/article_add.php'
-        # print('url==========------> ',url)
-        if objCookies:
-            # print('objCookies==> ', objCookies)
-            ret = self.requests_obj.get(url, cookies=objCookies)
-        else:
-            ret = self.requests_obj.get(url)
+        ret = self.requests_obj.get(url, cookies=self.cookies)
+        # print(ret.text)
         soup = BeautifulSoup(ret.text, 'lxml')
 
         select_tag = soup.find('select', id='typeid')
+        print('select_tag -->', select_tag)
         retData = []
         for option_tag in select_tag.find_all('option'):
             class_id = int(option_tag.attrs.get('value'))
@@ -89,22 +103,19 @@ class DeDe(object):
         print("判断标题是否可用")
         url = self.home_url + '/article_test_title.php?t={title}'.format(title=title)
         # print('url -->', url)
-        ret = self.requests_obj.get(url)
+        ret = self.requests_obj.get(url, cookies=self.cookies)
         if '存在标题' in ret.text.strip():
             print('标题已存在')
             return False
         return True
 
     # 发布文章
-    def sendArticle(self, data, objCookies=None):
+    def sendArticle(self, data):
         if self.article_test_title(data.get('title')):
             # print('增加文章')
             url = self.home_url + '/article_add.php'
             print('发布url------------------> ', url)
-            if objCookies:
-                ret = self.requests_obj.post(url, data=data, cookies=objCookies)
-            else:
-                ret = self.requests_obj.post(url, data=data)
+            ret = self.requests_obj.post(url, data=data, cookies=self.cookies)
             # print('========> ', ret.text.strip())
             if '无法解析文档' not in ret.text.strip():
                 print('ret.text=========> ',ret.text)
@@ -185,18 +196,18 @@ class DeDe(object):
                         status = True
                     else:
                         status = False
-                    models.xzh_article.objects.filter(id=id).update(is_audit=status)
 
 
+if __name__ == '__main__':
+    domain = 'http://www.bjwletyy.com'
+    home_path = '/wladmin'
+    userid = 'zhidao'
+    pwd = 'zhidao2018'
+    cookies = { 'PHPSESSID': 'oljb8k6gmtn4o96pipo4efcgpk', 'DedeUserID': '3'}
+    obj = DeDe(domain, home_path, userid, pwd, cookies)
+    # cookies = obj.login(userid, pwd)
+    obj.login()
+    print('obj.cookies -->', obj.cookies)
 
-
-
-# if __name__ == '__main__':
-#     domain = 'http://www.bjwletyy.com'
-#     home_path = '/wladmin'
-#     userid = 'zhidao'
-#     pwd = 'zhidao2018'
-#     obj = DeDe(domain, home_path)
-#     obj.login(userid, pwd)
-    # class_data = obj.getClassInfo()
+    class_data = obj.getClassInfo()
 
