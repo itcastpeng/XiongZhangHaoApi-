@@ -1,8 +1,7 @@
 import requests, json
 from bs4 import BeautifulSoup
 from backend.lianzhongDama import LianZhongDama
-
-
+from xiongzhanghao import models
 class DeDe(object):
     def __init__(self, domain, home_path):
         self.requests_obj = requests.session()
@@ -108,12 +107,13 @@ class DeDe(object):
                 ret = self.requests_obj.post(url, data=data)
             # print('========> ', ret.text.strip())
             if '无法解析文档' not in ret.text.strip():
+                print('ret.text=========> ',ret.text)
                 if '成功发布文章' in ret.text:
                     soup = BeautifulSoup(ret.text, 'lxml')
                     aid_href = soup.find('a', text='更改文章').get('href')    # 文章id
                     aid = aid_href.split('?')[1].split('&')[0].split('aid=')[-1]
                     huilian = self.home_url + '/news/{}.html'.format(aid)
-
+                    print('aid===================>', aid)
                     # 更新文档url
                     # updateWordUrl = '{home_url}/task_do.php?typeid={cid}&aid={aid}&dopost=makeprenext&nextdo=makeindex,makeparenttype'.format(
                     #     home_url=self.home_url,
@@ -143,7 +143,8 @@ class DeDe(object):
                     print('’发布成功=========================发布成功===================发布成功')
                     return {
                         'huilian':huilian,
-                         'code':200
+                        'aid':aid,
+                        'code':200
                         }
                 else:
                     print('’发布失败=========================发布失败===================发布失败 500')
@@ -163,6 +164,30 @@ class DeDe(object):
                     'huilian':'',
                      'code':300
                     }
+
+    # 查询是否审核通过
+    def getArticleAudit(self, url, id, aid, cookie):
+        ret = requests.get(url, cookies=cookie)
+        encode_ret = ret.apparent_encoding
+        print('encode_ret===========', encode_ret)
+        if encode_ret == 'GB2312':
+            ret.encoding = 'gbk'
+        else:
+            ret.encoding = 'utf-8'
+
+        soup = BeautifulSoup(ret.text, 'lxml')
+        center_divs_all = soup.find_all('tr', align='center')
+        for center_div in center_divs_all:
+            if int(center_div.attrs.get('height') )== 26:
+                if int(center_div.find_all('td')[0].get_text().strip()) == aid:
+                    auditHtml = center_div.find_all('td')[6].get_text().strip()
+                    if auditHtml == '已生成':
+                        status = True
+                    else:
+                        status = False
+                    models.xzh_article.objects.filter(id=id).update(is_audit=status)
+
+
 
 
 

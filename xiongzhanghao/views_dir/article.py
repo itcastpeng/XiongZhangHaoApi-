@@ -8,6 +8,7 @@ from xiongzhanghao.forms.article import AddForm, UpdateForm, SelectForm
 import json, datetime, requests
 from urllib.parse import urlparse
 from backend.articlePublish import DeDe
+import os
 from XiongZhangHaoApi_celery.tasks import celeryGetDebugUser
 
 
@@ -195,12 +196,14 @@ def article_oper(request, oper_type, o_id):
 def models_article(class_data, user_id):
     code = class_data.get('code')
     huilian = class_data.get('huilian')
+    aid = class_data.get('aid')
     objs = models.xzh_article.objects.filter(id=user_id)
     if code == 200:                 # 发布成功
         objs.update(
             article_status=2,
             back_url=huilian,
-            note_content='无',
+            aid=aid,
+            note_content='无'
 
         )
     elif code == 300:               # 标题重复
@@ -300,3 +303,15 @@ def script_oper(request):
                 send_article(obj, article_data)
     response.code = 200
     return JsonResponse(response.__dict__)
+
+
+
+
+
+
+
+
+
+
+
+

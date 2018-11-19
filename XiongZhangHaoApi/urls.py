@@ -49,7 +49,7 @@ urlpatterns = [
     url(r'^image_upload', img_upload.image_upload),
 
     # 发布成功的 查询是否审核通过
-    url(r'^getWhetherApproved', getCookieAndColumn.getWhetherApproved),
+    url(r'^celeryTimed', getCookieAndColumn.celeryTimedRefreshAudit),
 
 ]
 
