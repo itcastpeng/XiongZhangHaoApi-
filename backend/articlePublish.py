@@ -120,13 +120,18 @@ class DeDe(object):
             ret = self.requests_obj.post(url, data=data, cookies=self.cookies)
             # print('========> ', ret.text.strip())
             if '无法解析文档' not in ret.text.strip():
-                # print('ret.text=========> ',ret.text)
+                print('ret.text=========> ',ret.text)
                 if '成功发布文章' in ret.text:
                     soup = BeautifulSoup(ret.text, 'lxml')
                     aid_href = soup.find('a', text='更改文章').get('href')    # 文章id
                     aid = aid_href.split('?')[1].split('&')[0].split('aid=')[-1]
-                    huilian = self.home_url + '/news/{}.html'.format(aid)
-                    print('aid===================>', aid)
+                    huilian_href = soup.find('a', text='查看文章').get('href')    # 文章id
+                    huilian = self.domain + huilian_href
+
+                    print('huilian=============> ', huilian)
+
+
+
                     # 更新文档url
                     # updateWordUrl = '{home_url}/task_do.php?typeid={cid}&aid={aid}&dopost=makeprenext&nextdo=makeindex,makeparenttype'.format(
                     #     home_url=self.home_url,
@@ -192,7 +197,7 @@ class DeDe(object):
         status = False
         for center_div in center_divs_all:
             if int(center_div.attrs.get('height') )== 26:
-                if int(center_div.find_all('td')[0].get_text().strip()) == aid:
+                if int(center_div.find_all('td')[0].get_text().strip()) == int(aid):
                     auditHtml = center_div.find_all('td')[6].get_text().strip()
                     if auditHtml == '已生成':
                         status = True
