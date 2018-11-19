@@ -74,6 +74,7 @@ def article(request):
                     'back_url':back_url,
                     'send_time':send_time,
                     'is_audit':obj.is_audit,
+                    'article_status_id':obj.article_status
                 })
             #  查询成功 返回200 状态码
             response.code = 200
@@ -296,6 +297,7 @@ def celeryTimedRefreshAudit(request):
     response = Response.ResponseObj()
     objs = models.xzh_article.objects.filter(article_status=2, is_audit=0, aid__isnull=False)
     for obj in objs:
+        print('定时刷新文章是否审核----------------->', obj.id)
         website_backstage_url = obj.belongToUser.website_backstage_url.strip()
         url = urlparse(website_backstage_url)
         domain = 'http://' + url.hostname + '/'
