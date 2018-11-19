@@ -68,7 +68,7 @@ class xzh_article(models.Model):
     column_id = models.CharField(verbose_name='栏目', max_length=64, null=True, blank=True)
     create_date = models.DateTimeField(verbose_name="创建时间", auto_now_add=True)
     article_status_choices = (
-        (1, '未发布'),
+        (1, '发布中'),
         (2, '发布成功'),
         (3, '发布失败'),
     )

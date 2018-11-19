@@ -16,7 +16,6 @@ Including another URLconf
 from django.conf.urls import url, include
 from django.contrib import admin
 from xiongzhanghao.views_dir import login, company, permissions, role, user, article, img_upload
-from backend import getCookieAndColumn
 
 urlpatterns = [
     # 登录
@@ -48,8 +47,7 @@ urlpatterns = [
     # 上传文件
     url(r'^image_upload', img_upload.image_upload),
 
-    # 发布成功的 查询是否审核通过
-    url(r'^celeryTimed', getCookieAndColumn.celeryTimedRefreshAudit),
+    url(r'^celeryTimed', article.celeryTimedRefreshAudit),
 
 ]
 

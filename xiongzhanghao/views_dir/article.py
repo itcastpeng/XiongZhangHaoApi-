@@ -9,7 +9,6 @@ import json, datetime, requests
 from urllib.parse import urlparse
 from backend.articlePublish import DeDe
 import os
-from XiongZhangHaoApi_celery.tasks import celeryGetDebugUser
 
 
 # from xiongzhanghao.views_dir.user import objLogin
@@ -74,7 +73,7 @@ def article(request):
                     'note_content':obj.note_content,
                     'back_url':back_url,
                     'send_time':send_time,
-                    'is_audit':obj.is_audit
+                    'is_audit':obj.is_audit,
                 })
             #  查询成功 返回200 状态码
             response.code = 200
@@ -228,31 +227,18 @@ def models_article(class_data, user_id):
         )
 
 
-
 def send_article(obj, article_data):
     website_backstage_url = obj.belongToUser.website_backstage_url.strip()
     url = urlparse(website_backstage_url)
     domain = 'http://' + url.hostname + '/'
     home_path = website_backstage_url.split(domain)[1].replace('/', '')
-    DeDeObj = DeDe(domain=domain, home_path=home_path)
-    if obj.belongToUser.cookies:
-        try:
-            print('-=========================================================cookie', obj.belongToUser.cookies)
-            class_data = DeDeObj.sendArticle(article_data, objCookies=eval(obj.belongToUser.cookies))
-            models_article(class_data, obj.id)
-        except Exception as e:
-            print('错误-----------错误--------------------> ', e)
-            celeryGetDebugUser.delay(obj.belongToUser_id)
-            # url = 'http://127.0.0.1:8003/getTheDebugUser?userLoginId={}'.format(obj.belongToUser_id)
-            # requests.get(url)
-            class_data = DeDeObj.sendArticle(article_data)
-            models_article(class_data, obj.id)
-    else:
-        celeryGetDebugUser.delay(obj.belongToUser_id)
-        # url = 'http://127.0.0.1:8003/getTheDebugUser?userLoginId={}'.format(obj.belongToUser_id)
-        # requests.get(url)
-        class_data = DeDeObj.sendArticle(article_data)
-        models_article(class_data, obj.id)
+    userid = obj.belongToUser.website_backstage_username
+    pwd = obj.belongToUser.website_backstage_password
+    cookie = eval(obj.belongToUser.cookies)
+    DeDeObj = DeDe(domain, home_path, userid, pwd, cookie)
+    cookie = DeDeObj.login()
+    resultData = DeDeObj.sendArticle(article_data)
+    models_article(resultData, obj.id)
 
 # 脚本运行 查询未发布文章发布 修改文章状态
 @csrf_exempt
@@ -304,7 +290,26 @@ def script_oper(request):
     response.code = 200
     return JsonResponse(response.__dict__)
 
-
+# 定时刷新文章是否审核
+def celeryTimedRefreshAudit(request):
+    response = Response.ResponseObj()
+    objs = models.xzh_article.objects.filter(article_status=2, is_audit=0, aid__isnull=False)
+    for obj in objs:
+        website_backstage_url = obj.belongToUser.website_backstage_url.strip()
+        url = urlparse(website_backstage_url)
+        domain = 'http://' + url.hostname + '/'
+        home_path = website_backstage_url.split(domain)[1].replace('/', '')
+        userid = obj.belongToUser.website_backstage_username
+        pwd = obj.belongToUser.website_backstage_password
+        indexUrl = website_backstage_url + 'content_list.php?channelid=1'
+        cookie = eval(obj.belongToUser.cookies)
+        DeDeObj = DeDe(domain, home_path, userid, pwd, cookie)
+        print(indexUrl, obj.id, obj.aid)
+        id, status = DeDeObj.getArticleAudit(indexUrl, obj.id, obj.aid)
+        print(id, status)
+        models.xzh_article.objects.filter(id=id).update(is_audit=status)
+        response.code = 200
+    return JsonResponse(response.__dict__)
 
 
 

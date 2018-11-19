@@ -67,11 +67,12 @@ class DeDe(object):
         # print('self.requests_obj.cookies---------> ',self.requests_obj.headers)
         cookies = requests.utils.dict_from_cookiejar(self.requests_obj.cookies)
         self.cookies = cookies
+        return cookies
 
     # 判断是否登录
     def is_login(self):
-        print("判断是否登录")
-        url = 'http://www.bjwletyy.com/wladmin/index.php'
+        url = self.home_url + '/index.php'
+        print('判断是否登录========》 ', url, self.cookies)
         ret = self.requests_obj.get(url, cookies=self.cookies)
         # print(ret.text)
         if "登录" in ret.text:
@@ -119,7 +120,7 @@ class DeDe(object):
             ret = self.requests_obj.post(url, data=data, cookies=self.cookies)
             # print('========> ', ret.text.strip())
             if '无法解析文档' not in ret.text.strip():
-                print('ret.text=========> ',ret.text)
+                # print('ret.text=========> ',ret.text)
                 if '成功发布文章' in ret.text:
                     soup = BeautifulSoup(ret.text, 'lxml')
                     aid_href = soup.find('a', text='更改文章').get('href')    # 文章id
@@ -178,15 +179,14 @@ class DeDe(object):
                     }
 
     # 查询是否审核通过
-    def getArticleAudit(self, url, id, aid, cookie):
-        ret = requests.get(url, cookies=cookie)
+    def getArticleAudit(self, url, id, aid):
+        ret = requests.get(url, cookies=self.cookies)
         encode_ret = ret.apparent_encoding
         print('encode_ret===========', encode_ret)
         if encode_ret == 'GB2312':
             ret.encoding = 'gbk'
         else:
             ret.encoding = 'utf-8'
-
         soup = BeautifulSoup(ret.text, 'lxml')
         center_divs_all = soup.find_all('tr', align='center')
         for center_div in center_divs_all:
@@ -197,18 +197,18 @@ class DeDe(object):
                         status = True
                     else:
                         status = False
+                    return id, status
 
 
-if __name__ == '__main__':
-    domain = 'http://www.bjwletyy.com'
-    home_path = '/wladmin'
-    userid = 'zhidao'
-    pwd = 'zhidao2018'
-    cookies = { 'PHPSESSID': 'oljb8k6gmtn4o96pipo4efcgpk', 'DedeUserID': '3'}
-    obj = DeDe(domain, home_path, userid, pwd, cookies)
-    # cookies = obj.login(userid, pwd)
-    obj.login()
-    print('obj.cookies -->', obj.cookies)
-
-    class_data = obj.getClassInfo()
+# if __name__ == '__main__':
+#     domain = 'http://www.bjwletyy.com'
+#     home_path = '/wladmin'
+#     userid = 'zhidao'
+#     pwd = 'zhidao2018'
+#     cookies = { 'PHPSESSID': 'oljb8k6gmtn4o96pipo4efcgpk', 'DedeUserID': '3'}
+#     obj = DeDe(domain, home_path, userid, pwd, cookies)
+#     obj.login()
+#     print('obj.cookies -->', obj.cookies)
+#
+#     class_data = obj.getClassInfo()
 
