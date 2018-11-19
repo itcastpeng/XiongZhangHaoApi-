@@ -104,6 +104,7 @@ class DeDe(object):
         url = self.home_url + '/article_test_title.php?t={title}'.format(title=title)
         # print('url -->', url)
         ret = self.requests_obj.get(url, cookies=self.cookies)
+
         if '存在标题' in ret.text.strip():
             print('标题已存在')
             return False
