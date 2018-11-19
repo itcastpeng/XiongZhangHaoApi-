@@ -330,8 +330,8 @@ def submitXiongZhangHao(request):
                 print('提交链接-------------------------------------> ', obj.id)
                 submitUrl = 'http://data.zz.baidu.com/urls?appid={appid}&token={token}&type=realtime'.format(appid=appid, token=token)
                 ret = requests.post(submitUrl, data=formData)
+                print('ret.text------------------->',ret.text)
                 if json.loads(ret.text).get('error'):
-                    print('ret.text------------------->',ret.text)
                     note_content = json.loads(ret.text).get('message')
                 else:
                     obj.article_status = 5
@@ -340,7 +340,7 @@ def submitXiongZhangHao(request):
             obj.note_content = note_content
             obj.save()
             continue
-        response.code = 200
+    response.code = 200
     return JsonResponse(response.__dict__)
 
 
