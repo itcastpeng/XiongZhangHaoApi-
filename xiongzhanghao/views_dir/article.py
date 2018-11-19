@@ -290,6 +290,7 @@ def script_oper(request):
     response.code = 200
     return JsonResponse(response.__dict__)
 
+
 # 定时刷新文章是否审核
 def celeryTimedRefreshAudit(request):
     response = Response.ResponseObj()
@@ -304,14 +305,17 @@ def celeryTimedRefreshAudit(request):
         indexUrl = website_backstage_url + 'content_list.php?channelid=1'
         cookie = eval(obj.belongToUser.cookies)
         DeDeObj = DeDe(domain, home_path, userid, pwd, cookie)
-        print(indexUrl, obj.id, obj.aid)
+        cookies = DeDeObj.login()
         id, status = DeDeObj.getArticleAudit(indexUrl, obj.id, obj.aid)
-        print(id, status)
-        models.xzh_article.objects.filter(id=id).update(is_audit=status)
+        models.xzh_article.objects.filter(id=id).update(is_audit=status, article_status=4)
         response.code = 200
     return JsonResponse(response.__dict__)
 
 
+def submitXiongZhangHao(request):
+    objs = models.xzh_article.objects.filter(is_audit=True, article_status=4)
+    for obj in objs:
+        backUrl = obj.back_url # 回链
 
 
 

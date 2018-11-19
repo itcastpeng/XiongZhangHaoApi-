@@ -69,8 +69,10 @@ class xzh_article(models.Model):
     create_date = models.DateTimeField(verbose_name="创建时间", auto_now_add=True)
     article_status_choices = (
         (1, '发布中'),
-        (2, '发布成功'),
+        (2, '发布成功, 待审核'),
         (3, '发布失败'),
+        (4, '审核成功, 提交中'),
+        (5, '已完成'),
     )
     article_status = models.SmallIntegerField(verbose_name='文章状态',choices=article_status_choices, default=1)
     back_url = models.CharField(verbose_name='回链地址', max_length=128, null=True, blank=True)

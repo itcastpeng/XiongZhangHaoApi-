@@ -16,7 +16,7 @@ CELERYD_FORCE_EXECV = True    # 非常重要,有些情况下可以防止死锁
 CELERYD_MAX_TASKS_PER_CHILD = 100    # 每个worker最多执行万100个任务就会被销毁，可防止内存泄露
 app.conf.beat_schedule = {
 
-# 5分钟一次
+# 1分钟一次
  'celeryPublishedArticles':{
         'task':'XiongZhangHaoApi_celery.tasks.celeryPublishedArticles',
         # 'schedule':30                                   # 秒
