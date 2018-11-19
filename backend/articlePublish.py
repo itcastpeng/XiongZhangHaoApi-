@@ -189,15 +189,15 @@ class DeDe(object):
             ret.encoding = 'utf-8'
         soup = BeautifulSoup(ret.text, 'lxml')
         center_divs_all = soup.find_all('tr', align='center')
+        status = False
         for center_div in center_divs_all:
             if int(center_div.attrs.get('height') )== 26:
                 if int(center_div.find_all('td')[0].get_text().strip()) == aid:
                     auditHtml = center_div.find_all('td')[6].get_text().strip()
                     if auditHtml == '已生成':
                         status = True
-                    else:
-                        status = False
-                    return id, status
+                        break
+        return id, status
 
 
 # if __name__ == '__main__':
