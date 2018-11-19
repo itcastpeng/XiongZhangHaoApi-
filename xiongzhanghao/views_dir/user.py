@@ -11,7 +11,6 @@ from backend.articlePublish import DeDe
 from XiongZhangHaoApi_celery.tasks import celeryGetDebugUser
 from urllib.parse import urlparse
 import json, requests, datetime
-from backend.getCookieAndColumn import getCookies
 
 
 def init_data(request):
@@ -295,8 +294,30 @@ def user_oper(request, oper_type, o_id):
 
 # 定时刷新 调试用户 获取cookies和所有栏目
 @csrf_exempt
-@getCookies(models.xzh_userprofile)
 def getTheDebugUser(request):
+    userLoginId = request.GET.get('userLoginId')
+    userObjs = models.xzh_userprofile.objects
+    if userLoginId:
+        objs = userObjs.filter(id=userLoginId)
+    else:
+        objs = userObjs.filter(status=1, is_debug=False)
+    for obj in objs:
+        if obj.website_backstage == 1:
+            website_backstage_url = obj.website_backstage_url.strip()
+            url = urlparse(website_backstage_url)
+            domain = 'http://' + url.hostname + '/'
+            home_path = website_backstage_url.split(domain)[1].replace('/', '')
+            userid = obj.website_backstage_username
+            pwd = obj.website_backstage_password
+            cookie = eval(obj.cookies)
+            DeDeObj = DeDe(domain, home_path,  userid, pwd, cookie)
+            cookie = DeDeObj.login()
+            retData = DeDeObj.getClassInfo()
+            models.xzh_userprofile.objects.filter(id=obj.id).update(
+                column_all=json.dumps(retData),
+                is_debug=1,
+                cookies=cookie
+            )
     response = Response.ResponseObj()
     response.code = 200
     return JsonResponse(response.__dict__)
@@ -305,11 +326,9 @@ def getTheDebugUser(request):
 @csrf_exempt
 @account.is_token(models.xzh_userprofile)
 def deBugLoginAndGetCookie(request):
-    # print('request.POST -->', request.POST)
     userLoginId = request.POST.get('userLoginId')
     response = Response.ResponseObj()
     celeryGetDebugUser.delay(userLoginId)
-    # print('userLoginId=====---------------===> ',userLoginId)
     # url = 'http://127.0.0.1:8003/getTheDebugUser?userLoginId={}'.format(userLoginId)
     # requests.get(url)
     response.code = 200
