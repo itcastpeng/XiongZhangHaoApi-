@@ -330,17 +330,17 @@ def submitXiongZhangHao(request):
                 print('提交链接-------------------------------------> ', obj.id)
                 submitUrl = 'http://data.zz.baidu.com/urls?appid={appid}&token={token}&type=realtime'.format(appid=appid, token=token)
                 ret = requests.post(submitUrl, data=formData)
+                print('ret.text------------------->',ret.text)
                 if json.loads(ret.text).get('error'):
-                    print('ret.text------------------->',ret.text)
                     note_content = json.loads(ret.text).get('message')
-                    continue
                 else:
                     obj.article_status = 5
             else:
                 note_content = 'appid 或 token 有问题, 建议重新获取token'
             obj.note_content = note_content
             obj.save()
-        response.code = 200
+            continue
+    response.code = 200
     return JsonResponse(response.__dict__)
 
 
