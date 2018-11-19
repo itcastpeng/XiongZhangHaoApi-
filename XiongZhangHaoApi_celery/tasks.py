@@ -28,3 +28,8 @@ def celeryPublishedArticles():
     requests.get(url)
     requests.get(urlAudit)
 
+# 提交到熊掌号
+@app.task
+def celerySubmitXiongZhangHao():
+    url = 'http://xiongzhanghao.zhugeyingxiao.com:8003/submitXiongZhangHao'
+    requests.get(url)

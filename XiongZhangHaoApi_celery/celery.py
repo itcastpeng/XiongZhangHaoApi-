@@ -25,6 +25,13 @@ app.conf.beat_schedule = {
         # 'schedule': crontab(hour=8, minute=30),
     },
 
+'celerySubmitXiongZhangHao':{
+        'task': 'XiongZhangHaoApi_celery.tasks.celerySubmitXiongZhangHao',
+        'schedule': crontab("*/10", '*', '*', '*', '*'),  # 此处跟 linux 中 crontab 的格式一样
+    },
+
+
+
 }
 app.conf.update(
     result_expires=3600,

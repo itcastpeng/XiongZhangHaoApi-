@@ -5,10 +5,9 @@ from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt, csrf_protect
 from xiongzhanghao.publicFunc.condition_com import conditionCom
 from xiongzhanghao.forms.article import AddForm, UpdateForm, SelectForm
-import json, datetime, requests
+import json, datetime, requests, os
 from urllib.parse import urlparse
 from backend.articlePublish import DeDe
-import os
 
 
 # from xiongzhanghao.views_dir.user import objLogin
@@ -309,15 +308,37 @@ def celeryTimedRefreshAudit(request):
         DeDeObj = DeDe(domain, home_path, userid, pwd, cookie)
         cookies = DeDeObj.login()
         id, status = DeDeObj.getArticleAudit(indexUrl, obj.id, obj.aid)
-        models.xzh_article.objects.filter(id=id).update(is_audit=status, article_status=4)
+        if status:
+            models.xzh_article.objects.filter(id=id).update(is_audit=status, article_status=4)
         response.code = 200
     return JsonResponse(response.__dict__)
 
 
 def submitXiongZhangHao(request):
+    response = Response.ResponseObj()
     objs = models.xzh_article.objects.filter(is_audit=True, article_status=4)
+    note_content = ''
     for obj in objs:
-        backUrl = obj.back_url # 回链
+        print('提交链接-------------------------------------> ', obj.id)
+        appid = obj.belongToUser.website_backstage_appid
+        token = obj.belongToUser.website_backstage_token
+        formData = {
+            'url': obj.back_url # 回链
+        }
+        if token and appid:
+            submitUrl = 'http://data.zz.baidu.com/urls?appid={appid}&token={token}&type=realtime'.format(appid=appid, token=token)
+            ret = requests.post(submitUrl, data=formData)
+            if json.loads(ret.text).get('error'):
+                note_content = json.loads(ret.text).get('message')
+                continue
+            else:
+                obj.article_status = 5
+        else:
+            note_content = 'appid 或 token 有问题, 建议重新获取token'
+        obj.note_content = note_content
+        obj.save()
+        response.code = 200
+    return JsonResponse(response.__dict__)
 
 
 
