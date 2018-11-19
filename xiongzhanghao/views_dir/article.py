@@ -193,7 +193,7 @@ def article_oper(request, oper_type, o_id):
 
 # 更改状态和备注
 def models_article(class_data, user_id):
-    code = class_data.get('code')
+    code = int(class_data.get('code'))
     huilian = class_data.get('huilian')
     aid = class_data.get('aid')
     objs = models.xzh_article.objects.filter(id=user_id)
@@ -234,10 +234,11 @@ def send_article(obj, article_data):
     home_path = website_backstage_url.split(domain)[1].replace('/', '')
     userid = obj.belongToUser.website_backstage_username
     pwd = obj.belongToUser.website_backstage_password
+
     cookie = eval(obj.belongToUser.cookies)
     DeDeObj = DeDe(domain, home_path, userid, pwd, cookie)
     cookie = DeDeObj.login()
-    resultData = DeDeObj.sendArticle(article_data)
+    resultData = DeDeObj.sendArticle(article_data, obj.title)
     models_article(resultData, obj.id)
 
 # 脚本运行 查询未发布文章发布 修改文章状态
@@ -319,24 +320,26 @@ def submitXiongZhangHao(request):
     objs = models.xzh_article.objects.filter(is_audit=True, article_status=4)
     note_content = ''
     for obj in objs:
-        print('提交链接-------------------------------------> ', obj.id)
         appid = obj.belongToUser.website_backstage_appid
         token = obj.belongToUser.website_backstage_token
-        formData = {
-            'url': obj.back_url # 回链
-        }
-        if token and appid:
-            submitUrl = 'http://data.zz.baidu.com/urls?appid={appid}&token={token}&type=realtime'.format(appid=appid, token=token)
-            ret = requests.post(submitUrl, data=formData)
-            if json.loads(ret.text).get('error'):
-                note_content = json.loads(ret.text).get('message')
-                continue
+        if obj.back_url:
+            formData = {
+                'url': obj.back_url # 回链
+            }
+            if token and appid:
+                print('提交链接-------------------------------------> ', obj.id)
+                submitUrl = 'http://data.zz.baidu.com/urls?appid={appid}&token={token}&type=realtime'.format(appid=appid, token=token)
+                ret = requests.post(submitUrl, data=formData)
+                if json.loads(ret.text).get('error'):
+                    print('ret.text------------------->',ret.text)
+                    note_content = json.loads(ret.text).get('message')
+                    continue
+                else:
+                    obj.article_status = 5
             else:
-                obj.article_status = 5
-        else:
-            note_content = 'appid 或 token 有问题, 建议重新获取token'
-        obj.note_content = note_content
-        obj.save()
+                note_content = 'appid 或 token 有问题, 建议重新获取token'
+            obj.note_content = note_content
+            obj.save()
         response.code = 200
     return JsonResponse(response.__dict__)
 
