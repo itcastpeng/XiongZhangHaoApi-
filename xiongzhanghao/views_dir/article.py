@@ -8,7 +8,7 @@ from xiongzhanghao.forms.article import AddForm, UpdateForm, SelectForm
 import json, datetime, requests, os
 from urllib.parse import urlparse
 from backend.articlePublish import DeDe
-
+from urllib import parse
 
 # from xiongzhanghao.views_dir.user import objLogin
 
@@ -369,18 +369,23 @@ def articleScriptOper(request, oper_type):
         for obj in objs:
             appid = obj.belongToUser.website_backstage_appid
             token = obj.belongToUser.website_backstage_token
+            print('appid, token------------------> ',appid, token)
             if obj.back_url:
                 formData = {
-                    'url': obj.back_url  # 回链
+                    'url':obj.back_url    # 回链
                 }
                 if token and appid:
-                    print('提交链接-------------------------------------> ', obj.id)
                     submitUrl = 'http://data.zz.baidu.com/urls?appid={appid}&token={token}&type=realtime'.format(
                         appid=appid, token=token)
+                    print('=--===============>', formData)
                     ret = requests.post(submitUrl, data=formData)
                     print('ret.text------------------->', ret.text)
                     if json.loads(ret.text).get('error'):
                         note_content = json.loads(ret.text).get('message')
+                    elif json.loads(ret.text).get('not_same_site'):
+                        note_content = '不是本站url或未处理的url'
+                    elif json.loads(ret.text).get('not_valid'):
+                        note_content = '不合法的url'
                     else:
                         obj.article_status = 5
                 else:

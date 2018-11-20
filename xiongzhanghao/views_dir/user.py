@@ -268,15 +268,6 @@ def user_oper(request, oper_type, o_id):
             if not response.data:
                 response.data = json.dumps([])
 
-        # 点击调试
-        elif oper_type == 'deBugLoginAndGetCookie':
-            userLoginId = request.POST.get('userLoginId')
-            response = Response.ResponseObj()
-            celeryGetDebugUser.delay(userLoginId)
-            # url = 'http://127.0.0.1:8003/getTheDebugUser?userLoginId={}'.format(userLoginId)
-            # requests.get(url)
-            response.code = 200
-            response.msg = '正在调试,请等待'
 
         else:
             response.code = 402
@@ -340,6 +331,17 @@ def userGetCookieOper(request, oper_type):
                     cookies=cookie
                 )
         response.code = 200
+
+    # 点击调试
+    elif oper_type == 'deBugLoginAndGetCookie':
+        userLoginId = request.POST.get('userLoginId')
+        response = Response.ResponseObj()
+        celeryGetDebugUser.delay(userLoginId)
+        # url = 'http://127.0.0.1:8003/userGetCookieOper/getTheDebugUser?userLoginId={}'.format(userLoginId)
+        # requests.get(url)
+        response.code = 200
+        response.msg = '正在调试,请等待'
+
     else:
         response.code = 402
         response.msg = '请求失败'
