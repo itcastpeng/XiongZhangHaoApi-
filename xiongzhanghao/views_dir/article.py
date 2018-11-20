@@ -241,56 +241,6 @@ def send_article(obj, article_data):
     resultData = DeDeObj.sendArticle(article_data, obj.title)
     models_article(resultData, obj.id)
 
-# 脚本运行 查询未发布文章发布 修改文章状态
-# @csrf_exempt
-# def script_oper(request):
-#     response = Response.ResponseObj()
-#     objs = models.xzh_article.objects.select_related('belongToUser').filter(
-#         article_status=1,
-#         belongToUser__is_debug=1
-#     ).order_by('create_date')
-#     for obj in objs:
-#         title = obj.title.encode('utf8')
-#         summary = obj.summary.encode('utf8')
-#         content = obj.content.encode('utf8')
-#         if 'http://m.chyy120.com/netadmin' in obj.belongToUser.website_backstage_url:
-#             title = obj.title.encode('gbk')
-#             summary = obj.summary.encode('gbk')
-#             content = obj.content.encode('gbk')
-#         if obj.title and obj.column_id and obj.summary and obj.content:
-#             article_data = {
-#                 "channelid": "1",  # 表示普通文章
-#                 "dopost": "save",  # 隐藏写死属性
-#                 "title": title,  # 文章标题
-#                 "weight": "1033",  # 权重
-#                 "typeid": eval(obj.column_id).get('Id'),  # 栏目id
-#                 "autokey": "1",  # 关键字自动获取
-#                 "description": summary,  # 描述
-#                 "remote": "1",  # 下载远程图片和资源
-#                 "autolitpic": "1",  # 提取第一个图片为缩略图
-#                 "sptype": "hand",  # 分页方式 手动
-#                 "spsize": "5",
-#                 "body": content,
-#                 "notpost": "0",
-#                 "click": "63",
-#                 "sortup": "0",
-#                 "arcrank": "0",
-#                 "money": "0",
-#                 "pubdate": datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
-#                 "ishtml": 1,
-#                 "imageField.x": "30",
-#                 "imageField.y": "12"
-#             }
-#             if obj.send_time:  # 如果有定时
-#                 now_date = datetime.datetime.now()
-#                 if obj.send_time <= now_date:
-#                     print('=================定时发送文章 ----------- ', obj.send_time)
-#                     send_article(obj, article_data)
-#             else:               # 没有定时
-#                 send_article(obj, article_data)
-#     response.code = 200
-#     return JsonResponse(response.__dict__)
-
 
 @csrf_exempt
 def articleScriptOper(request, oper_type):
@@ -371,14 +321,10 @@ def articleScriptOper(request, oper_type):
             token = obj.belongToUser.website_backstage_token
             print('appid, token------------------> ',appid, token)
             if obj.back_url:
-                formData = {
-                    'url':obj.back_url    # 回链
-                }
                 if token and appid:
                     submitUrl = 'http://data.zz.baidu.com/urls?appid={appid}&token={token}&type=realtime'.format(
                         appid=appid, token=token)
-                    print('=--===============>', formData)
-                    ret = requests.post(submitUrl, data=formData)
+                    ret = requests.post(submitUrl, data=obj.back_url)
                     print('ret.text------------------->', ret.text)
                     if json.loads(ret.text).get('error'):
                         note_content = json.loads(ret.text).get('message')
@@ -400,56 +346,4 @@ def articleScriptOper(request, oper_type):
         response.msg = '请求失败'
 
     return JsonResponse(response.__dict__)
-
-
-# 定时刷新文章是否审核
-# def celeryTimedRefreshAudit(request):
-#     response = Response.ResponseObj()
-#     objs = models.xzh_article.objects.filter(article_status=2, is_audit=0, aid__isnull=False)
-#     for obj in objs:
-#         print('定时刷新文章是否审核----------------->', obj.id)
-#         website_backstage_url = obj.belongToUser.website_backstage_url.strip()
-#         url = urlparse(website_backstage_url)
-#         domain = 'http://' + url.hostname + '/'
-#         home_path = website_backstage_url.split(domain)[1].replace('/', '')
-#         userid = obj.belongToUser.website_backstage_username
-#         pwd = obj.belongToUser.website_backstage_password
-#         indexUrl = website_backstage_url + 'content_list.php?channelid=1'
-#         cookie = eval(obj.belongToUser.cookies)
-#         DeDeObj = DeDe(domain, home_path, userid, pwd, cookie)
-#         cookies = DeDeObj.login()
-#         id, status = DeDeObj.getArticleAudit(indexUrl, obj.id, obj.aid)
-#         if status:
-#             models.xzh_article.objects.filter(id=id).update(is_audit=status, article_status=4)
-#         response.code = 200
-#     return JsonResponse(response.__dict__)
-
-# 提交回链 到熊掌号
-# def submitXiongZhangHao(request):
-#     response = Response.ResponseObj()
-#     objs = models.xzh_article.objects.filter(is_audit=True, article_status=4)
-#     note_content = ''
-#     for obj in objs:
-#         appid = obj.belongToUser.website_backstage_appid
-#         token = obj.belongToUser.website_backstage_token
-#         if obj.back_url:
-#             formData = {
-#                 'url': obj.back_url # 回链
-#             }
-#             if token and appid:
-#                 print('提交链接-------------------------------------> ', obj.id)
-#                 submitUrl = 'http://data.zz.baidu.com/urls?appid={appid}&token={token}&type=realtime'.format(appid=appid, token=token)
-#                 ret = requests.post(submitUrl, data=formData)
-#                 print('ret.text------------------->',ret.text)
-#                 if json.loads(ret.text).get('error'):
-#                     note_content = json.loads(ret.text).get('message')
-#                 else:
-#                     obj.article_status = 5
-#             else:
-#                 note_content = 'appid 或 token 有问题, 建议重新获取token'
-#             obj.note_content = note_content
-#             obj.save()
-#             continue
-#     response.code = 200
-#     return JsonResponse(response.__dict__)
 
