@@ -19,10 +19,10 @@ class DeDe(object):
         if self.cookies:
             self.is_login()
             return self.cookies
-
         login_url = self.home_url + '/login.php'
         # print('login_url=====================> ',login_url)
         url = self.home_url + '/login.php?gotopage=%2Fdrqaz%2F'
+
         ret = self.requests_obj.get(url)
 
         soup = BeautifulSoup(ret.text, 'lxml')

@@ -268,6 +268,7 @@ def user_oper(request, oper_type, o_id):
             if not response.data:
                 response.data = json.dumps([])
 
+        # 点击调试
         elif oper_type == 'deBugLoginAndGetCookie':
             userLoginId = request.POST.get('userLoginId')
             response = Response.ResponseObj()
@@ -318,11 +319,18 @@ def userGetCookieOper(request, oper_type):
             if obj.website_backstage == 1:
                 website_backstage_url = obj.website_backstage_url.strip()
                 url = urlparse(website_backstage_url)
-                domain = 'http://' + url.hostname + '/'
-                home_path = website_backstage_url.split(domain)[1].replace('/', '')
+                if url.hostname:
+                    domain = 'http://' + url.hostname + '/'
+                    home_path = website_backstage_url.split(domain)[1].replace('/', '')
+                else:
+                    domain = 'http://' + website_backstage_url.split('/')[0] + '/'
+                    home_path = website_backstage_url.split('/')[1]
+                print('home_path--------------->? ',domain, home_path)
                 userid = obj.website_backstage_username
                 pwd = obj.website_backstage_password
-                cookie = eval(obj.cookies)
+                cookie = ''
+                if obj.cookies:
+                    cookie = eval(obj.cookies)
                 DeDeObj = DeDe(domain, home_path,  userid, pwd, cookie)
                 cookie = DeDeObj.login()
                 retData = DeDeObj.getClassInfo()
@@ -337,52 +345,6 @@ def userGetCookieOper(request, oper_type):
         response.msg = '请求失败'
 
     return JsonResponse(response.__dict__)
-
-
-# def getTheDebugUser(request):
-#     userLoginId = request.GET.get('userLoginId')
-#     userObjs = models.xzh_userprofile.objects
-#     if userLoginId:
-#         objs = userObjs.filter(id=userLoginId)
-#     else:
-#         objs = userObjs.filter(status=1, is_debug=False)
-#     for obj in objs:
-#         if obj.website_backstage == 1:
-#             website_backstage_url = obj.website_backstage_url.strip()
-#             url = urlparse(website_backstage_url)
-#             domain = 'http://' + url.hostname + '/'
-#             home_path = website_backstage_url.split(domain)[1].replace('/', '')
-#             userid = obj.website_backstage_username
-#             pwd = obj.website_backstage_password
-#             cookie = eval(obj.cookies)
-#             DeDeObj = DeDe(domain, home_path,  userid, pwd, cookie)
-#             cookie = DeDeObj.login()
-#             retData = DeDeObj.getClassInfo()
-#             models.xzh_userprofile.objects.filter(id=obj.id).update(
-#                 column_all=json.dumps(retData),
-#                 is_debug=1,
-#                 cookies=cookie
-#             )
-#     response = Response.ResponseObj()
-#     response.code = 200
-#     return JsonResponse(response.__dict__)
-
-# 用户手动触发当前账号是否调试成功
-# @csrf_exempt
-# @account.is_token(models.xzh_userprofile)
-# def deBugLoginAndGetCookie(request):
-#     userLoginId = request.POST.get('userLoginId')
-#     response = Response.ResponseObj()
-#     celeryGetDebugUser.delay(userLoginId)
-#     # url = 'http://127.0.0.1:8003/getTheDebugUser?userLoginId={}'.format(userLoginId)
-#     # requests.get(url)
-#     response.code = 200
-#     response.msg = '正在调试,请等待'
-#     return JsonResponse(response.__dict__)
-
-
-
-
 
 
 
