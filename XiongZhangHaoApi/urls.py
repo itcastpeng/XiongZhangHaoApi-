@@ -35,20 +35,17 @@ urlpatterns = [
 
     # 用户管理
     url(r'^user/(?P<oper_type>\w+)/(?P<o_id>\d+)$', user.user_oper),
+    url(r'^userGetCookieOper/(?P<oper_type>\w+)$', user.userGetCookieOper),   # 获取栏目及cookie
     url(r'^user$', user.user),
-    url(r'^deBugLoginAndGetCookie$', user.deBugLoginAndGetCookie),
-    url(r'^getTheDebugUser', user.getTheDebugUser),
 
     # 文章管理
     url(r'^article/(?P<oper_type>\w+)/(?P<o_id>\d+)$', article.article_oper),
+    url(r'^articleScriptOper/(?P<oper_type>\w+)$', article.articleScriptOper), # 文章操作 审核 提交熊掌号 发布文章
     url(r'^article', article.article),
-    url(r'^script_oper', article.script_oper),
 
     # 上传文件
     url(r'^image_upload', img_upload.image_upload),
 
-    url(r'^celeryTimed', article.celeryTimedRefreshAudit),  # 查询文章是否审核
-    url(r'^submitXiongZhangHao', article.submitXiongZhangHao), # 提交回链到熊掌号
 
 ]
 
