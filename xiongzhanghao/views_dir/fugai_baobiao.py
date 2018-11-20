@@ -27,12 +27,26 @@ def fugai_baobiao(request):
             order = request.GET.get('order', '-create_date')
             field_dict = {
                 'id': '',
+                'status': '',
                 'create_date': '',
             }
+            # request_obj = {
+            #     'GET': {
+            #         'id': request.GET.get('id'),
+            #         'create_date': request.GET.get('create_date'),
+            #         'user_id': request.GET.get('uid'),
+            #     }
+            # }
             q = conditionCom(request, field_dict)
+
+
 
             print('q -->', q)
             objs = models.xzh_fugai_baobiao.objects.select_related('user').filter(q).filter(user__role_id=61).order_by(order)
+            uid = request.GET.get('uid')
+            print('uid -->', uid)
+            if uid:
+                objs = objs.filter(user_id=uid)
             count = objs.count()
 
             if length != 0:
@@ -76,7 +90,7 @@ def fugai_baobiao(request):
 #  增删改
 #  csrf  token验证
 @csrf_exempt
-# @account.is_token(models.xzh_userprofile)
+@account.is_token(models.xzh_userprofile)
 def fugai_baobiao_oper(request, oper_type, o_id):
     response = Response.ResponseObj()
     if request.method == "POST":

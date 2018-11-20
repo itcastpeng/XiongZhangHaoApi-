@@ -113,5 +113,5 @@ class xzh_fugai_baobiao_detail(models.Model):
     xzh_fugai_baobiao = models.ForeignKey('xzh_fugai_baobiao', verbose_name="覆盖表")
     link_num = models.IntegerField(verbose_name="链接数")
     cover_num = models.IntegerField(verbose_name="总覆盖")
-    baobiao_url = models.CharField(verbose_name="报表地址", max_length=128)
+    baobiao_url = models.TextField(verbose_name="报表地址")
     create_date = models.DateField(verbose_name="创建时间", auto_now_add=True)
