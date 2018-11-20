@@ -198,13 +198,16 @@ def models_article(class_data, user_id):
     aid = class_data.get('aid')
     objs = models.xzh_article.objects.filter(id=user_id)
     if code == 200:                 # 发布成功
+        article_status = 2
+        if int(objs[0].belongToUser.userType) == 2:  # 判断是否为特殊用户
+            article_status = 6
         objs.update(
-            article_status=2,
+            article_status=article_status,
             back_url=huilian,
             aid=aid,
             note_content='无'
-
         )
+
     elif code == 300:               # 标题重复
         objs.update(
             article_status=3,
