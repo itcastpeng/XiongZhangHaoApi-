@@ -23,13 +23,13 @@ def celeryGetDebugUser(userLoginId=None):
 @app.task
 def celeryPublishedArticles():
     # url = 'http://127.0.0.1:8003/celeryTimed'
-    urlAudit = 'http://xiongzhanghao.zhugeyingxiao.com:8003/script_oper/celeryTimedRefreshAudit'  # 查询审核
-    url = 'http://xiongzhanghao.zhugeyingxiao.com:8003/script_oper/sendArticle'
+    urlAudit = 'http://xiongzhanghao.zhugeyingxiao.com:8003/articleScriptOper/celeryTimedRefreshAudit'  # 查询审核
+    url = 'http://xiongzhanghao.zhugeyingxiao.com:8003/articleScriptOper/sendArticle'
     requests.get(url)
     requests.get(urlAudit)
 
 # 提交到熊掌号
 @app.task
 def celerySubmitXiongZhangHao():
-    url = 'http://xiongzhanghao.zhugeyingxiao.com:8003/script_oper/submitXiongZhangHao'
+    url = 'http://xiongzhanghao.zhugeyingxiao.com:8003/articleScriptOper/submitXiongZhangHao'
     requests.get(url)

@@ -293,7 +293,7 @@ def send_article(obj, article_data):
 
 
 @csrf_exempt
-def script_oper(request, oper_type):
+def articleScriptOper(request, oper_type):
     response = Response.ResponseObj()
     # 发送文章
     if oper_type == 'sendArticle':
