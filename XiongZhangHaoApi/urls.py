@@ -15,7 +15,7 @@ Including another URLconf
 """
 from django.conf.urls import url, include
 from django.contrib import admin
-from xiongzhanghao.views_dir import login, company, permissions, role, user, article, img_upload
+from xiongzhanghao.views_dir import login, company, permissions, role, user, article, img_upload, fugai_baobiao
 
 urlpatterns = [
     # 登录
@@ -42,6 +42,14 @@ urlpatterns = [
     url(r'^article/(?P<oper_type>\w+)/(?P<o_id>\d+)$', article.article_oper),
     url(r'^articleScriptOper/(?P<oper_type>\w+)$', article.articleScriptOper), # 文章操作 审核 提交熊掌号 发布文章
     url(r'^article', article.article),
+
+    # # 关键词管理
+    # url(r'^keywords/(?P<oper_type>\w+)/(?P<o_id>\d+)$', keywords.keywords_oper),
+    # url(r'^keywords', keywords.keywords),
+
+    # 覆盖报表
+    url(r'^fugai_baobiao/(?P<oper_type>\w+)/(?P<o_id>\d+)$', fugai_baobiao.fugai_baobiao_oper),
+    url(r'^fugai_baobiao', fugai_baobiao.fugai_baobiao),
 
     # 上传文件
     url(r'^image_upload', img_upload.image_upload),

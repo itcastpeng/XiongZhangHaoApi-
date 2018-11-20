@@ -259,6 +259,7 @@ class AdminUpdateForm(forms.Form):
         else:
             return username
 
+
 # 判断是否是数字
 class SelectForm(forms.Form):
     current_page = forms.IntegerField(
@@ -275,7 +276,6 @@ class SelectForm(forms.Form):
         }
     )
 
-
     def clean_current_page(self):
         if 'current_page' not in self.data:
             current_page = 1
@@ -289,13 +289,3 @@ class SelectForm(forms.Form):
         else:
             length = int(self.data['length'])
         return length
-
-    # def clean_company_id(self):
-    #     role_id = self.data.get('role_id')
-    #     company_id = self.data.get('company_id')
-    #     print('role_id -->', role_id)
-    #     print('company_id -->', company_id)
-    #     if role_id != '1' and not company_id:
-    #         self.add_error('company_id', '公司id不能为空')
-    #     else:
-    #         return company_id

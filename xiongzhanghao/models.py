@@ -58,6 +58,7 @@ class xzh_userprofile(models.Model):
     website_backstage_token = models.CharField(verbose_name='熊掌号token', max_length=64, null=True, blank=True)
     website_backstage_appid = models.CharField(verbose_name='熊掌号appid', max_length=64, null=True, blank=True)
 
+
 # 公众号-文章表
 class xzh_article(models.Model):
     user = models.ForeignKey('xzh_userprofile', verbose_name='文章创建人', null=True)
@@ -80,3 +81,37 @@ class xzh_article(models.Model):
     send_time = models.DateTimeField(verbose_name='定时发送文章', null=True, blank=True)
     aid = models.IntegerField(verbose_name='文章发布id', null=True, blank=True)
     is_audit = models.BooleanField(verbose_name='是否审核', default=False)
+
+
+# 关键词表
+class xzh_keywords(models.Model):
+    user = models.ForeignKey('xzh_userprofile', verbose_name="所属用户")
+    keywords = models.CharField(verbose_name="关键词", max_length=128)
+    create_date = models.DateTimeField(verbose_name="创建时间", auto_now_add=True)
+    select_date = models.DateTimeField(verbose_name="查询时间", null=True, blank=True)
+
+
+# 覆盖报表
+class xzh_fugai_baobiao(models.Model):
+    user = models.ForeignKey('xzh_userprofile', verbose_name="所属用户")
+    keywords_num = models.IntegerField(verbose_name="关键词总数")
+
+    status_choices = (
+        (1, "查询中"),
+        (2, "查询完成"),
+    )
+    status = models.SmallIntegerField(verbose_name="查询状态", default=1, choices=status_choices)
+
+    today_cover = models.IntegerField(verbose_name="今日覆盖")
+    total_cover = models.IntegerField(verbose_name="总覆盖")
+    publish_num = models.IntegerField(verbose_name="总发布篇数")
+    create_date = models.DateTimeField(verbose_name="创建时间", auto_now_add=True)
+
+
+# 覆盖报表展开详情
+class xzh_fugai_baobiao_detail(models.Model):
+    xzh_fugai_baobiao = models.ForeignKey('xzh_fugai_baobiao', verbose_name="覆盖表")
+    link_num = models.IntegerField(verbose_name="链接数")
+    cover_num = models.IntegerField(verbose_name="总覆盖")
+    baobiao_url = models.CharField(verbose_name="报表地址", max_length=128)
+    create_date = models.DateField(verbose_name="创建时间", auto_now_add=True)
