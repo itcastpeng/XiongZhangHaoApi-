@@ -199,8 +199,6 @@ def models_article(class_data, user_id):
     objs = models.xzh_article.objects.filter(id=user_id)
     if code == 200:                 # 发布成功
         article_status = 2
-        if int(objs[0].belongToUser.userType) == 2:  # 判断是否为特殊用户
-            article_status = 6
         objs.update(
             article_status=article_status,
             back_url=huilian,
@@ -312,7 +310,10 @@ def articleScriptOper(request, oper_type):
             cookies = DeDeObj.login()
             id, status = DeDeObj.getArticleAudit(indexUrl, obj.id, obj.aid)
             if status:
-                models.xzh_article.objects.filter(id=id).update(is_audit=status, article_status=4)
+                article_status = 4
+                if int(objs[0].belongToUser.userType) == 2:  # 判断是否为特殊用户
+                    article_status = 6
+                models.xzh_article.objects.filter(id=id).update(is_audit=status, article_status=article_status)
             response.code = 200
 
     # 提交文章到熊掌号

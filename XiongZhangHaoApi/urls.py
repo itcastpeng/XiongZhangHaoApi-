@@ -15,7 +15,8 @@ Including another URLconf
 """
 from django.conf.urls import url, include
 from django.contrib import admin
-from xiongzhanghao.views_dir import login, company, permissions, role, user, article, img_upload, fugai_baobiao, keywords
+from xiongzhanghao.views_dir import login, company, permissions, role, user, article, img_upload, fugai_baobiao, keywords, \
+    generateThePage
 
 urlpatterns = [
     # 登录
@@ -54,6 +55,9 @@ urlpatterns = [
     # 上传文件
     url(r'^image_upload', img_upload.image_upload),
 
+    # 二级域名
+    url(r'^specialUserGenerateThePage', generateThePage.specialUserGenerateThePage),   # 生成二级域名
+    url(r'^SearchSecondary/(?P<article_id>\d+)', generateThePage.SearchSecondaryDomainName),                # 查询二级域名
 
 ]
 
