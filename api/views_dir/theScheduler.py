@@ -42,12 +42,6 @@ def theScheduler(request):
             resule_data['task_id'] = 3
             print('判断是否审核')
 
-    # if not resule_data['flag']:
-    #     submitXiongZhangHaoObjs = articleObjs.filter(is_audit=True, article_status=4)
-    #     if submitXiongZhangHaoObjs:
-    #         resule_data['flag'] = True
-    #         resule_data['task_id'] = 4
-    #         print('提交到熊掌号')
 
 
 

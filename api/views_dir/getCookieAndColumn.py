@@ -52,12 +52,8 @@ import json, requests, datetime
 #     return JsonResponse(response.__dict__)
 
 
-
-
-
-
-
 @csrf_exempt
+@account.is_token(models.xzh_userprofile)
 def userGetCookieOper(request, oper_type):
     response = Response.ResponseObj()
     # 进行获取cookie 和 栏目

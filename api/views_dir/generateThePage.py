@@ -11,6 +11,7 @@ import json, datetime, requests, os
 
 # 特殊用户 生成页面
 @csrf_exempt
+@account.is_token(models.xzh_userprofile)
 def specialUserGenerateThePage(request):
     response = Response.ResponseObj()
     objs = models.xzh_article.objects.filter(article_status=6)
@@ -34,6 +35,7 @@ def specialUserGenerateThePage(request):
 
 # 查询二级域名
 @csrf_exempt
+@account.is_token(models.xzh_userprofile)
 def SearchSecondaryDomainName(request, article_id):
     response = Response.ResponseObj()
     print('article_id============> ',article_id)

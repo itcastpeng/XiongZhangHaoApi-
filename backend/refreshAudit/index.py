@@ -7,7 +7,7 @@ from urllib.parse import urlparse
 
 def refreshAudit():
     # url = 'http://127.0.0.1:8003/api/script_oper/articleScriptOper/refreshAudit'
-    url = 'http://xiongzhanghao.zhugeyingxiao.com:8003//api/script_oper/articleScriptOper/refreshAudit'
+    url = 'http://xiongzhanghao.zhugeyingxiao.com:8003//api/script_oper/articleScriptOper/refreshAudit?user_id=44&timestamp=123&rand_str=a66b1a82b4ba3ca9d444322c8524e844'
     ret = requests.get(url)
     result = json.loads(ret.text).get('data')
     print('==================', result)
@@ -35,7 +35,7 @@ def refreshAudit():
             'userType': userType
         }
         # url = 'http://127.0.0.1:8003/api/script_oper/articleScriptOper/refreshAuditModel'
-        url = 'http://xiongzhanghao.zhugeyingxiao.com:8003/api/script_oper/articleScriptOper/refreshAuditModel'
+        url = 'http://xiongzhanghao.zhugeyingxiao.com:8003/api/script_oper/articleScriptOper/refreshAuditModel?user_id=44&timestamp=123&rand_str=a66b1a82b4ba3ca9d444322c8524e844'
         ret = requests.post(url, data=result_data)
 
 # if __name__ == '__main__':

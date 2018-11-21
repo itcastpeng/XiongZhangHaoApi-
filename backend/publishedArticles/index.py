@@ -6,7 +6,7 @@ from urllib.parse import urlparse
 
 def publishedArticles():
     # url = 'http://127.0.0.1:8003/api/script_oper/articleScriptOper/sendArticle'
-    url = 'http://xiongzhanghao.zhugeyingxiao.com:8003//api/script_oper/articleScriptOper/sendArticle'
+    url = 'http://xiongzhanghao.zhugeyingxiao.com:8003//api/script_oper/articleScriptOper/sendArticle?user_id=44&timestamp=123&rand_str=a66b1a82b4ba3ca9d444322c8524e844'
     ret = requests.get(url)
     resultData = json.loads(ret.text).get('data')
     if resultData:
@@ -60,7 +60,7 @@ def publishedArticles():
         }
         print(result_data)
         # url = 'http://127.0.0.1:8003/api/script_oper/articleScriptOper/models_article'
-        url = 'http://xiongzhanghao.zhugeyingxiao.com:8003//api/script_oper/articleScriptOper/models_article'
+        url = 'http://xiongzhanghao.zhugeyingxiao.com:8003//api/script_oper/articleScriptOper/models_article?user_id=44&timestamp=123&rand_str=a66b1a82b4ba3ca9d444322c8524e844'
         requests.post(url, data=result_data)
 
 
