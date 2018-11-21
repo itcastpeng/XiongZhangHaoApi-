@@ -22,13 +22,20 @@ def select_keywords_cover(request):
         q = Q(Q(select_date__lt=now_date) | Q(select_date__isnull=True)) & Q(get_date__lt=dtime) | Q(get_date__isnull=True)
 
         print('q -->', q)
-        objs = models.xzh_keywords.objects.filter(q)
-        print(objs)
-        #
-        # response.data = {
-        #     'ret_data': ret_data,
-        #     'data_count': count,
-        # }
+        objs = models.xzh_keywords.objects.filter(q).order_by('?')
+
+        ret_data = []
+        if objs:
+            obj = objs[0]
+            ret_data = {
+                'keywords': obj.keywords,
+            }
+            obj.get_date = datetime.datetime.now()
+            obj.save()
+
+        response.data = {
+            'ret_data': ret_data,
+        }
     return JsonResponse(response.__dict__)
 
 #
