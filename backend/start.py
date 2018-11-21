@@ -6,7 +6,8 @@ import os
 from time import sleep
 if __name__ == '__main__':
     # while True:
-    ret = requests.get('http://127.0.0.1:8003/api/script_oper/theScheduler/theScheduler')
+    # ret = requests.get('http://127.0.0.1:8003/api/script_oper/theScheduler/theScheduler')
+    ret = requests.get('http://xiongzhanghao.zhugeyingxiao.com:8003/api/script_oper/theScheduler/theScheduler')
     print(ret.url)
     result_data = ret.json()
     print(result_data)

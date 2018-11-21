@@ -1,13 +1,14 @@
 from backend.articlePublish import DeDe
 import json, requests, datetime
 from urllib.parse import urlparse
-
+from api.public.token import start
 
 
 def publishedArticles():
+    params = start()
     # url = 'http://127.0.0.1:8003/api/script_oper/articleScriptOper/sendArticle'
-    url = 'http://xiongzhanghao.zhugeyingxiao.com:8003//api/script_oper/articleScriptOper/sendArticle?user_id=44&timestamp=123&rand_str=a66b1a82b4ba3ca9d444322c8524e844'
-    ret = requests.get(url)
+    url = 'http://xiongzhanghao.zhugeyingxiao.com:8003/api/script_oper/articleScriptOper/sendArticle'
+    ret = requests.get(url, params=params)
     resultData = json.loads(ret.text).get('data')
     if resultData:
         o_id =  resultData.get('o_id')
@@ -60,7 +61,7 @@ def publishedArticles():
         }
         print(result_data)
         # url = 'http://127.0.0.1:8003/api/script_oper/articleScriptOper/models_article'
-        url = 'http://xiongzhanghao.zhugeyingxiao.com:8003//api/script_oper/articleScriptOper/models_article?user_id=44&timestamp=123&rand_str=a66b1a82b4ba3ca9d444322c8524e844'
+        url = 'http://xiongzhanghao.zhugeyingxiao.com:8003/api/script_oper/articleScriptOper/models_article?user_id=44&timestamp=1542788198850&rand_str=86b24054d91240d9559e369296af06cd'
         requests.post(url, data=result_data)
 
 

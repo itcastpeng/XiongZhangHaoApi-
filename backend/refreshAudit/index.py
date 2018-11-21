@@ -1,14 +1,15 @@
 from backend.articlePublish import DeDe
 import json, requests, datetime
 from urllib.parse import urlparse
-
+from api.public.token import start
 
 
 
 def refreshAudit():
+    params = start()
     # url = 'http://127.0.0.1:8003/api/script_oper/articleScriptOper/refreshAudit'
-    url = 'http://xiongzhanghao.zhugeyingxiao.com:8003//api/script_oper/articleScriptOper/refreshAudit?user_id=44&timestamp=123&rand_str=a66b1a82b4ba3ca9d444322c8524e844'
-    ret = requests.get(url)
+    url = 'http://xiongzhanghao.zhugeyingxiao.com:8003/api/script_oper/articleScriptOper/refreshAudit'
+    ret = requests.get(url, params=params)
     result = json.loads(ret.text).get('data')
     print('==================', result)
     if result:
@@ -35,7 +36,7 @@ def refreshAudit():
             'userType': userType
         }
         # url = 'http://127.0.0.1:8003/api/script_oper/articleScriptOper/refreshAuditModel'
-        url = 'http://xiongzhanghao.zhugeyingxiao.com:8003/api/script_oper/articleScriptOper/refreshAuditModel?user_id=44&timestamp=123&rand_str=a66b1a82b4ba3ca9d444322c8524e844'
+        url = 'http://xiongzhanghao.zhugeyingxiao.com:8003/api/script_oper/articleScriptOper/refreshAuditModel?user_id=44&timestamp=1542788198850&rand_str=86b24054d91240d9559e369296af06cd'
         ret = requests.post(url, data=result_data)
 
 # if __name__ == '__main__':

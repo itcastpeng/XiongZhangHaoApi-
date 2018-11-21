@@ -59,22 +59,22 @@ def userGetCookieOper(request, oper_type):
     # 进行获取cookie 和 栏目
     if oper_type == 'getTheDebugUser':
         print('=======================进行获取cookie 和 栏目============================')
-        userObjs = models.xzh_userprofile.objects
-        objs = userObjs.filter(status=1, is_debug=False).order_by('create_date')
+        objs = models.xzh_userprofile.objects.filter(status=1, is_debug=False, role_id=61).order_by('create_date')
         if objs:
-            if objs[0].website_backstage == 1:
-                website_backstage_url = objs[0].website_backstage_url.strip()
-                userid = objs[0].website_backstage_username
-                pwd = objs[0].website_backstage_password
+            obj = objs[0]
+            if obj.website_backstage == 1:
+                website_backstage_url = obj.website_backstage_url.strip()
+                userid = obj.website_backstage_username
+                pwd = obj.website_backstage_password
                 cookie = ''
-                if objs[0].cookies:
-                    cookie = eval(objs[0].cookies)
+                if obj.cookies:
+                    cookie = eval(obj.cookies)
                 response.data = {
                     'website_backstage_url':website_backstage_url,
                     'userid':userid,
                     'pwd':pwd,
                     'cookie':cookie,
-                    'o_id':objs[0].id
+                    'o_id':obj.id
                 }
         response.msg = '查询成功'
         response.code = 200
