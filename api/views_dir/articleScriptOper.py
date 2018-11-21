@@ -21,7 +21,6 @@ def articleScriptOper(request, oper_type):
         now_date = datetime.datetime.now()
         objs = models.xzh_article.objects.select_related('belongToUser').filter(
             article_status=1,
-            belongToUser__is_debug=1,
             send_time__lte=now_date
         ).order_by('create_date')
         if objs:
