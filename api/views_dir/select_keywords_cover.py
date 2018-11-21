@@ -13,6 +13,7 @@ from django.db.models import Q
 # cerf  token验证
 # 公司查询
 @csrf_exempt
+@account.is_token(models.xzh_userprofile)
 def select_keywords_cover(request):
     response = Response.ResponseObj()
     if request.method == "GET":
@@ -28,6 +29,7 @@ def select_keywords_cover(request):
         if objs:
             obj = objs[0]
             ret_data = {
+                'keywords_id': obj.id,
                 'keywords': obj.keywords,
                 'xiongZhangHaoIndex': obj.user.xiongZhangHaoIndex
             }
