@@ -17,16 +17,19 @@ CELERYD_MAX_TASKS_PER_CHILD = 100    # 每个worker最多执行万100个任务�
 app.conf.beat_schedule = {
 
 # 1分钟一次
+# 生成二级域名
  'specialUserGenerateThePage':{
-        'task':'XiongZhangHaoApi_celery.tasks.specialUserGenerateThePage',
+        'task':'XiongZhangHaoApi_celery.tasks.specialUserGenerateThePage?user_id=44&timestamp=123&rand_str=a66b1a82b4ba3ca9d444322c8524e844',
         # 'schedule':30                                   # 秒
         'schedule': crontab("*/1", '*', '*', '*', '*'),  # 此处跟 linux 中 crontab 的格式一样
         # 'schedule': crontab("5", '9, 11', '*', '*', '*'),  # 9点一次  11点一次
         # 'schedule': crontab(hour=8, minute=30),
     },
 
+
+# 提交熊掌号
 'celerySubmitXiongZhangHao':{
-        'task': 'XiongZhangHaoApi_celery.tasks.celerySubmitXiongZhangHao',
+        'task': 'XiongZhangHaoApi_celery.tasks.celerySubmitXiongZhangHao?user_id=44&timestamp=123&rand_str=a66b1a82b4ba3ca9d444322c8524e844',
         'schedule': crontab("*/10", '*', '*', '*', '*'),  # 此处跟 linux 中 crontab 的格式一样
     },
 
