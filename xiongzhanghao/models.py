@@ -58,6 +58,14 @@ class xzh_userprofile(models.Model):
     website_backstage_token = models.CharField(verbose_name='熊掌号token', max_length=64, null=True, blank=True)
     website_backstage_appid = models.CharField(verbose_name='熊掌号appid', max_length=64, null=True, blank=True)
 
+    userType_choices = (
+        (1,'普通用户'),
+        (2,'特殊用户')
+    )
+    userType = models.SmallIntegerField(verbose_name='用户类型', default=1)
+    secondaryDomainName = models.CharField(verbose_name='二级域名,针对特殊用户', max_length=128, null=True, blank=True)
+    xiongZhangHaoIndex = models.CharField(verbose_name='熊掌号主页', max_length=128, null=True, blank=True)
+
 
 # 公众号-文章表
 class xzh_article(models.Model):
@@ -74,6 +82,7 @@ class xzh_article(models.Model):
         (3, '发布失败'),
         (4, '审核成功, 提交中'),
         (5, '已完成'),
+        (6, '特殊用户, 生成页面中'),
     )
     article_status = models.SmallIntegerField(verbose_name='文章状态',choices=article_status_choices, default=1)
     back_url = models.CharField(verbose_name='回链地址', max_length=128, null=True, blank=True)
@@ -81,6 +90,7 @@ class xzh_article(models.Model):
     send_time = models.DateTimeField(verbose_name='定时发送文章', null=True, blank=True)
     aid = models.IntegerField(verbose_name='文章发布id', null=True, blank=True)
     is_audit = models.BooleanField(verbose_name='是否审核', default=False)
+    DomainNameText = models.TextField(verbose_name='二级域名内容, 针对特殊用户', null=True, blank=True)
 
 
 # 关键词表
