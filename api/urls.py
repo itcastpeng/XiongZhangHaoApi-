@@ -41,6 +41,7 @@ urlpatterns = [
 
     # 初始化覆盖报表中的数据
     url(r'init_fugai_baobiao$', init_fugai_baobiao.init_fugai_baobiao)
+
 ]
 
 
