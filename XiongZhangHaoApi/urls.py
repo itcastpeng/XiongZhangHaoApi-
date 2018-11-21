@@ -18,7 +18,11 @@ from django.contrib import admin
 from xiongzhanghao.views_dir import login, company, permissions, role, user, article, img_upload, fugai_baobiao, keywords, \
     generateThePage
 
+
 urlpatterns = [
+
+    url(r'^api', include('api.urls')),
+
     # 登录
     url(r'^login$', login.login),
 
@@ -58,6 +62,8 @@ urlpatterns = [
     # 二级域名
     url(r'^specialUserGenerateThePage', generateThePage.specialUserGenerateThePage),   # 生成二级域名
     url(r'^SearchSecondary/(?P<article_id>\d+)', generateThePage.SearchSecondaryDomainName),                # 查询二级域名
+
+
 
 ]
 
