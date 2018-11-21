@@ -53,6 +53,8 @@ def select_keywords_cover(request):
                 url=form_obj.cleaned_data.get('url'),
                 rank=form_obj.cleaned_data.get('rank'),
             )
+        else:
+            print(form_obj.errors.as_json())
     return JsonResponse(response.__dict__)
 
 #
