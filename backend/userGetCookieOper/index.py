@@ -1,16 +1,17 @@
 from backend.articlePublish import DeDe
 import json, requests, datetime
 from urllib.parse import urlparse
-
+from api.public.token import start
 
 
 
 def userGetCookieOper():
-    # url = 'http://127.0.0.1:8003/api/userGetCookieOper/getTheDebugUser'
-    url = 'http://xiongzhanghao.zhugeyingxiao.com:8003//api/userGetCookieOper/getTheDebugUser'
-    ret = requests.get(url)
-    result = ret.json().get('data')
-    if result:
+    params = start()
+    # url = 'http://127.0.0.1:8003/api/userGetCookieOper/getTheDebugUser?user_id=17&timestamp=123&rand_str=4297f44b13955235245b2497399d7a93'
+    url = 'http://xiongzhanghao.zhugeyingxiao.com:8003/api/userGetCookieOper/getTheDebugUser'
+    ret = requests.get(url, params=params)
+    if ret:
+        result = ret.json().get('data')
         website_backstage_url = result.get('website_backstage_url')
         url = urlparse(website_backstage_url)
         if url.hostname:
@@ -32,8 +33,8 @@ def userGetCookieOper():
             'retData':retData,
             'oid':result.get('o_id')
         }
-        # url = 'http://127.0.0.1:8003/api/userGetCookieOper/updateModel'
-        url = 'http://xiongzhanghao.zhugeyingxiao.com:8003//api/userGetCookieOper/updateModel'
+        # url = 'http://127.0.0.1:8003/api/userGetCookieOper/updateModel?user_id=17&timestamp=123&rand_str=4297f44b13955235245b2497399d7a93'
+        url = 'http://xiongzhanghao.zhugeyingxiao.com:8003/api/userGetCookieOper/updateModel?user_id=44&timestamp=1542788198850&rand_str=86b24054d91240d9559e369296af06cd'
         ret = requests.post(url, data=result_data)
 
 # if __name__ == '__main__':

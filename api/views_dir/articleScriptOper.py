@@ -13,6 +13,7 @@ from urllib import parse
 
 
 @csrf_exempt
+@account.is_token(models.xzh_userprofile)
 def articleScriptOper(request, oper_type):
     response = Response.ResponseObj()
     # 发送文章
