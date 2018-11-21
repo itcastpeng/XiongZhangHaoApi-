@@ -64,6 +64,8 @@ class xzh_userprofile(models.Model):
     )
     userType = models.SmallIntegerField(verbose_name='用户类型', default=1)
     secondaryDomainName = models.CharField(verbose_name='二级域名,针对特殊用户', max_length=128, null=True, blank=True)
+    xiongZhangHaoIndex = models.CharField(verbose_name='熊掌号主页', max_length=128, null=True, blank=True)
+
 
 # 公众号-文章表
 class xzh_article(models.Model):
