@@ -6,7 +6,8 @@ import os
 from time import sleep
 if __name__ == '__main__':
     while True:
-        ret = requests.get('http://127.0.0.1:8003/api/script_oper/theScheduler/theScheduler')
+    # ret = requests.get('http://127.0.0.1:8003/api/script_oper/theScheduler/theScheduler')
+        ret = requests.get('http://xiongzhanghao.zhugeyingxiao.com:8003/api/script_oper/theScheduler/theScheduler')
         print(ret.url)
         result_data = ret.json()
         print(result_data)
@@ -23,11 +24,6 @@ if __name__ == '__main__':
             elif task_id == 3:
                 print("--> 判断是否审核")
                 refreshAudit.refreshAudit()
-
-            # elif task_id == 4:
-            #     print("--> 提交到熊掌号")
-                # os.system('chcp 65001 && cd select_keywords_cover && python index.py')
-
 
         else:
             print('=================休息5分钟')
