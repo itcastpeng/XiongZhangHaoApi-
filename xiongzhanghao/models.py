@@ -88,6 +88,7 @@ class xzh_keywords(models.Model):
     user = models.ForeignKey('xzh_userprofile', verbose_name="所属用户")
     keywords = models.CharField(verbose_name="关键词", max_length=128)
     create_date = models.DateTimeField(verbose_name="创建时间", auto_now_add=True)
+    get_date = models.DateTimeField(verbose_name="获取时间", null=True, blank=True)     # 该时间控制每个词在5分钟之内只被查询一次
     select_date = models.DateTimeField(verbose_name="查询时间", null=True, blank=True)
 
 

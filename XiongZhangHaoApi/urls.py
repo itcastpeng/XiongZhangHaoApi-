@@ -17,7 +17,11 @@ from django.conf.urls import url, include
 from django.contrib import admin
 from xiongzhanghao.views_dir import login, company, permissions, role, user, article, img_upload, fugai_baobiao, keywords
 
+
 urlpatterns = [
+
+    url(r'^api', include('api.urls')),
+
     # 登录
     url(r'^login$', login.login),
 
@@ -53,6 +57,8 @@ urlpatterns = [
 
     # 上传文件
     url(r'^image_upload', img_upload.image_upload),
+
+
 
 
 ]
