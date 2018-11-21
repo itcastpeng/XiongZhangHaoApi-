@@ -5,7 +5,7 @@ from xiongzhanghao.publicFunc import account
 from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt, csrf_protect
 from xiongzhanghao.publicFunc.condition_com import conditionCom
-from xiongzhanghao.forms.keywords import AddForm, SelectForm
+from xiongzhanghao.forms.keywords import AddForm, SelectForm, BatchDeleteForm
 from django.db.models import Q
 from backend.articlePublish import DeDe
 from XiongZhangHaoApi_celery.tasks import celeryGetDebugUser
@@ -74,7 +74,7 @@ def keywords(request):
 #  增删改
 #  csrf  token验证
 @csrf_exempt
-@account.is_token(models.xzh_userprofile)
+# @account.is_token(models.xzh_userprofile)
 def keywords_oper(request, oper_type, o_id):
     response = Response.ResponseObj()
 
@@ -125,6 +125,21 @@ def keywords_oper(request, oper_type, o_id):
                 response.msg = '删除ID不存在'
             response.data = {}
 
+        # 批量删除
+        elif oper_type == "batch_delete":
+            form_data = {
+                'user_id': o_id,
+            }
+            forms_obj = BatchDeleteForm(form_data)
+            if forms_obj.is_valid():
+                user_id = forms_obj.cleaned_data.get('user_id')
+                models.xzh_keywords.objects.filter(user_id=user_id).delete()
+
+                response.code = 200
+                response.msg = "批量删除成功"
+            else:
+                response.code = 301
+                response.msg = json.loads(forms_obj.errors.as_json())
     return JsonResponse(response.__dict__)
 
 

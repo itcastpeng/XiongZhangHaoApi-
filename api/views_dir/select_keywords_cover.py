@@ -29,6 +29,7 @@ def select_keywords_cover(request):
             obj = objs[0]
             ret_data = {
                 'keywords': obj.keywords,
+                'xiongZhangHaoIndex': obj.user.xiongZhangHaoIndex
             }
             obj.get_date = datetime.datetime.now()
             obj.save()
