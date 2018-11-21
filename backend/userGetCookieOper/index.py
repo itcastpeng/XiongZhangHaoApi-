@@ -5,8 +5,9 @@ from urllib.parse import urlparse
 
 
 
-def start():
-    url = 'http://127.0.0.1:8003/api/userGetCookieOper/getTheDebugUser'
+def userGetCookieOper():
+    # url = 'http://127.0.0.1:8003/api/userGetCookieOper/getTheDebugUser'
+    url = 'http://xiongzhanghao.zhugeyingxiao.com:8003//api/userGetCookieOper/getTheDebugUser'
     ret = requests.get(url)
     result = ret.json().get('data')
     if result:
@@ -31,12 +32,13 @@ def start():
             'retData':retData,
             'oid':result.get('o_id')
         }
-        url = 'http://127.0.0.1:8003/api/userGetCookieOper/updateModel'
+        # url = 'http://127.0.0.1:8003/api/userGetCookieOper/updateModel'
+        url = 'http://xiongzhanghao.zhugeyingxiao.com:8003//api/userGetCookieOper/updateModel'
         ret = requests.post(url, data=result_data)
 
-if __name__ == '__main__':
-    start()
-
+# if __name__ == '__main__':
+#     start()
+#
 
 
 

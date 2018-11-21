@@ -42,19 +42,13 @@ def theScheduler(request):
             resule_data['task_id'] = 3
             print('判断是否审核')
 
-    if not resule_data['flag']:
-        submitXiongZhangHaoObjs = articleObjs.filter(is_audit=True, article_status=4)
-        if submitXiongZhangHaoObjs:
-            resule_data['flag'] = True
-            resule_data['task_id'] = 4
-            print('提交到熊掌号')
-
     # if not resule_data['flag']:
-    #     specialUserGenerateThePageObjs = articleObjs.filter(article_status=6)
-    #     if specialUserGenerateThePageObjs:
+    #     submitXiongZhangHaoObjs = articleObjs.filter(is_audit=True, article_status=4)
+    #     if submitXiongZhangHaoObjs:
     #         resule_data['flag'] = True
-    #         resule_data['task_id'] = 5
-    #         print('生成二级域名')
+    #         resule_data['task_id'] = 4
+    #         print('提交到熊掌号')
+
 
 
     response.code = 200

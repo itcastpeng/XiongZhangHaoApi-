@@ -3,10 +3,10 @@ from celery import Celery
 from celery.schedules import crontab
 
 app = Celery(
-    # broker='redis://redis:6379/0',
-    broker='redis://127.0.0.1:6379/0',
-    # backend='redis://redis:6379/0',
-    backend='redis://127.0.0.1:6379/0',
+    broker='redis://redis_host:6379/4',
+    # broker='redis://127.0.0.1:6379/0',
+    backend='redis://redis_host:6379/4',
+    # backend='redis://127.0.0.1:6379/0',
     include=['XiongZhangHaoApi_celery.tasks'],
 
 )
@@ -17,18 +17,18 @@ CELERYD_MAX_TASKS_PER_CHILD = 100    # 每个worker最多执行万100个任务�
 app.conf.beat_schedule = {
 
 # 1分钟一次
-#  'celeryPublishedArticles':{
-#         'task':'XiongZhangHaoApi_celery.tasks.celeryPublishedArticles',
-#         # 'schedule':30                                   # 秒
-#         'schedule': crontab("*/1", '*', '*', '*', '*'),  # 此处跟 linux 中 crontab 的格式一样
+ 'specialUserGenerateThePage':{
+        'task':'XiongZhangHaoApi_celery.tasks.specialUserGenerateThePage',
+        # 'schedule':30                                   # 秒
+        'schedule': crontab("*/1", '*', '*', '*', '*'),  # 此处跟 linux 中 crontab 的格式一样
         # 'schedule': crontab("5", '9, 11', '*', '*', '*'),  # 9点一次  11点一次
         # 'schedule': crontab(hour=8, minute=30),
-    # },
+    },
 
-# 'celerySubmitXiongZhangHao':{
-#         'task': 'XiongZhangHaoApi_celery.tasks.celerySubmitXiongZhangHao',
-#         'schedule': crontab("*/10", '*', '*', '*', '*'),  # 此处跟 linux 中 crontab 的格式一样
-#     },
+'celerySubmitXiongZhangHao':{
+        'task': 'XiongZhangHaoApi_celery.tasks.celerySubmitXiongZhangHao',
+        'schedule': crontab("*/10", '*', '*', '*', '*'),  # 此处跟 linux 中 crontab 的格式一样
+    },
 
 
 
