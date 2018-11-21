@@ -48,7 +48,7 @@ def select_keywords_cover(request):
             rank = form_obj.cleaned_data.get('rank')
             keywords_id = form_obj.cleaned_data.get('keywords_id')
             models.xzh_keywords.objects.filter(id=keywords_id).update(select_date=datetime.datetime.now())
-
+            print('rank -->', rank, type(rank))
             if rank > 0:
                 models.xzh_keywords_detail.objects.create(
                     xzh_keywords_id=form_obj.cleaned_data.get('keywords_id'),
@@ -56,7 +56,7 @@ def select_keywords_cover(request):
                     rank=form_obj.cleaned_data.get('rank'),
                 )
         else:
-            print(form_obj.errors.as_json())
+            print('form_obj.errors.as_json() -->', form_obj.errors.as_json())
     return JsonResponse(response.__dict__)
 
 #
