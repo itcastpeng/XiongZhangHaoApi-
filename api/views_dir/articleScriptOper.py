@@ -11,46 +11,6 @@ from backend.articlePublish import DeDe
 from urllib import parse
 
 
-# 更改状态和备注
-def models_article(class_data, user_id):
-    code = int(class_data.get('code'))
-    huilian = class_data.get('huilian')
-    aid = class_data.get('aid')
-    objs = models.xzh_article.objects.filter(id=user_id)
-    if code == 200:                 # 发布成功
-        article_status = 2
-        objs.update(
-            article_status=article_status,
-            back_url=huilian,
-            aid=aid,
-            note_content='无'
-        )
-
-    elif code == 300:               # 标题重复
-        objs.update(
-            article_status=3,
-            note_content='标题重复'
-        )
-    elif code == 302:               # 登录失败
-        objs.update(
-            article_status=3,
-            note_content='登录失败'
-        )
-    elif code == 305:  # 登录失败
-        objs.update(
-            article_status=3,
-            note_content='模板文件不存在, 请选择子级菜单'
-        )
-    else:                           # 发布失败
-        objs.update(
-            article_status=3,
-            note_content='发布失败'
-        )
-
-
-
-
-
 
 @csrf_exempt
 def articleScriptOper(request, oper_type):
@@ -64,10 +24,7 @@ def articleScriptOper(request, oper_type):
             send_time__lte=now_date
         ).order_by('create_date')
         if objs:
-            print('-0000000000000---------------------> ', objs[0].id)
-
             if objs[0].title and objs[0].column_id and objs[0].summary and objs[0].content:
-
                 result_data = {
                     'website_backstage_url': objs[0].belongToUser.website_backstage_url.strip(),
                     'website_backstage_username': objs[0].belongToUser.website_backstage_username,
@@ -77,33 +34,86 @@ def articleScriptOper(request, oper_type):
                     'summary': objs[0].summary,
                     'content': objs[0].content,
                     'typeid': eval(objs[0].column_id).get('Id'),
+                    'o_id':objs[0].id
                 }
                 print('result_data,---------------> ',result_data)
                 response.data = result_data
         response.code = 200
 
+
+    # 更改状态和备注
+    elif oper_type == 'sendArticleModels':
+        resultData = request.POST.get('resultData')
+        o_id = request.POST.get('o_id')
+        if resultData:
+            resultData = eval(resultData)
+            code = int(resultData.get('code'))
+            huilian = resultData.get('huilian')
+            aid = resultData.get('aid')
+            objs = models.xzh_article.objects.filter(id=o_id)
+            if code == 200:  # 发布成功
+                article_status = 2
+                objs.update(
+                    article_status=article_status,
+                    back_url=huilian,
+                    aid=aid,
+                    note_content='无'
+                )
+
+            elif code == 300:  # 标题重复
+                objs.update(
+                    article_status=3,
+                    note_content='标题重复'
+                )
+            elif code == 302:  # 登录失败
+                objs.update(
+                    article_status=3,
+                    note_content='登录失败'
+                )
+            elif code == 305:  # 登录失败
+                objs.update(
+                    article_status=3,
+                    note_content='模板文件不存在, 请选择子级菜单'
+                )
+            else:  # 发布失败
+                objs.update(
+                    article_status=3,
+                    note_content='发布失败'
+                )
+
+
     # 判断文章是否审核
-    elif oper_type == 'timedRefreshAudit':
+    elif oper_type == 'refreshAudit':
         objs = models.xzh_article.objects.filter(article_status=2, is_audit=0, aid__isnull=False)
-        for obj in objs:
+        if objs:
+            obj = objs[0]
             print('定时刷新文章是否审核----------------->', obj.id)
-            website_backstage_url = obj.belongToUser.website_backstage_url.strip()
-            url = urlparse(website_backstage_url)
-            domain = 'http://' + url.hostname + '/'
-            home_path = website_backstage_url.split(domain)[1].replace('/', '')
-            userid = obj.belongToUser.website_backstage_username
-            pwd = obj.belongToUser.website_backstage_password
-            indexUrl = website_backstage_url + 'content_list.php?channelid=1'
-            cookie = eval(obj.belongToUser.cookies)
-            DeDeObj = DeDe(domain, home_path, userid, pwd, cookie)
-            cookies = DeDeObj.login()
-            id, status = DeDeObj.getArticleAudit(indexUrl, obj.id, obj.aid)
-            if status:
-                article_status = 4
-                if int(objs[0].belongToUser.userType) == 2:  # 判断是否为特殊用户
-                    article_status = 6
-                models.xzh_article.objects.filter(id=id).update(is_audit=status, article_status=article_status)
+            result_data = {
+                'website_backstage_url': obj.belongToUser.website_backstage_url,
+                'website_backstage_username': obj.belongToUser.website_backstage_username,
+                'website_backstage_password': obj.belongToUser.website_backstage_password,
+                'cookies': obj.belongToUser.cookies,
+                'o_id': obj.id,
+                'aid': obj.aid,
+                'userType': obj.belongToUser.userType,
+            }
+            response.data = result_data
         response.code = 200
+
+
+    # 文章审核更新数据库
+    elif oper_type == 'refreshAuditModel':
+        o_id = request.POST.get('o_id')
+        status = request.POST.get('status')
+        userType = request.POST.get('userType')
+        print('status, o_id============> ', status, o_id, userType)
+        if status and userType and o_id:
+            article_status = 4
+            if int(userType) == 2:  # 判断是否为特殊用户
+                article_status = 6
+            models.xzh_article.objects.filter(id=o_id).update(is_audit=status, article_status=article_status)
+        response.code = 200
+
 
     # 提交文章到熊掌号
     elif oper_type == 'submitXiongZhangHao':
@@ -133,6 +143,7 @@ def articleScriptOper(request, oper_type):
                 obj.save()
                 continue
         response.code = 200
+
 
     else:
         response.code = 402

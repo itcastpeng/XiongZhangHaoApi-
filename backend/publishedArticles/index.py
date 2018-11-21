@@ -4,25 +4,19 @@ from urllib.parse import urlparse
 
 
 
-
-
-
-
-
-
 def publishedArticles():
-    url = 'http://127.0.0.1:8003/api/script_oper/articleScriptOper/sendArticle'
+    # url = 'http://127.0.0.1:8003/api/script_oper/articleScriptOper/sendArticle'
+    url = 'http://xiongzhanghao.zhugeyingxiao.com:8003//api/script_oper/articleScriptOper/sendArticle'
     ret = requests.get(url)
     resultData = json.loads(ret.text).get('data')
     if resultData:
-        article_data = ret.json().get('data').get('article_data')
+        o_id =  resultData.get('o_id')
         website_backstage_url = resultData.get('website_backstage_url').strip()
         url = urlparse(website_backstage_url)
         domain = 'http://' + url.hostname + '/'
         home_path = website_backstage_url.split(domain)[1].replace('/', '')
         userid = resultData.get('website_backstage_username')
         pwd = resultData.get('website_backstage_password')
-        print('website_backstage_url-=-------> ',domain, home_path, userid, pwd, resultData.get('cookies'))
         typeid = resultData.get('typeid')
         cookie = ''
         if resultData.get('cookies'):
@@ -57,20 +51,21 @@ def publishedArticles():
             "imageField.x": "30",
             "imageField.y": "12"
         }
+        DeDeObj = DeDe(domain, home_path, userid, pwd, cookie)
+        cookie = DeDeObj.login()
+        resultData = DeDeObj.sendArticle(article_data, article_data.get('title'))
+        result_data = {
+            'resultData': str(resultData),
+            'o_id': o_id
+        }
+        print(result_data)
+        # url = 'http://127.0.0.1:8003/api/script_oper/articleScriptOper/models_article'
+        url = 'http://xiongzhanghao.zhugeyingxiao.com:8003//api/script_oper/articleScriptOper/models_article'
+        requests.post(url, data=result_data)
 
 
-        print(article_data)
-
-        # DeDeObj = DeDe(domain, home_path, userid, pwd, cookie)
-        # cookie = DeDeObj.login()
-        # resultData = DeDeObj.sendArticle(article_data, article_data.get('title'))
-
-
-
-        # models_article(resultData, obj.id)
-
-if __name__ == '__main__':
-    publishedArticles()
+# if __name__ == '__main__':
+#     publishedArticles()
 
 
 

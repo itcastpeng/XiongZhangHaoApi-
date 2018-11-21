@@ -7,15 +7,12 @@ import requests, datetime, os, sys
 
 
 
-# 获取cookie 以及栏目
-# @app.task
-# def celeryGetDebugUser(userLoginId=None):
-#     if userLoginId:
-#         url = 'http://xiongzhanghao.zhugeyingxiao.com:8003/api/userGetCookieOper/getTheDebugUser?userLoginId={}'.format(userLoginId)
-#     else:
-#         url = 'http://xiongzhanghao.zhugeyingxiao.com:8003/api/userGetCookieOper/getTheDebugUser'
-#     print('url -->', url)
-#     requests.get(url)
+# 生成二级域名
+@app.task
+def celeryGetDebugUser():
+    url = 'http://xiongzhanghao.zhugeyingxiao.com:8003/api/specialUserGenerateThePage'
+    print('url -->', url)
+    requests.get(url)
 
 
 # 定时发布文章(1分钟一次)
