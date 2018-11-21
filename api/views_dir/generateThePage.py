@@ -2,15 +2,15 @@ from xiongzhanghao import models
 from xiongzhanghao.publicFunc import Response
 from xiongzhanghao.publicFunc import account
 from django.http import JsonResponse
+from django.shortcuts import render, render_to_response
 from django.views.decorators.csrf import csrf_exempt, csrf_protect
 from xiongzhanghao.publicFunc.condition_com import conditionCom
 from xiongzhanghao.forms.article import AddForm, UpdateForm, SelectForm
 import json, datetime, requests, os
-from urllib.parse import urlparse
-from backend.articlePublish import DeDe
 
 
 # 特殊用户 生成页面
+@csrf_exempt
 def specialUserGenerateThePage(request):
     response = Response.ResponseObj()
     objs = models.xzh_article.objects.filter(article_status=6)
@@ -22,31 +22,30 @@ def specialUserGenerateThePage(request):
             ret.encoding = 'gbk'
         else:
             ret.encoding = 'utf-8'
-
-        back_url = 'article/{}.html'.format(obj.id)
+        domain = obj.belongToUser.secondaryDomainName
+        back_url = domain + 'article/{}.html'.format(obj.id)
         obj.back_url = back_url
         obj.DomainNameText = ret.text
         obj.article_status = 4
         obj.save()
-
-
     response.code = 200
     response.msg = '生成完成'
     return JsonResponse(response.__dict__)
 
-
-
 # 查询二级域名
+@csrf_exempt
 def SearchSecondaryDomainName(request, article_id):
     response = Response.ResponseObj()
+    print('article_id============> ',article_id)
     objs = models.xzh_article.objects.get(id=article_id)
     if objs:
-        response.data = objs.DomainNameText
+        return render(request, 'index.html',{
+            'my_message':objs.DomainNameText
+        })
     else:
-        print('无此id')
-    response.code = 200
-    response.msg = '查询成功'
-    return JsonResponse(response.__dict__)
+        response.code = 301
+        response.msg = '无此id'
+        return JsonResponse(response.__dict__)
 
 
 

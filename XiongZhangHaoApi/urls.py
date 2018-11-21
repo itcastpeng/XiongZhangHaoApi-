@@ -14,9 +14,7 @@ Including another URLconf
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
 from django.conf.urls import url, include
-from django.contrib import admin
-from xiongzhanghao.views_dir import login, company, permissions, role, user, article, img_upload, fugai_baobiao, keywords, \
-    generateThePage
+from xiongzhanghao.views_dir import login, permissions, role, user, article, img_upload, fugai_baobiao, keywords
 
 
 urlpatterns = [
@@ -40,12 +38,10 @@ urlpatterns = [
 
     # 用户管理
     url(r'^user/(?P<oper_type>\w+)/(?P<o_id>\d+)$', user.user_oper),
-    url(r'^userGetCookieOper/(?P<oper_type>\w+)$', user.userGetCookieOper),   # 获取栏目及cookie
     url(r'^user$', user.user),
 
     # 文章管理
     url(r'^article/(?P<oper_type>\w+)/(?P<o_id>\d+)$', article.article_oper),
-    url(r'^articleScriptOper/(?P<oper_type>\w+)$', article.articleScriptOper), # 文章操作 审核 提交熊掌号 发布文章
     url(r'^article', article.article),
 
     # 关键词管理
@@ -58,10 +54,6 @@ urlpatterns = [
 
     # 上传文件
     url(r'^image_upload', img_upload.image_upload),
-
-    # 二级域名
-    url(r'^specialUserGenerateThePage', generateThePage.specialUserGenerateThePage),   # 生成二级域名
-    url(r'^SearchSecondary/(?P<article_id>\d+)', generateThePage.SearchSecondaryDomainName),                # 查询二级域名
 
 
 

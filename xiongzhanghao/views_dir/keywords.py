@@ -8,7 +8,6 @@ from xiongzhanghao.publicFunc.condition_com import conditionCom
 from xiongzhanghao.forms.keywords import AddForm, SelectForm, BatchDeleteForm
 from django.db.models import Q
 from backend.articlePublish import DeDe
-from XiongZhangHaoApi_celery.tasks import celeryGetDebugUser
 from urllib.parse import urlparse
 import json, requests, datetime
 

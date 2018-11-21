@@ -8,7 +8,6 @@ from xiongzhanghao.publicFunc.condition_com import conditionCom
 from xiongzhanghao.forms.user import AddForm, UpdateForm, SelectForm, AdminAddForm, AdminUpdateForm
 from django.db.models import Q
 from backend.articlePublish import DeDe
-from XiongZhangHaoApi_celery.tasks import celeryGetDebugUser
 from urllib.parse import urlparse
 import json, requests, datetime
 
@@ -128,6 +127,7 @@ def user_oper(request, oper_type, o_id):
                 'website_backstage_password': request.POST.get('website_backstage_password'),
                 'website_backstage_token': request.POST.get('website_backstage_token'),
                 'website_backstage_appid': request.POST.get('website_backstage_appid'),
+                'xiongZhangHaoIndex': request.POST.get('xiongZhangHaoIndex'),
             }
             print('form_data----->',form_data)
             #  创建 form验证 实例（参数默认转成字典）
@@ -145,7 +145,7 @@ def user_oper(request, oper_type, o_id):
                 # url = 'http://xiongzhanghao.zhugeyingxiao.com:8003/getTheDebugUser'
                 # requests.get(url)
 
-                celeryGetDebugUser.delay()  # 异步调用
+                # celeryGetDebugUser.delay()  # 异步调用
                 response.code = 200
                 response.msg = "添加成功"
             else:
@@ -167,6 +167,7 @@ def user_oper(request, oper_type, o_id):
                 'website_backstage_password': request.POST.get('website_backstage_password'),
                 'website_backstage_token': request.POST.get('website_backstage_token'),
                 'website_backstage_appid': request.POST.get('website_backstage_appid'),
+                'xiongZhangHaoIndex': request.POST.get('xiongZhangHaoIndex'),
             }
             flag = False
             if int(form_data.get('role_id')) == 64 or int(form_data.get('role_id')) ==  66:
@@ -193,7 +194,7 @@ def user_oper(request, oper_type, o_id):
                         website_backstage_password = forms_obj.cleaned_data['website_backstage_password']
                         website_backstage_token = forms_obj.cleaned_data['website_backstage_token']
                         website_backstage_appid = forms_obj.cleaned_data['website_backstage_appid']
-
+                        xiongZhangHaoIndex = forms_obj.cleaned_data['xiongZhangHaoIndex']
                         print('website_backstage_token, website_backstage_appid---------------> ',website_backstage_token, website_backstage_appid)
                         #  查询数据库  用户id
                         objs.update(
@@ -204,7 +205,8 @@ def user_oper(request, oper_type, o_id):
                             website_backstage_username=website_backstage_username,
                             website_backstage_password=website_backstage_password,
                             website_backstage_appid=website_backstage_appid,
-                            website_backstage_token=website_backstage_token
+                            website_backstage_token=website_backstage_token,
+                            xiongZhangHaoIndex=xiongZhangHaoIndex
                         )
                     else:
                         objs.update(
@@ -296,57 +298,6 @@ def user_oper(request, oper_type, o_id):
 
 # 定时刷新 调试用户 获取cookies和所有栏目
 
-@csrf_exempt
-def userGetCookieOper(request, oper_type):
-    response = Response.ResponseObj()
-    if oper_type == 'getTheDebugUser':
-        userLoginId = request.GET.get('userLoginId')
-        userObjs = models.xzh_userprofile.objects
-        if userLoginId:
-            objs = userObjs.filter(id=userLoginId)
-        else:
-            objs = userObjs.filter(status=1, is_debug=False)
-        for obj in objs:
-            if obj.website_backstage == 1:
-                website_backstage_url = obj.website_backstage_url.strip()
-                url = urlparse(website_backstage_url)
-                if url.hostname:
-                    domain = 'http://' + url.hostname + '/'
-                    home_path = website_backstage_url.split(domain)[1].replace('/', '')
-                else:
-                    domain = 'http://' + website_backstage_url.split('/')[0] + '/'
-                    home_path = website_backstage_url.split('/')[1]
-                print('home_path--------------->? ',domain, home_path)
-                userid = obj.website_backstage_username
-                pwd = obj.website_backstage_password
-                cookie = ''
-                if obj.cookies:
-                    cookie = eval(obj.cookies)
-                DeDeObj = DeDe(domain, home_path,  userid, pwd, cookie)
-                cookie = DeDeObj.login()
-                retData = DeDeObj.getClassInfo()
-                models.xzh_userprofile.objects.filter(id=obj.id).update(
-                    column_all=json.dumps(retData),
-                    is_debug=1,
-                    cookies=cookie
-                )
-        response.code = 200
-
-    # 点击调试
-    elif oper_type == 'deBugLoginAndGetCookie':
-        userLoginId = request.POST.get('userLoginId')
-        response = Response.ResponseObj()
-        celeryGetDebugUser.delay(userLoginId)
-        # url = 'http://127.0.0.1:8003/userGetCookieOper/getTheDebugUser?userLoginId={}'.format(userLoginId)
-        # requests.get(url)
-        response.code = 200
-        response.msg = '正在调试,请等待'
-
-    else:
-        response.code = 402
-        response.msg = '请求失败'
-
-    return JsonResponse(response.__dict__)
 
 
 

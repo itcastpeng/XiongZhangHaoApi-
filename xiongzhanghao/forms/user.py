@@ -75,6 +75,12 @@ class AddForm(forms.Form):
             'required': "熊掌号appid不能为空"
         }
     )
+    xiongZhangHaoIndex = forms.CharField(
+        required=True,
+        error_messages={
+            'required': "熊掌号主页不能为空"
+        }
+    )
 
 
     # 查询名称是否存在
@@ -205,6 +211,12 @@ class UpdateForm(forms.Form):
         required=True,
         error_messages={
             'required': "熊掌号appid不能为空"
+        }
+    )
+    xiongZhangHaoIndex = forms.CharField(
+        required=True,
+        error_messages={
+            'required': "熊掌号主页不能为空"
         }
     )
     # 判断名称是否存在
