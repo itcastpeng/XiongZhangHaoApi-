@@ -8,6 +8,7 @@ from xiongzhanghao.publicFunc.condition_com import conditionCom
 from xiongzhanghao.forms.fugai_baobiao import SelectForm, AddForm, UpdateForm, AdminAddForm, AdminUpdateForm
 
 import json
+import datetime
 
 
 # cerf  token验证 用户展示模块
@@ -62,6 +63,7 @@ def fugai_baobiao(request):
                 #  将查询出来的数据 加入列表
                 ret_data.append({
                     'id': obj.id,
+                    'user_id': obj.user_id,
                     'username': obj.user.username,
                     'keywords_num': obj.keywords_num,
                     'today_cover': obj.today_cover,

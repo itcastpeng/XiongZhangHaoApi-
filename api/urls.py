@@ -15,7 +15,7 @@ Including another URLconf
 """
 from django.conf.urls import url, include
 from api.views_dir import select_keywords_cover, generateThePage, getCookieAndColumn, articleScriptOper, \
-    theScheduler
+    theScheduler, init_fugai_baobiao
 
 urlpatterns = [
 
@@ -38,6 +38,9 @@ urlpatterns = [
 
     # 文章脚本操作
     url(r'articleScriptOper/(?P<oper_type>\w+)$', articleScriptOper.articleScriptOper), # 文章操作 审核 提交熊掌号 发布文章
+
+    # 初始化覆盖报表中的数据
+    url(r'init_fugai_baobiao$', init_fugai_baobiao.init_fugai_baobiao)
 ]
 
 

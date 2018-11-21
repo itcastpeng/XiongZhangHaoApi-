@@ -4,6 +4,7 @@ from xiongzhanghao import models
 from xiongzhanghao.publicFunc import account
 import json
 
+
 # 普通用户添加
 class AddForm(forms.Form):
     user_id = forms.IntegerField(
@@ -74,3 +75,24 @@ class SelectForm(forms.Form):
         else:
             length = int(self.data['length'])
         return length
+
+
+# 批量删除
+class BatchDeleteForm(forms.Form):
+    user_id = forms.IntegerField(
+        # required=False,
+        error_messages={
+            'required': "请选择客户"
+        }
+    )
+
+    # 查询用户是否存在
+    def clean_user_id(self):
+        user_id = self.data['user_id']
+        objs = models.xzh_userprofile.objects.filter(
+            id=user_id,
+        )
+        if not objs:
+            self.add_error('user_id', '请求异常')
+        else:
+            return user_id
