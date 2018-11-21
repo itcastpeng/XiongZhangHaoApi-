@@ -42,7 +42,7 @@ def select_keywords_cover(request):
         response.data = ret_data
     else:   # 提交查询关键词覆盖的结果
         # {'url': 'http://author.baidu.com/home/1611292686377463', 'keywords': '四川肛肠医院', 'rank': 4, 'keywords_id': 834}
-
+        print('保存查覆盖结果')
         form_obj = AddForm(request.POST)
         if form_obj.is_valid():
             keywords_id = form_obj.cleaned_data.get('keywords_id')
