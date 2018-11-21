@@ -11,6 +11,7 @@ def userGetCookieOper():
     url = 'http://xiongzhanghao.zhugeyingxiao.com:8003/api/userGetCookieOper/getTheDebugUser'
     ret = requests.get(url, params=params)
     if ret:
+        print(ret.text)
         result = ret.json().get('data')
         website_backstage_url = result.get('website_backstage_url')
         url = urlparse(website_backstage_url)
@@ -20,14 +21,13 @@ def userGetCookieOper():
         else:
             domain = 'http://' + website_backstage_url.split('/')[0] + '/'
             home_path = website_backstage_url.split('/')[1]
-        print('home_path--------------->? ', domain, home_path)
         userid = result.get('userid')
         cookie = result.get('cookie')
         pwd = result.get('pwd')
+        print('home_path--------------->? ', domain, home_path, userid, pwd, cookie)
         DeDeObj = DeDe(domain, home_path, userid, pwd, cookie)
         cookie = DeDeObj.login()
         retData = DeDeObj.getClassInfo()
-        print('===========================> ',cookie)
         result_data = {
             'cookie':str(cookie),
             'retData':retData,
