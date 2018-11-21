@@ -78,7 +78,8 @@ def init_data(request):
                 'website_backstage_url':obj.website_backstage_url,
                 'is_debug':is_debug,
                 'website_backstage_token':obj.website_backstage_token,
-                'website_backstage_appid':obj.website_backstage_appid
+                'website_backstage_appid':obj.website_backstage_appid,
+                'xiongZhangHaoIndex': obj.xiongZhangHaoIndex
 
             })
         #  查询成功 返回200 状态码
