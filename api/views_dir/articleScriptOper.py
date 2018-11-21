@@ -20,10 +20,12 @@ def articleScriptOper(request, oper_type):
     if oper_type == 'sendArticle':
         now_date = datetime.datetime.now()
         q = Q()
-        q.add(Q(send_time__lte=now_date) | Q(send_time__is_null=True), Q.AND)
+        q.add(Q(send_time__lte=now_date) | Q(send_time__isnull=True), Q.AND)
         objs = models.xzh_article.objects.select_related('belongToUser').filter(q).filter(
             article_status=1,
+            belongToUser__is_debug=1
         ).order_by('create_date')
+        print('objs========================> ',objs)
         if objs:
             if objs[0].title and objs[0].column_id and objs[0].summary and objs[0].content:
                 result_data = {
