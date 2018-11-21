@@ -36,6 +36,7 @@ def select_keywords_cover(request):
             obj.get_date = datetime.datetime.now()
             obj.save()
 
+        response.code = 200
         response.data = {
             'ret_data': ret_data,
         }
