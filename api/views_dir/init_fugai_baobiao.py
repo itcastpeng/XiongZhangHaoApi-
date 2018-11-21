@@ -36,10 +36,10 @@ def init_fugai_baobiao(request):
             if xzh_keywords_objs.filter(q).count() == 0:
                 data['status'] = 2  # 查询完成
 
-            xzh_fugai_baobiao_detail_objs = models.xzh_fugai_baobiao_detail.objects.filter(
-                xzh_fugai_baobiao__user_id=user_id)
-            data['today_cover'] = xzh_fugai_baobiao_detail_objs.filter(create_date=now_date).count()  # 今日覆盖
-            data['total_cover'] = xzh_fugai_baobiao_detail_objs.count()  # 总覆盖
+            xzh_keywords_detail_objs = models.xzh_keywords_detail.objects.filter(
+                xzh_keywords__user_id=user_id)
+            data['today_cover'] = xzh_keywords_detail_objs.filter(create_date=now_date).count()  # 今日覆盖
+            data['total_cover'] = xzh_keywords_detail_objs.count()  # 总覆盖
 
         data['publish_num'] = models.xzh_article.objects.filter(user_id=user_id).count()  # 总发布篇数
 
