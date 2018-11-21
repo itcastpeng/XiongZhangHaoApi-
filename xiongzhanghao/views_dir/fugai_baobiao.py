@@ -62,6 +62,7 @@ def fugai_baobiao(request):
                 #  将查询出来的数据 加入列表
                 ret_data.append({
                     'id': obj.id,
+                    'user_id': obj.user_id,
                     'username': obj.user.username,
                     'keywords_num': obj.keywords_num,
                     'today_cover': obj.today_cover,
