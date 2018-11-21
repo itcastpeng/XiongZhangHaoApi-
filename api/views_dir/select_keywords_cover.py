@@ -37,9 +37,7 @@ def select_keywords_cover(request):
             obj.save()
 
         response.code = 200
-        response.data = {
-            'ret_data': ret_data,
-        }
+        response.data = ret_data
     return JsonResponse(response.__dict__)
 
 #
