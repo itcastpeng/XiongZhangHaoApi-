@@ -29,7 +29,10 @@ def theScheduler(request):
             print('获取栏目')
 
     if not resule_data['flag']:
-        sendArticleObjs = articleObjs.select_related('belongToUser').filter(article_status=1,belongToUser__is_debug=1)
+        now_date = datetime.datetime.now()
+        q = Q()
+        q.add(Q(send_time__lte=now_date) | Q(send_time__isnull=True), Q.AND)
+        sendArticleObjs = articleObjs.select_related('belongToUser').filter(article_status=1,belongToUser__is_debug=1).filter(q)
         if sendArticleObjs:
             resule_data['flag'] = True
             resule_data['task_id'] = 2
