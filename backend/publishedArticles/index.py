@@ -5,10 +5,12 @@ from api.public.token import start
 
 
 def publishedArticles():
+    print('=================================')
     params = start()
     # url = 'http://127.0.0.1:8003/api/script_oper/articleScriptOper/sendArticle'
     url = 'http://xiongzhanghao.zhugeyingxiao.com:8003/api/script_oper/articleScriptOper/sendArticle'
     ret = requests.get(url, params=params)
+    print('=ret.text=========> ',ret.text)
     resultData = json.loads(ret.text).get('data')
     if resultData:
         o_id =  resultData.get('o_id')
