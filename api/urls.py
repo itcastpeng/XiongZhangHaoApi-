@@ -14,7 +14,8 @@ Including another URLconf
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
 from django.conf.urls import url, include
-from api.views_dir import select_keywords_cover
+from api.views_dir import select_keywords_cover, generateThePage, getCookieAndColumn, articleScriptOper, \
+    theScheduler
 
 urlpatterns = [
 
@@ -22,9 +23,21 @@ urlpatterns = [
     # url(r'^permissions/(?P<oper_type>\w+)/(?P<o_id>\d+)$', permissions.permissions_oper),
     # url(r'^permissions$', permissions.permissions),
 
-    # 查关键词覆盖
-    url(r'select_keywords_cover', select_keywords_cover.select_keywords_cover),
+    # 调度器 分配任务
+    url(r'theScheduler$', theScheduler.theScheduler),
 
+    # 查关键词覆盖
+    url(r'select_keywords_cover$', select_keywords_cover.select_keywords_cover),
+
+    # 二级域名
+    url(r'SearchSecondary/(?P<article_id>\d+)$', generateThePage.SearchSecondaryDomainName),  # 查询二级域名
+    url(r'specialUserGenerateThePage$', generateThePage.specialUserGenerateThePage),  # 生成二级域名
+
+    # 获取栏目及cookie
+    url(r'userGetCookieOper/(?P<oper_type>\w+)$', getCookieAndColumn.userGetCookieOper),
+
+    # 文章脚本操作
+    url(r'articleScriptOper/(?P<oper_type>\w+)$', articleScriptOper.articleScriptOper), # 文章操作 审核 提交熊掌号 发布文章
 ]
 
 

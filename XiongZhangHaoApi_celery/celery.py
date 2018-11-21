@@ -17,18 +17,18 @@ CELERYD_MAX_TASKS_PER_CHILD = 100    # 每个worker最多执行万100个任务�
 app.conf.beat_schedule = {
 
 # 1分钟一次
- 'celeryPublishedArticles':{
-        'task':'XiongZhangHaoApi_celery.tasks.celeryPublishedArticles',
-        # 'schedule':30                                   # 秒
-        'schedule': crontab("*/1", '*', '*', '*', '*'),  # 此处跟 linux 中 crontab 的格式一样
+#  'celeryPublishedArticles':{
+#         'task':'XiongZhangHaoApi_celery.tasks.celeryPublishedArticles',
+#         # 'schedule':30                                   # 秒
+#         'schedule': crontab("*/1", '*', '*', '*', '*'),  # 此处跟 linux 中 crontab 的格式一样
         # 'schedule': crontab("5", '9, 11', '*', '*', '*'),  # 9点一次  11点一次
         # 'schedule': crontab(hour=8, minute=30),
-    },
+    # },
 
-'celerySubmitXiongZhangHao':{
-        'task': 'XiongZhangHaoApi_celery.tasks.celerySubmitXiongZhangHao',
-        'schedule': crontab("*/10", '*', '*', '*', '*'),  # 此处跟 linux 中 crontab 的格式一样
-    },
+# 'celerySubmitXiongZhangHao':{
+#         'task': 'XiongZhangHaoApi_celery.tasks.celerySubmitXiongZhangHao',
+#         'schedule': crontab("*/10", '*', '*', '*', '*'),  # 此处跟 linux 中 crontab 的格式一样
+#     },
 
 
 

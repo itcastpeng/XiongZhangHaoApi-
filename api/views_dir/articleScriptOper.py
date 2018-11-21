@@ -1,0 +1,141 @@
+from xiongzhanghao import models
+from xiongzhanghao.publicFunc import Response
+from xiongzhanghao.publicFunc import account
+from django.http import JsonResponse
+from django.views.decorators.csrf import csrf_exempt, csrf_protect
+from xiongzhanghao.publicFunc.condition_com import conditionCom
+from xiongzhanghao.forms.article import AddForm, UpdateForm, SelectForm
+import json, datetime, requests, os
+from urllib.parse import urlparse
+from backend.articlePublish import DeDe
+from urllib import parse
+
+
+# 更改状态和备注
+def models_article(class_data, user_id):
+    code = int(class_data.get('code'))
+    huilian = class_data.get('huilian')
+    aid = class_data.get('aid')
+    objs = models.xzh_article.objects.filter(id=user_id)
+    if code == 200:                 # 发布成功
+        article_status = 2
+        objs.update(
+            article_status=article_status,
+            back_url=huilian,
+            aid=aid,
+            note_content='无'
+        )
+
+    elif code == 300:               # 标题重复
+        objs.update(
+            article_status=3,
+            note_content='标题重复'
+        )
+    elif code == 302:               # 登录失败
+        objs.update(
+            article_status=3,
+            note_content='登录失败'
+        )
+    elif code == 305:  # 登录失败
+        objs.update(
+            article_status=3,
+            note_content='模板文件不存在, 请选择子级菜单'
+        )
+    else:                           # 发布失败
+        objs.update(
+            article_status=3,
+            note_content='发布失败'
+        )
+
+
+
+
+
+
+@csrf_exempt
+def articleScriptOper(request, oper_type):
+    response = Response.ResponseObj()
+    # 发送文章
+    if oper_type == 'sendArticle':
+        now_date = datetime.datetime.now()
+        objs = models.xzh_article.objects.select_related('belongToUser').filter(
+            article_status=1,
+            belongToUser__is_debug=1,
+            send_time__lte=now_date
+        ).order_by('create_date')
+        if objs:
+            print('-0000000000000---------------------> ', objs[0].id)
+
+            if objs[0].title and objs[0].column_id and objs[0].summary and objs[0].content:
+
+                result_data = {
+                    'website_backstage_url': objs[0].belongToUser.website_backstage_url.strip(),
+                    'website_backstage_username': objs[0].belongToUser.website_backstage_username,
+                    'website_backstage_password': objs[0].belongToUser.website_backstage_password,
+                    'cookies':objs[0].belongToUser.cookies,
+                    'title': objs[0].title,
+                    'summary': objs[0].summary,
+                    'content': objs[0].content,
+                    'typeid': eval(objs[0].column_id).get('Id'),
+                }
+                print('result_data,---------------> ',result_data)
+                response.data = result_data
+        response.code = 200
+
+    # 判断文章是否审核
+    elif oper_type == 'timedRefreshAudit':
+        objs = models.xzh_article.objects.filter(article_status=2, is_audit=0, aid__isnull=False)
+        for obj in objs:
+            print('定时刷新文章是否审核----------------->', obj.id)
+            website_backstage_url = obj.belongToUser.website_backstage_url.strip()
+            url = urlparse(website_backstage_url)
+            domain = 'http://' + url.hostname + '/'
+            home_path = website_backstage_url.split(domain)[1].replace('/', '')
+            userid = obj.belongToUser.website_backstage_username
+            pwd = obj.belongToUser.website_backstage_password
+            indexUrl = website_backstage_url + 'content_list.php?channelid=1'
+            cookie = eval(obj.belongToUser.cookies)
+            DeDeObj = DeDe(domain, home_path, userid, pwd, cookie)
+            cookies = DeDeObj.login()
+            id, status = DeDeObj.getArticleAudit(indexUrl, obj.id, obj.aid)
+            if status:
+                article_status = 4
+                if int(objs[0].belongToUser.userType) == 2:  # 判断是否为特殊用户
+                    article_status = 6
+                models.xzh_article.objects.filter(id=id).update(is_audit=status, article_status=article_status)
+        response.code = 200
+
+    # 提交文章到熊掌号
+    elif oper_type == 'submitXiongZhangHao':
+        objs = models.xzh_article.objects.filter(is_audit=True, article_status=4)
+        note_content = ''
+        for obj in objs:
+            appid = obj.belongToUser.website_backstage_appid
+            token = obj.belongToUser.website_backstage_token
+            print('appid, token------------------> ',appid, token)
+            if obj.back_url:
+                if token and appid:
+                    submitUrl = 'http://data.zz.baidu.com/urls?appid={appid}&token={token}&type=realtime'.format(
+                        appid=appid, token=token)
+                    ret = requests.post(submitUrl, data=obj.back_url)
+                    print('ret.text------------------->', ret.text)
+                    if json.loads(ret.text).get('error'):
+                        note_content = json.loads(ret.text).get('message')
+                    elif json.loads(ret.text).get('not_same_site'):
+                        note_content = '不是本站url或未处理的url'
+                    elif json.loads(ret.text).get('not_valid'):
+                        note_content = '不合法的url'
+                    else:
+                        obj.article_status = 5
+                else:
+                    note_content = 'appid 或 token 有问题, 建议重新获取token'
+                obj.note_content = note_content
+                obj.save()
+                continue
+        response.code = 200
+
+    else:
+        response.code = 402
+        response.msg = '请求失败'
+
+    return JsonResponse(response.__dict__)
