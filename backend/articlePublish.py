@@ -20,16 +20,16 @@ class DeDe(object):
             self.is_login()
             return self.cookies
         login_url = self.home_url + '/login.php'
-        # print('login_url=====================> ',login_url)
+        print('login_url=====================> ',login_url)
         url = self.home_url + '/login.php?gotopage=%2Fdrqaz%2F'
 
         ret = self.requests_obj.get(url)
-
+        # print(ret.text)
         soup = BeautifulSoup(ret.text, 'lxml')
         gotopage = soup.find('input', attrs={'name': 'gotopage'}).attrs.get('value')
         dopost = soup.find('input', attrs={'name': 'dopost'}).attrs.get('value')
         adminstyle = soup.find('input', attrs={'name': 'adminstyle'}).attrs.get('value')
-
+        print(gotopage, dopost, adminstyle)
         soup = BeautifulSoup(ret.text, 'lxml')
         yzm = ''
         while True:
@@ -47,11 +47,9 @@ class DeDe(object):
                 yzm = obj.get_yzm('yzm.jpg')
                 print('yzm -->', yzm)
                 # yzm = input('输入验证码 >>>')
-
                 break
-
             except AttributeError:
-                pass
+                break
 
         post_data = {
             'gotopage': gotopage,

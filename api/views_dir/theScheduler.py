@@ -22,7 +22,7 @@ def theScheduler(request):
 
 
     if not resule_data['flag']:
-        getCookieObjs = userObjs.filter(status=1, is_debug=False)  # 获取栏目 及 cookie
+        getCookieObjs = userObjs.filter(is_debug=False, role_id=61)  # 获取栏目 及 cookie
         if getCookieObjs:
             resule_data['flag'] = True
             resule_data['task_id'] = 1
