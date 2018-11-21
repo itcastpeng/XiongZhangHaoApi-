@@ -104,7 +104,7 @@ class xzh_keywords(models.Model):
 
 # 关键词覆盖表
 class xzh_keywords_detail(models.Model):
-    xzh_keywords = models.ForeignKey(xzh_keywords, verbose_name="关键词")
+    xzh_keywords = models.ForeignKey('xzh_keywords', verbose_name="关键词")
     url = models.CharField(verbose_name="匹配到的链接", max_length=256)
     rank = models.SmallIntegerField(verbose_name="排名")
     create_date = models.DateField(verbose_name="创建时间", auto_now_add=True)
