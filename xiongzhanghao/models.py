@@ -102,6 +102,14 @@ class xzh_keywords(models.Model):
     select_date = models.DateTimeField(verbose_name="查询时间", null=True, blank=True)
 
 
+# 关键词覆盖表
+class xzh_keywords_detail(models.Model):
+    xzh_keywords = models.ForeignKey(xzh_keywords, verbose_name="关键词")
+    url = models.CharField(verbose_name="匹配到的链接", max_length=256)
+    rank = models.SmallIntegerField(verbose_name="排名")
+    create_date = models.DateField(verbose_name="创建时间", auto_now_add=True)
+
+
 # 覆盖报表
 class xzh_fugai_baobiao(models.Model):
     user = models.ForeignKey('xzh_userprofile', verbose_name="所属用户")

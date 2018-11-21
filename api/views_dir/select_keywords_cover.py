@@ -9,6 +9,8 @@ import datetime
 
 from django.db.models import Q
 
+from api.forms.select_keywords_cover import AddForm
+
 
 # cerf  token验证
 # 公司查询
@@ -16,7 +18,7 @@ from django.db.models import Q
 @account.is_token(models.xzh_userprofile)
 def select_keywords_cover(request):
     response = Response.ResponseObj()
-    if request.method == "GET":
+    if request.method == "GET":     # 获取查覆盖的关键词
         dtime = datetime.datetime.now() - datetime.timedelta(minutes=10)
         now_date = datetime.datetime.now().strftime("%Y-%m-%d")
 
@@ -38,6 +40,19 @@ def select_keywords_cover(request):
 
         response.code = 200
         response.data = ret_data
+    else:   # 提交查询关键词覆盖的结果
+        # {'url': 'http://author.baidu.com/home/1611292686377463', 'keywords': '四川肛肠医院', 'rank': 4, 'keywords_id': 834}
+
+        form_obj = AddForm(request.POST)
+        if form_obj.is_valid():
+            keywords_id = form_obj.cleaned_data.get('keywords_id')
+            models.xzh_keywords.objects.filter(id=keywords_id).update(select_date=datetime.datetime.now())
+
+            models.xzh_keywords_detail.objects.create(
+                xzh_keywords_id=form_obj.cleaned_data.get('keywords_id'),
+                url=form_obj.cleaned_data.get('url'),
+                rank=form_obj.cleaned_data.get('rank'),
+            )
     return JsonResponse(response.__dict__)
 
 #
