@@ -59,7 +59,7 @@ def userGetCookieOper(request, oper_type):
     # 进行获取cookie 和 栏目
     if oper_type == 'getTheDebugUser':
         print('=======================进行获取cookie 和 栏目============================')
-        objs = models.xzh_userprofile.objects.filter(status=1, is_debug=False, role_id=61).order_by('create_date')
+        objs = models.xzh_userprofile.objects.filter(is_debug=False, role_id=61).order_by('create_date')
         if objs:
             obj = objs[0]
             if obj.website_backstage == 1:

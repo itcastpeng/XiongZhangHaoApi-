@@ -49,39 +49,35 @@ def articleScriptOper(request, oper_type):
         if resultData:
             resultData = eval(resultData)
             code = int(resultData.get('code'))
-            huilian = resultData.get('huilian')
-            aid = resultData.get('aid')
             objs = models.xzh_article.objects.filter(id=o_id)
+
+            article_status = 3
+            note_content = '无'
+            huilian = ''
+            aid = ''
             if code == 200:  # 发布成功
                 article_status = 2
-                objs.update(
-                    article_status=article_status,
-                    back_url=huilian,
-                    aid=aid,
-                    note_content='无'
-                )
+                huilian = resultData.get('huilian')
+                aid = resultData.get('aid')
 
             elif code == 300:  # 标题重复
-                objs.update(
-                    article_status=3,
-                    note_content='标题重复'
-                )
-            elif code == 302:  # 登录失败
-                objs.update(
-                    article_status=3,
-                    note_content='登录失败'
-                )
-            elif code == 305:  # 登录失败
-                objs.update(
-                    article_status=3,
-                    note_content='模板文件不存在, 请选择子级菜单'
-                )
-            else:  # 发布失败
-                objs.update(
-                    article_status=3,
-                    note_content='发布失败'
-                )
+                note_content='标题重复'
 
+            elif code == 302:  # 登录失败
+                note_content='登录失败'
+
+            elif code == 305:  # 登录失败
+                note_content='模板文件不存在, 请选择子级菜单'
+
+            else:  # 发布失败
+                note_content='发布失败'
+
+            objs.update(
+                article_status=article_status,
+                back_url=huilian,
+                aid=aid,
+                note_content=note_content
+            )
 
     # 判断文章是否审核
     elif oper_type == 'refreshAudit':
