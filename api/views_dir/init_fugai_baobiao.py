@@ -1,17 +1,12 @@
 
-
-from django.shortcuts import render, HttpResponse
 from xiongzhanghao import models
 from xiongzhanghao.publicFunc import Response
 from xiongzhanghao.publicFunc import account
 from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt, csrf_protect
-from xiongzhanghao.publicFunc.condition_com import conditionCom
-from xiongzhanghao.forms.keywords import AddForm, SelectForm, BatchDeleteForm
 from django.db.models import Q
-from backend.articlePublish import DeDe
-from urllib.parse import urlparse
-import json, requests, datetime
+
+import datetime
 
 
 # cerf  token验证 用户展示模块
@@ -37,8 +32,8 @@ def init_fugai_baobiao(request):
 
         if data['keywords_num'] > 0:
             now_date = datetime.datetime.now().strftime("%Y-%m-%d")
-
-            if xzh_keywords_objs.filter(select_date__lt=now_date).count() == 0:
+            q = Q(select_date__lt=now_date) | Q(select_date__isnull=True)
+            if xzh_keywords_objs.filter(q).count() == 0:
                 data['status'] = 2  # 查询完成
 
             xzh_fugai_baobiao_detail_objs = models.xzh_fugai_baobiao_detail.objects.filter(
