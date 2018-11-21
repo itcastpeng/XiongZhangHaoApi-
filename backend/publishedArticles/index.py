@@ -63,7 +63,7 @@ def publishedArticles():
         }
         print(result_data)
         # url = 'http://127.0.0.1:8003/api/script_oper/articleScriptOper/models_article'
-        url = 'http://xiongzhanghao.zhugeyingxiao.com:8003/api/script_oper/articleScriptOper/models_article?user_id=44&timestamp=1542788198850&rand_str=86b24054d91240d9559e369296af06cd'
+        url = 'http://xiongzhanghao.zhugeyingxiao.com:8003/api/script_oper/articleScriptOper/sendArticleModels?user_id=44&timestamp=1542788198850&rand_str=86b24054d91240d9559e369296af06cd'
         requests.post(url, data=result_data)
 
 
