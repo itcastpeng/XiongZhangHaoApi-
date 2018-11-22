@@ -18,6 +18,7 @@ def articleScriptOper(request, oper_type):
     response = Response.ResponseObj()
     # 发送文章
     if oper_type == 'sendArticle':
+        print('==============================sendArticle==sendArticle')
         now_date = datetime.datetime.now()
         q = Q()
         q.add(Q(send_time__lte=now_date) | Q(send_time__isnull=True), Q.AND)
@@ -39,7 +40,6 @@ def articleScriptOper(request, oper_type):
                     'typeid': eval(objs[0].column_id).get('Id'),
                     'o_id':objs[0].id
                 }
-                print('result_data,---------------> ',result_data)
                 response.data = result_data
         response.code = 200
 
@@ -48,11 +48,14 @@ def articleScriptOper(request, oper_type):
     elif oper_type == 'sendArticleModels':
         resultData = request.POST.get('resultData')
         o_id = request.POST.get('o_id')
+        print('====================', resultData)
+        print(request.POST)
+        print(request.GET)
         if resultData:
             resultData = eval(resultData)
             code = int(resultData.get('code'))
             objs = models.xzh_article.objects.filter(id=o_id)
-
+            print('code==========> ',code)
             article_status = 3
             note_content = '无'
             huilian = ''
@@ -116,6 +119,7 @@ def articleScriptOper(request, oper_type):
 
     # 提交文章到熊掌号
     elif oper_type == 'submitXiongZhangHao':
+        print('===')
         objs = models.xzh_article.objects.filter(is_audit=True, article_status=4)
         note_content = ''
         for obj in objs:
@@ -131,8 +135,10 @@ def articleScriptOper(request, oper_type):
                     if json.loads(ret.text).get('error'):
                         note_content = json.loads(ret.text).get('message')
                     elif json.loads(ret.text).get('not_same_site'):
+                        print('======================================不是本站url或未处理的url============================')
                         note_content = '不是本站url或未处理的url'
                     elif json.loads(ret.text).get('not_valid'):
+                        print('==---------------------------不合法的url=-----------------------------')
                         note_content = '不合法的url'
                     else:
                         obj.article_status = 5

@@ -1,6 +1,6 @@
 from __future__ import absolute_import, unicode_literals
 from .celery import app
-import requests, datetime, os, sys
+import requests
 
 import time
 from xiongzhanghao.publicFunc.account import str_encrypt
@@ -25,7 +25,8 @@ def specialUserGenerateThePage():
 # 提交到熊掌号
 @app.task
 def celerySubmitXiongZhangHao():
-    url = 'http://xiongzhanghao.zhugeyingxiao.com:8003/api/script_oper/articleScriptOper/submitXiongZhangHao'
+    print('===========================提交到熊掌号')
+    url = 'http://xiongzhanghao.zhugeyingxiao.com:8003/api/articleScriptOper/submitXiongZhangHao'
     requests.get(url, params=params)
 
 
@@ -33,4 +34,10 @@ def celerySubmitXiongZhangHao():
 @app.task
 def init_fugai_baobiao():
     url = 'http://xiongzhanghao.zhugeyingxiao.com:8003/api/init_fugai_baobiao'
+    requests.get(url, params=params)
+
+# 更新覆盖报表详情
+@app.task
+def update_fugai_baobiao_detail():
+    url = 'http://xiongzhanghao.zhugeyingxiao.com:8003/api/statisticalReports'
     requests.get(url, params=params)

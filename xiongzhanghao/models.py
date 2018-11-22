@@ -91,7 +91,7 @@ class xzh_article(models.Model):
     aid = models.IntegerField(verbose_name='文章发布id', null=True, blank=True)
     is_audit = models.BooleanField(verbose_name='是否审核', default=False)
     DomainNameText = models.TextField(verbose_name='二级域名内容, 针对特殊用户', null=True, blank=True)
-
+    is_delete = models.BooleanField(verbose_name='客户页面是否删除', default=False)
 
 # 关键词表
 class xzh_keywords(models.Model):
@@ -104,7 +104,7 @@ class xzh_keywords(models.Model):
 
 # 关键词覆盖表
 class xzh_keywords_detail(models.Model):
-    xzh_keywords = models.ForeignKey(xzh_keywords, verbose_name="关键词")
+    xzh_keywords = models.ForeignKey('xzh_keywords', verbose_name="关键词")
     url = models.CharField(verbose_name="匹配到的链接", max_length=256)
     rank = models.SmallIntegerField(verbose_name="排名")
     create_date = models.DateField(verbose_name="创建时间", auto_now_add=True)

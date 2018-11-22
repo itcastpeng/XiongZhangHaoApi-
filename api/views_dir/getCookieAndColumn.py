@@ -86,7 +86,7 @@ def userGetCookieOper(request, oper_type):
         cookie = request.POST.get('cookie')
         print('cookie------cookie-------->',cookie)
         models.xzh_userprofile.objects.filter(id=oid).update(
-            column_all=json.dumps(retData),
+            column_all=retData,
             is_debug=1,
             cookies=cookie
         )

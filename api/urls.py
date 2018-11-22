@@ -15,7 +15,7 @@ Including another URLconf
 """
 from django.conf.urls import url, include
 from api.views_dir import select_keywords_cover, generateThePage, getCookieAndColumn, articleScriptOper, \
-    theScheduler, init_fugai_baobiao
+    theScheduler, init_fugai_baobiao, init_fugai_detail, selectDeleteQuery
 
 urlpatterns = [
 
@@ -40,7 +40,13 @@ urlpatterns = [
     url(r'articleScriptOper/(?P<oper_type>\w+)$', articleScriptOper.articleScriptOper), # 文章操作 审核 提交熊掌号 发布文章
 
     # 初始化覆盖报表中的数据
-    url(r'init_fugai_baobiao$', init_fugai_baobiao.init_fugai_baobiao)
+    url(r'init_fugai_baobiao$', init_fugai_baobiao.init_fugai_baobiao),
+
+    # 更新覆盖报表详情数据
+    url(r'statisticalReports$', init_fugai_detail.statisticalReports),
+
+    # 查询客户网站该文章是否删除 做出提示
+    url(r'deleteQuery', selectDeleteQuery.deleteQuery),
 
 ]
 

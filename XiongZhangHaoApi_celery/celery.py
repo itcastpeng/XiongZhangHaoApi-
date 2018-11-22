@@ -3,10 +3,10 @@ from celery import Celery
 from celery.schedules import crontab
 
 app = Celery(
-    broker='redis://redis_host:6379/4',
-    # broker='redis://127.0.0.1:6379/0',
-    backend='redis://redis_host:6379/4',
-    # backend='redis://127.0.0.1:6379/0',
+    # broker='redis://redis_host:6379/4',
+    broker='redis://127.0.0.1:6379/0',
+    # backend='redis://redis_host:6379/4',
+    backend='redis://127.0.0.1:6379/0',
     include=['XiongZhangHaoApi_celery.tasks'],
 
 )
@@ -18,7 +18,7 @@ app.conf.beat_schedule = {
     # 1分钟一次
     # 生成二级域名
     'specialUserGenerateThePage':{
-        'task':'XiongZhangHaoApi_celery.tasks.specialUserGenerateThePage?user_id=44&timestamp=123&rand_str=a66b1a82b4ba3ca9d444322c8524e844',
+        'task':'XiongZhangHaoApi_celery.tasks.specialUserGenerateThePage',
         # 'schedule':30                                   # 秒
         'schedule': crontab("*/1", '*', '*', '*', '*'),  # 此处跟 linux 中 crontab 的格式一样
         # 'schedule': crontab("5", '9, 11', '*', '*', '*'),  # 9点一次  11点一次
@@ -34,10 +34,15 @@ app.conf.beat_schedule = {
 
     # 提交熊掌号
     'celerySubmitXiongZhangHao':{
-        'task': 'XiongZhangHaoApi_celery.tasks.celerySubmitXiongZhangHao?user_id=44&timestamp=123&rand_str=a66b1a82b4ba3ca9d444322c8524e844',
+        'task': 'XiongZhangHaoApi_celery.tasks.celerySubmitXiongZhangHao',
         'schedule': crontab("*/10", '*', '*', '*', '*'),  # 此处跟 linux 中 crontab 的格式一样
-    }
+    },
 
+    # 更新覆盖报表详情数据
+    'update_fugai_baobiao_detail':{
+        'task': 'XiongZhangHaoApi_celery.tasks.update_fugai_baobiao_detail',
+        'schedule': crontab("*/10", '*', '*', '*', '*'),  # 此处跟 linux 中 crontab 的格式一样
+    },
 }
 app.conf.update(
     result_expires=3600,

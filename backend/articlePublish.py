@@ -20,7 +20,7 @@ class DeDe(object):
             self.is_login()
             return self.cookies
         login_url = self.home_url + '/login.php'
-        print('login_url=====================> ',login_url)
+        # print('login_url=====================> ',login_url)
         url = self.home_url + '/login.php?gotopage=%2Fdrqaz%2F'
 
         ret = self.requests_obj.get(url)
@@ -29,7 +29,7 @@ class DeDe(object):
         gotopage = soup.find('input', attrs={'name': 'gotopage'}).attrs.get('value')
         dopost = soup.find('input', attrs={'name': 'dopost'}).attrs.get('value')
         adminstyle = soup.find('input', attrs={'name': 'adminstyle'}).attrs.get('value')
-        print(gotopage, dopost, adminstyle)
+        # print(gotopage, dopost, adminstyle)
         soup = BeautifulSoup(ret.text, 'lxml')
         yzm = ''
         while True:
@@ -70,7 +70,7 @@ class DeDe(object):
     # 判断是否登录
     def is_login(self):
         url = self.home_url + '/index.php'
-        print('判断是否登录========》 ', url, self.cookies)
+        # print('判断是否登录========》 ', url, self.cookies)
         ret = self.requests_obj.get(url, cookies=self.cookies)
         # print(ret.text)
         if "登录" in ret.text:
@@ -114,7 +114,7 @@ class DeDe(object):
         if self.article_test_title(data.get('title')):
             # print('增加文章')
             url = self.home_url + '/article_add.php'
-            print('发布url------------------> ', url)
+            # print('发布url------------------> ', url)
             ret = self.requests_obj.post(url, data=data, cookies=self.cookies)
             # print('========> ', ret.text.strip())
             if '无法解析文档' not in ret.text.strip():
@@ -124,13 +124,15 @@ class DeDe(object):
                     aid = aid_href.split('?')[1].split('&')[0].split('aid=')[-1]
                     huilian_href = soup.find('a', text='查看文章').get('href')    # 文章id
                     huilian = self.domain + huilian_href
+                    # print('huilian================> ',huilian)
                     ret = self.requests_obj.get(huilian, cookies=self.cookies)
                     encode_ret = ret.apparent_encoding
-                    print('encode_ret===========', encode_ret)
+                    # print('encode_ret===========', encode_ret)
                     if encode_ret == 'GB2312':
                         ret.encoding = 'gbk'
                     else:
                         ret.encoding = 'utf-8'
+                    print('title==============> ',title)
                     if title in ret.text:
                         print('huilian=============> ', huilian)
                         # 更新文档url
@@ -165,6 +167,8 @@ class DeDe(object):
                             'aid':aid,
                             'code':200
                             }
+                    else:
+                        print('=============================')
                 else:
                     print('’发布失败=========================发布失败===================发布失败 500')
                     return {
