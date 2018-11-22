@@ -15,7 +15,7 @@ Including another URLconf
 """
 from django.conf.urls import url, include
 from api.views_dir import select_keywords_cover, generateThePage, getCookieAndColumn, articleScriptOper, \
-    theScheduler, init_fugai_baobiao, init_fugai_detail
+    theScheduler, init_fugai_baobiao, init_fugai_detail, selectDeleteQuery
 
 urlpatterns = [
 
@@ -46,7 +46,8 @@ urlpatterns = [
     url(r'statisticalReports$', init_fugai_detail.statisticalReports),
 
     # 查询客户网站该文章是否删除 做出提示
-    
+    url(r'deleteQuery', selectDeleteQuery.deleteQuery),
+
 ]
 
 
