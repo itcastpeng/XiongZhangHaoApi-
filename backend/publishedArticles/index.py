@@ -3,9 +3,8 @@ import json, requests, datetime
 from urllib.parse import urlparse
 from api.public.token import start
 
-
+# 发布文章
 def publishedArticles():
-    print('=================================')
     params = start()
     # url = 'http://127.0.0.1:8003/api/articleScriptOper/sendArticle?user_id=17&timestamp=123&rand_str=4297f44b13955235245b2497399d7a93'
     # ret = requests.get(url)
@@ -34,7 +33,7 @@ def publishedArticles():
         title = resultData.get('title')
         summary = resultData.get('summary')
         content =  resultData.get('content')
-        if 'http://m.chyy120.com/netadmin' in website_backstage_url:
+        if 'http://m.chyy120.com/netadmin' or 'http://wap.tysgmr.com/dede' in website_backstage_url:  # 判断utf8 还是 gbk
             title =  resultData.get('title').encode('gbk')
             summary =  resultData.get('summary').encode('gbk')
             content =  resultData.get('content').encode('gbk')

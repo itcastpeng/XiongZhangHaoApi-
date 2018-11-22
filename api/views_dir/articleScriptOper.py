@@ -56,10 +56,12 @@ def articleScriptOper(request, oper_type):
             code = int(resultData.get('code'))
             objs = models.xzh_article.objects.filter(id=o_id)
             print('code==========> ',code)
+            print("=============resultData.get('huilian')=======> ",resultData.get('huilian'))
+            print("=============resultData.get('aid')=======> ",resultData.get('aid'))
             article_status = 3
-            note_content = '无'
+            note_content = ''
             huilian = ''
-            aid = ''
+            aid = 0
             if code == 200:  # 发布成功
                 article_status = 2
                 huilian = resultData.get('huilian')
@@ -68,16 +70,15 @@ def articleScriptOper(request, oper_type):
             elif code == 300:  # 标题重复
                 note_content='标题重复'
 
-            elif code == 302:  # 登录失败
-                note_content='登录失败'
-
             elif code == 305:  # 登录失败
                 note_content='模板文件不存在, 请选择子级菜单'
+
             elif code == 301:
                 note_content = '客户网站标题未查到, 请验证'
-            else:  # 发布失败
-                note_content='发布失败'
 
+            else:  # 发布失败
+                note_content = '发布失败'
+            print('note_content============> ', note_content)
             objs.update(
                 article_status=article_status,
                 back_url=huilian,

@@ -31,6 +31,7 @@ def deleteQuery(request):
         DeDeObj = DeDe(domain, home_path, userid, pwd, cookie)
         cookie = DeDeObj.login()
 
+        DeDeObj.deleteQuery(website_backstage_url)
 
     return JsonResponse(response.__dict__)
 

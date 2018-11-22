@@ -13,7 +13,7 @@ params = {
     'rand_str': str_encrypt(timestamp + token),
     'timestamp': timestamp,
 }
-
+print('params----------------> ',params)
 # 生成二级域名
 @app.task
 def specialUserGenerateThePage():
