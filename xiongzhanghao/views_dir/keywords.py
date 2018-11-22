@@ -96,7 +96,8 @@ def keywords_oper(request, oper_type, o_id):
                 user_id = forms_obj.cleaned_data.get('user_id')
                 keywords_list = forms_obj.cleaned_data.get('keywords')
                 for keywords in keywords_list:
-                    if not models.xzh_keywords.objects.filter(user_id=user_id, keywords=keywords):
+                    keywords = keywords.strip()
+                    if keywords and not models.xzh_keywords.objects.filter(user_id=user_id, keywords=keywords):
                         query_list.append(models.xzh_keywords(
                             user_id=user_id,
                             keywords=keywords

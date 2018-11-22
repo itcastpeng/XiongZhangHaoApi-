@@ -39,5 +39,6 @@ def init_fugai_baobiao():
 # 更新覆盖报表详情
 @app.task
 def update_fugai_baobiao_detail():
+    print('======================更新覆盖报表详情=====================')
     url = 'http://xiongzhanghao.zhugeyingxiao.com:8003/api/statisticalReports'
     requests.get(url, params=params)

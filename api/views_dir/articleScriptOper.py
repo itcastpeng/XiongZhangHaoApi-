@@ -111,7 +111,8 @@ def articleScriptOper(request, oper_type):
         print('status, o_id============> ', status, o_id, userType)
         article_status = 2
         if userType and o_id:
-            if status == True:
+            if status == 'True':
+                print('=================')
                 article_status = 4
                 if int(userType) == 2:  # 判断是否为特殊用户
                     article_status = 6
