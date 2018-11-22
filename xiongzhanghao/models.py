@@ -91,6 +91,8 @@ class xzh_article(models.Model):
     aid = models.IntegerField(verbose_name='文章发布id', null=True, blank=True)
     is_audit = models.BooleanField(verbose_name='是否审核', default=False)
     DomainNameText = models.TextField(verbose_name='二级域名内容, 针对特殊用户', null=True, blank=True)
+
+    deletionTime = models.DateTimeField(verbose_name='判断删除时间', null=True, blank=True)
     is_delete = models.BooleanField(verbose_name='客户页面是否删除', default=False)
 
 # 关键词表
