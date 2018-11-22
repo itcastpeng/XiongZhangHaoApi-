@@ -20,11 +20,10 @@ class DeDe(object):
             self.is_login()
             return self.cookies
         login_url = self.home_url + '/login.php'
-        # print('login_url=====================> ',login_url)
+        print('login_url=====================> ',login_url)
         url = self.home_url + '/login.php?gotopage=%2Fdrqaz%2F'
 
         ret = self.requests_obj.get(url)
-        # print(ret.text)
         soup = BeautifulSoup(ret.text, 'lxml')
         gotopage = soup.find('input', attrs={'name': 'gotopage'}).attrs.get('value')
         dopost = soup.find('input', attrs={'name': 'dopost'}).attrs.get('value')
@@ -70,7 +69,7 @@ class DeDe(object):
     # 判断是否登录
     def is_login(self):
         url = self.home_url + '/index.php'
-        # print('判断是否登录========》 ', url, self.cookies)
+        print('判断是否登录========》 ', url, self.cookies)
         ret = self.requests_obj.get(url, cookies=self.cookies)
         # print(ret.text)
         if "登录" in ret.text:
@@ -114,7 +113,8 @@ class DeDe(object):
         if self.article_test_title(data.get('title')):
             # print('增加文章')
             url = self.home_url + '/article_add.php'
-            # print('发布url------------------> ', url)
+            print('发布url==================> ',url)
+            print('发布data------------------> ', data)
             ret = self.requests_obj.post(url, data=data, cookies=self.cookies)
             # print('========> ', ret.text.strip())
             if '无法解析文档' not in ret.text.strip():
@@ -168,6 +168,7 @@ class DeDe(object):
                             'huilian':huilian,
                             'aid':aid,
                             'code':200
+                            # 'code':305
                             }
                     else:
                         print('=============没有查到该标题=============')
@@ -181,7 +182,7 @@ class DeDe(object):
                          'code':500
                         }
             else:
-                print('’发布失败=========================发布失败===================发布失败 305')
+                print('’模板文件不存在, 请选择子级菜单=========================模板文件不存在, 请选择子级菜单===================模板文件不存在, 请选择子级菜单 305')
                 return {
                     'huilian': '',
                     'code': 305
@@ -213,6 +214,20 @@ class DeDe(object):
                         status = True
                         break
         return id, status
+
+    # 查询文章是否被删除
+    def deleteQuery(self, url):
+        ret = requests.get(url, cookies=self.cookies)
+        encode_ret = ret.apparent_encoding
+        print('encode_ret===========', encode_ret)
+        if encode_ret == 'GB2312':
+            ret.encoding = 'gbk'
+        else:
+            ret.encoding = 'utf-8'
+        soup = BeautifulSoup(ret.text, 'lxml')
+        center_divs_all = soup.find_all('tr', align='center')
+
+
 
 
 # if __name__ == '__main__':

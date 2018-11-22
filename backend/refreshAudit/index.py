@@ -7,6 +7,7 @@ from api.public.token import start
 # 判断是否审核
 def refreshAudit():
     params = start()
+    print(params)
     # url = 'http://127.0.0.1:8003/api/articleScriptOper/refreshAudit'
     url = 'http://xiongzhanghao.zhugeyingxiao.com:8003/api/articleScriptOper/refreshAudit'
     ret = requests.get(url, params=params)

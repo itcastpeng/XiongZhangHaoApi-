@@ -12,8 +12,8 @@ from django.db.models import Q
 @account.is_token(models.xzh_userprofile)
 def statisticalReports(request):
     response = Response.ResponseObj()
-    objs = models.xzh_fugai_baobiao.objects.filter(user__role=64)
-
+    objs = models.xzh_fugai_baobiao.objects.filter(user__role=61)
+    print(objs)
     for obj in objs:
 
         print('=------=-=-=-=-==-=--=-=-==-=-obj.user_id=-----> ', obj.user_id)

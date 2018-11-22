@@ -29,6 +29,8 @@ def userGetCookieOper():
         cookie = DeDeObj.login()
         retData = DeDeObj.getClassInfo()
         print("result.get('o_id'=====================> ",result.get('o_id'))
+        if website_backstage_url in 'http://www.bjwletyy.com/wladmin':
+            retData = [[26, '眼科'], [27, '小儿保健科'], [28, '生长发育科'], [24, '耳鼻喉科'], [22, '小儿内科'], [29, '呼吸哮喘科'], [25, '皮肤科']]  #  该网站固定栏目
         result_data = {
             'cookie':str(cookie),
             'retData':json.dumps(retData),
