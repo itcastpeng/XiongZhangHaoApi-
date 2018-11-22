@@ -119,6 +119,7 @@ def articleScriptOper(request, oper_type):
 
     # 提交文章到熊掌号
     elif oper_type == 'submitXiongZhangHao':
+        print('===')
         objs = models.xzh_article.objects.filter(is_audit=True, article_status=4)
         note_content = ''
         for obj in objs:
@@ -134,8 +135,10 @@ def articleScriptOper(request, oper_type):
                     if json.loads(ret.text).get('error'):
                         note_content = json.loads(ret.text).get('message')
                     elif json.loads(ret.text).get('not_same_site'):
+                        print('======================================不是本站url或未处理的url============================')
                         note_content = '不是本站url或未处理的url'
                     elif json.loads(ret.text).get('not_valid'):
+                        print('==---------------------------不合法的url=-----------------------------')
                         note_content = '不合法的url'
                     else:
                         obj.article_status = 5

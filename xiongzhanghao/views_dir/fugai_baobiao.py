@@ -121,10 +121,6 @@ def fugai_baobiao_oper(request, oper_type, o_id):
                 'ret_data': ret_data,
             }
 
-        # 统计覆盖报表详情
-        elif oper_type == '':
-            pass
-
         else:
             response.code = 402
             response.msg = "请求异常"
