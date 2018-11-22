@@ -72,6 +72,12 @@ class AddForm(forms.Form):
         else:
             self.add_error('column_id', '该归属用户无栏目')
 
+    def clean_title(self):
+        title = self.data.get('title')
+        if len(title) > 22:
+            self.add_error('title', '标题长度不得大于22')
+        else:
+            return title
 # 更新
 class UpdateForm(forms.Form):
     user_id = forms.CharField(

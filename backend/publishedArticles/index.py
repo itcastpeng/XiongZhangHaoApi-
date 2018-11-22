@@ -16,9 +16,15 @@ def publishedArticles():
     if resultData:
         o_id =  resultData.get('o_id')
         website_backstage_url = resultData.get('website_backstage_url').strip()
-        url = urlparse(website_backstage_url)
-        domain = 'http://' + url.hostname + '/'
-        home_path = website_backstage_url.split(domain)[1].replace('/', '')
+        print('====================================website_backstage_url', website_backstage_url)
+        if 'http' in website_backstage_url:
+            url = urlparse(website_backstage_url)
+            domain = 'http://' + url.hostname + '/'
+            home_path = website_backstage_url.split(domain)[1].replace('/', '')
+        else:
+            web_url =  website_backstage_url.split('/')[0] + '/'
+            domain = 'http://' + web_url
+            home_path = website_backstage_url.split(web_url)[1].replace('/', '')
         userid = resultData.get('website_backstage_username')
         pwd = resultData.get('website_backstage_password')
         typeid = resultData.get('typeid')
@@ -55,9 +61,10 @@ def publishedArticles():
             "imageField.x": "30",
             "imageField.y": "12"
         }
-
+        print('domain, home_path, userid, pwd, cookie-----------------> ',domain, home_path, userid, pwd, cookie)
         DeDeObj = DeDe(domain, home_path, userid, pwd, cookie)
         cookie = DeDeObj.login()
+        print("===============-----999999999999999999999999999999999990000000-----------> ",resultData.get('title'))
         resultData = DeDeObj.sendArticle(article_data, resultData.get('title'))
 
         result_data = {

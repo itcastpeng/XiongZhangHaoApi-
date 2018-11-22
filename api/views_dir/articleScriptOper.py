@@ -73,7 +73,8 @@ def articleScriptOper(request, oper_type):
 
             elif code == 305:  # 登录失败
                 note_content='模板文件不存在, 请选择子级菜单'
-
+            elif code == 301:
+                note_content = '客户网站标题未查到, 请验证'
             else:  # 发布失败
                 note_content='发布失败'
 

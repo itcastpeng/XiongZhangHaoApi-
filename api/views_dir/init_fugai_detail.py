@@ -1,11 +1,15 @@
-from xiongzhanghao import models
-from xiongzhanghao.publicFunc import Response
-from django.http import JsonResponse
-from django.db.models import Q, Count
 import datetime, time
 from openpyxl import Workbook
+from xiongzhanghao import models
+from xiongzhanghao.publicFunc import Response
+from xiongzhanghao.publicFunc import account
+from django.http import JsonResponse
+from django.views.decorators.csrf import csrf_exempt, csrf_protect
+from django.db.models import Q
 
 # 统计覆盖报表详情
+@csrf_exempt
+@account.is_token(models.xzh_userprofile)
 def statisticalReports(request):
     response = Response.ResponseObj()
     objs = models.xzh_fugai_baobiao.objects.filter(user__role=64)

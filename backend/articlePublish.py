@@ -1,7 +1,7 @@
 import requests, json
 from bs4 import BeautifulSoup
 from backend.lianzhongDama import LianZhongDama
-
+import time
 
 class DeDe(object):
     def __init__(self, domain, home_path, userid, pwd, cookies=None):
@@ -125,6 +125,7 @@ class DeDe(object):
                     huilian_href = soup.find('a', text='查看文章').get('href')    # 文章id
                     huilian = self.domain + huilian_href
                     # print('huilian================> ',huilian)
+                    time.sleep(0.5)
                     ret = self.requests_obj.get(huilian, cookies=self.cookies)
                     encode_ret = ret.apparent_encoding
                     # print('encode_ret===========', encode_ret)
@@ -133,6 +134,7 @@ class DeDe(object):
                     else:
                         ret.encoding = 'utf-8'
                     print('title==============> ',title)
+                    # print(ret.text)
                     if title in ret.text:
                         print('huilian=============> ', huilian)
                         # 更新文档url
@@ -168,7 +170,10 @@ class DeDe(object):
                             'code':200
                             }
                     else:
-                        print('=============================')
+                        print('=============没有查到该标题=============')
+                        return {
+                            'code':301,
+                        }
                 else:
                     print('’发布失败=========================发布失败===================发布失败 500')
                     return {
