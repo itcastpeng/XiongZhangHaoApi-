@@ -28,9 +28,10 @@ def userGetCookieOper():
         DeDeObj = DeDe(domain, home_path, userid, pwd, cookie)
         cookie = DeDeObj.login()
         retData = DeDeObj.getClassInfo()
+        print("result.get('o_id'=====================> ",result.get('o_id'))
         result_data = {
             'cookie':str(cookie),
-            'retData':json.loads(retData),
+            'retData':json.dumps(retData),
             'oid':result.get('o_id')
         }
         # url = 'http://127.0.0.1:8003/api/userGetCookieOper/updateModel?user_id=17&timestamp=123&rand_str=4297f44b13955235245b2497399d7a93'
