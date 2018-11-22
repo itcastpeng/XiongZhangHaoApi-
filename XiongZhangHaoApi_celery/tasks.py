@@ -25,7 +25,7 @@ def specialUserGenerateThePage():
 # 提交到熊掌号
 @app.task
 def celerySubmitXiongZhangHao():
-    print('===========================提交到熊掌号')
+    print('===========================提交到熊掌号===================')
     url = 'http://xiongzhanghao.zhugeyingxiao.com:8003/api/articleScriptOper/submitXiongZhangHao'
     requests.get(url, params=params)
 
