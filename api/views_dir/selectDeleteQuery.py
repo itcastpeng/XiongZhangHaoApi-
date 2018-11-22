@@ -10,8 +10,8 @@ from bs4 import BeautifulSoup
 def deleteQuery(request):
     response = Response.ResponseObj()
     objs = models.xzh_article.objects.filter(article_status__in=[2, 4, 5])
-    for obj in objs:
-        obj.user
+    # for obj in objs:
+    #     obj.user
 
 
 
