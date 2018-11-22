@@ -64,6 +64,7 @@ class DeDe(object):
         # print('self.requests_obj.cookies---------> ',self.requests_obj.headers)
         cookies = requests.utils.dict_from_cookiejar(self.requests_obj.cookies)
         self.cookies = cookies
+        print('cookies============> ',cookies)
         return cookies
 
     # 判断是否登录
@@ -196,7 +197,7 @@ class DeDe(object):
 
     # 查询是否审核通过
     def getArticleAudit(self, url, id, aid):
-        ret = requests.get(url, cookies=self.cookies)
+        ret = self.requests_obj.get(url, cookies=self.cookies)
         encode_ret = ret.apparent_encoding
         print('encode_ret===========', encode_ret)
         if encode_ret == 'GB2312':
@@ -217,7 +218,10 @@ class DeDe(object):
 
     # 查询文章是否被删除
     def deleteQuery(self, url):
-        ret = requests.get(url, cookies=self.cookies)
+        print('00000000000000000000> ', self.cookies)
+        # url = url + '&pageno=1'
+        ret = self.requests_obj.get(url, cookies=self.cookies)
+        print('查询文章是否被删除==url==url====url===>', url)
         encode_ret = ret.apparent_encoding
         print('encode_ret===========', encode_ret)
         if encode_ret == 'GB2312':
@@ -225,9 +229,35 @@ class DeDe(object):
         else:
             ret.encoding = 'utf-8'
         soup = BeautifulSoup(ret.text, 'lxml')
-        center_divs_all = soup.find_all('tr', align='center')
+        next_href = soup.find_all('a')
+        for i in next_href:
+            print('next_href==========> ',i)
 
 
+
+
+
+
+
+        # flag = False
+        # yema = 0
+        # page_num = soup.find('div', class_='pagelistbox')
+        # print('page_num--------> ',page_num)
+        # if page_num:
+        #     page = page_num.find('span').get_text()
+        #     print('page--------> ',page)
+        #     if page:
+        #         yema = page.split('页')[0].split('共')[1]
+        #         print('yema--------> ',yema)
+        #         center_divs_all = soup.find_all('tr', align='center')
+        #         for center_div in center_divs_all:
+        #             if '“北京长虹医院”千万别忽视急性前列腺炎的危害' in center_div.get_text():
+        #                 flag = True
+        #     else:
+        #         flag = 1
+        # else:
+        #     flag = 1
+        # return flag, int(yema)
 
 
 # if __name__ == '__main__':

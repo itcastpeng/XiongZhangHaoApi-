@@ -66,7 +66,7 @@ def statisticalReports(request):
                 # baobiao_url = '127.0.0.1:8003' + '/' + xlsx_url
                 baobiao_url = 'http://xiongzhanghao.zhugeyingxiao.com:8003' + '/' + xlsx_url
 
-                fugai_baobiao_detail = models.xzh_fugai_baobiao_detail.objects.filter(id=obj.id, create_date=now_date)
+                fugai_baobiao_detail = models.xzh_fugai_baobiao_detail.objects.filter(xzh_fugai_baobiao_id=obj.id, create_date=now_date)
                 data = {
                     'link_num' : urlNum,
                     'cover_num' : fugaiNum,
