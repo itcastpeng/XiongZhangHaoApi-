@@ -30,13 +30,12 @@ def refreshAudit():
         DeDeObj = DeDe(domain, home_path, userid, pwd, cookie)
         cookies = DeDeObj.login()
         o_id, status = DeDeObj.getArticleAudit(indexUrl, o_id, aid)
-        status = False
         result_data = {
             'o_id': o_id,
             'status': status,
             'userType': userType
         }
-        print('result_data==============> ', result_data)
+        print('vresult_data--00000000000000------------000000000--------> ',result_data)
         # url = 'http://127.0.0.1:8003/api/articleScriptOper/refreshAuditModel'
         url = 'http://xiongzhanghao.zhugeyingxiao.com:8003/api/articleScriptOper/refreshAuditModel?user_id=44&timestamp=1542788198850&rand_str=86b24054d91240d9559e369296af06cd'
         ret = requests.post(url, data=result_data)
