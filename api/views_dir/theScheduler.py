@@ -47,7 +47,7 @@ def theScheduler(request):
 
     if not resule_data['flag']:
         now = datetime.datetime.now()
-        deletionTime = (now - datetime.timedelta(hours=5)).strftime('%Y-%m-%d %H:%M:%S')
+        deletionTime = (now - datetime.timedelta(hours=2)).strftime('%Y-%m-%d %H:%M:%S')
         deletionTime = datetime.datetime.strptime(deletionTime, '%Y-%m-%d %H:%M:%S')
         q = Q(Q(deletionTime__isnull=True) | Q(deletionTime__lte=deletionTime))
         q.add(Q(role_id=61), Q.AND)

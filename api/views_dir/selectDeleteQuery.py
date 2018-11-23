@@ -1,30 +1,85 @@
-from xiongzhanghao import models
-from xiongzhanghao.publicFunc import Response
-from django.http import JsonResponse
-# from api.public.token import start
+from django.http import JsonResponse, HttpResponse
 import datetime
 from django.db.models import Q
+from backend.selectDeleteQuery import index
+from xiongzhanghao import models
+from xiongzhanghao.publicFunc import Response
+from xiongzhanghao.publicFunc import account
+from django.http import JsonResponse
+from django.views.decorators.csrf import csrf_exempt, csrf_protect
+from django.db.models.query import QuerySet
 
-# 判断客户页面 该文章是否删除
-def deleteQuery(request):
-    # params = start()  # 获取token
+
+# 获取页面标题及aid
+@csrf_exempt
+@account.is_token(models.xzh_userprofile)
+def selectDeleteQuery(request, oper_type):
     response = Response.ResponseObj()
-    now = datetime.datetime.now()
-    deletionTime = (now - datetime.timedelta(hours=5)).strftime('%Y-%m-%d %H:%M:%S')
-    deletionTime = datetime.datetime.strptime(deletionTime, '%Y-%m-%d %H:%M:%S')
 
-    q = Q(Q(deletionTime__isnull=True) | Q(deletionTime__lte=deletionTime))
-    q.add(Q(role_id=61), Q.AND)
+    # 爬取发时时间 大于最小发布时间 的客户后台数据
+    if oper_type == 'deleteQuery':   # 判断上次读取时间超过5小时的 吐出数据
+        # params = start()  # 获取token
+        now = datetime.datetime.now()
+        deletionTime = (now - datetime.timedelta(hours=2)).strftime('%Y-%m-%d %H:%M:%S')
+        deletionTime = datetime.datetime.strptime(deletionTime, '%Y-%m-%d %H:%M:%S')
 
-    print('q-----> ',q)
-    # 查询据上次查询时间 超过xx小时
-    objs = models.xzh_userprofile.objects.filter(q)
-    obj = objs[0]
+        q = Q(Q(deletionTime__isnull=True) | Q(deletionTime__lte=deletionTime))
+        q.add(Q(role_id=61), Q.AND)
 
-    response.code = 200
-    response.msg = '查询成功'
-    response.data = {
-        'website_backstage_url': obj.website_backstage_url,
+        print('q-----> ',q)
+        # 查询据上次查询时间 超过xx小时
+        timeObjs = models.xzh_userprofile.objects.filter(q).order_by('create_date')
+        print(timeObjs)
+        objs = models.xzh_userprofile.objects.filter(q)
+        if objs:
+            obj = objs[0]
+            models.xzh_customer_background_background_is_deleted.objects.filter(user_background_id=obj.id).delete()
+            response.code = 200
+            response.msg = '查询成功'
+            response.data = {
+                'o_id': obj.id,
+                'website_backstage_url': obj.website_backstage_url,
+                'cookie': obj.cookies,
+                'website_backstage_password': obj.website_backstage_password,
+                'website_backstage_username': obj.website_backstage_username,
+                'maxtime':timeObjs[0].create_date.strftime('%Y-%m-%d %H:%M:%S')
+            }
+            obj.deletionTime = now
+            obj.save()
 
-    }
+    # 插入数据库
+    elif oper_type == 'deleteQueryModel':
+        print('=-=====================存入数据库')
+        result_data = request.POST.get('result_data')
+        o_id = request.POST.get('o_id')
+        if result_data and o_id:
+            querysetlist = []
+            for i in eval(result_data):
+                querysetlist.append(models.xzh_customer_background_background_is_deleted(
+                    user_background_id=o_id,
+                    aid=i.get('aid'),
+                    title=i.get('title'),
+                    releaseTime=i.get('releaseTime'),
+                ))
+
+            models.xzh_customer_background_background_is_deleted.objects.bulk_create(querysetlist)
+
+    # 定时器判断是否删除
+    elif oper_type == 'judgeToDelete':
+        objs = models.xzh_article.objects.filter(
+            article_status=5
+        )
+        for obj in objs:
+            print(obj.aid, obj.title, obj.belongToUser_id)
+            backObjs = models.xzh_customer_background_background_is_deleted.objects.filter(
+                user_background_id=obj.belongToUser_id,
+                aid=obj.aid,
+                title=obj.title
+            )
+            is_delete = True
+            if backObjs:
+                is_delete = False
+            obj.is_delete = is_delete
+            obj.save()
     return JsonResponse(response.__dict__)
+

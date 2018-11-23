@@ -43,6 +43,13 @@ app.conf.beat_schedule = {
         'task': 'XiongZhangHaoApi_celery.tasks.update_fugai_baobiao_detail',
         'schedule': crontab("*/10", '*', '*', '*', '*'),  # 此处跟 linux 中 crontab 的格式一样
     },
+
+    # 判断文章是否被删除   #每一小时执行一次
+    'selectDeleteQuery':{
+        'task': 'XiongZhangHaoApi_celery.tasks.selectDeleteQuery',
+        'schedule': crontab("*/60", '*', '*', '*', '*'),  # 此处跟 linux 中 crontab 的格式一样
+    },
+
 }
 app.conf.update(
     result_expires=3600,

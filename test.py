@@ -51,6 +51,12 @@ def deleteQuery():
 # if __name__ == '__main__':
 #     deleteQuery()
 
+p = [{'aid': '119', 'title': '“北京长虹医院”婚后一直有遗精 该引起重视了'}, {'aid': '148', 'title': '北京长虹告诉你前列腺肿大有哪些饮食禁忌'}, {'aid': '95', 'title': '包皮手术前要了解这些事'}]
+o = []
+for i in p:
+    print(i)
+    o.append(i)
+
 
 
 
