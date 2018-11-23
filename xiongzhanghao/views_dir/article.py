@@ -74,7 +74,8 @@ def article(request):
                     'send_time':send_time,
                     'is_audit':obj.is_audit,
                     'article_status_id':obj.article_status,
-                    'is_delete':obj.is_delete
+                    'is_delete':obj.is_delete,
+                    'manualRelease':obj.manualRelease
                 })
             #  查询成功 返回200 状态码
             response.code = 200
@@ -98,15 +99,19 @@ def article(request):
 def article_oper(request, oper_type, o_id):
     response = Response.ResponseObj()
     if request.method == "POST":
+        user_id = request.GET.get('user_id')
+        manualRelease = request.POST.get('manualRelease')
+        belongToUser_id = request.POST.get('belongToUser_id')
         form_data = {
-            'user_id': request.GET.get('user_id'),
+            'user_id': user_id,
             'title': request.POST.get('title'),
             'summary': request.POST.get('summary'),
             'content': request.POST.get('content'),
             'column_id': request.POST.get('column_id'),
             'create_date': datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S'),
-            'belongToUser_id':request.POST.get('belongToUser_id'),
-            'send_time': request.POST.get('send_time')
+            'belongToUser_id': belongToUser_id,
+            'send_time': request.POST.get('send_time'),
+            'manualRelease': manualRelease
         }
         if oper_type == "add":
             #  创建 form验证 实例（参数默认转成字典）
@@ -114,7 +119,9 @@ def article_oper(request, oper_type, o_id):
             if forms_obj.is_valid():
                 print("验证通过")
                 print("forms_obj.data.get('column_id')========> ",forms_obj.cleaned_data.get('column_id'))
-                models.xzh_article.objects.create(**forms_obj.cleaned_data)
+                obj = models.xzh_article.objects.create(**forms_obj.cleaned_data)
+                if manualRelease:
+                    models.xzh_article.objects.filter(id=obj.id).update(article_status=4)
                 response.code = 200
                 response.msg = "添加成功"
             else:
@@ -143,7 +150,7 @@ def article_oper(request, oper_type, o_id):
                             summary = objForm.get('summary'),
                             content = objForm.get('content'),
                             belongToUser_id = objForm.get('belongToUser_id'),
-                            column_id = objForm.get('column_id')
+                            column_id = objForm.get('column_id'),
                         )
                         if send_time:
                             objs.update(send_time=send_time)

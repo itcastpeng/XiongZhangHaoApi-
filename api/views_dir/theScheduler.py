@@ -22,7 +22,7 @@ def theScheduler(request):
 
 
     if not resule_data['flag']:
-        getCookieObjs = userObjs.filter(is_debug=False, role_id=61)  # 获取栏目 及 cookie
+        getCookieObjs = userObjs.filter(is_debug=False, role_id=61, userType=1)  # 获取栏目 及 cookie
         if getCookieObjs:
             resule_data['flag'] = True
             resule_data['task_id'] = 1
@@ -50,7 +50,7 @@ def theScheduler(request):
         deletionTime = (now - datetime.timedelta(hours=2)).strftime('%Y-%m-%d %H:%M:%S')
         deletionTime = datetime.datetime.strptime(deletionTime, '%Y-%m-%d %H:%M:%S')
         q = Q(Q(deletionTime__isnull=True) | Q(deletionTime__lte=deletionTime))
-        q.add(Q(role_id=61), Q.AND)
+        q.add(Q(role_id=61) & Q(userType=1), Q.AND)
 
         deleteQuery = userObjs.filter(q)
         if deleteQuery:

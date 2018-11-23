@@ -67,7 +67,7 @@ def specialUserGenerateThePage(request):
         back_url = domain + 'article/{}.html'.format(obj.id)
         # back_url = 'article/{}.html'.format(obj.id)
         obj.back_url = back_url
-        obj.DomainNameText = result_data
+        obj.DomainNameText = result_data  # 二级域名内容
         obj.article_status = 4
         obj.save()
     response.code = 200

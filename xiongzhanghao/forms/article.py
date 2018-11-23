@@ -55,6 +55,13 @@ class AddForm(forms.Form):
             'required': '发送时间格式错误'
         }
     )
+    manualRelease= forms.BooleanField(
+        required=False,
+        error_messages={
+            'required': '手动发布格式错误'
+        }
+    )
+
 
     def clean_column_id(self):
         column_id = self.data.get('column_id')

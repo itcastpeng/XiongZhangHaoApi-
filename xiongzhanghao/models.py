@@ -67,7 +67,7 @@ class xzh_userprofile(models.Model):
     xiongZhangHaoIndex = models.CharField(verbose_name='熊掌号主页', max_length=128, null=True, blank=True)
 
     deletionTime = models.DateTimeField(verbose_name='判断删除时间', null=True, blank=True) # 查询间隔时间
-    user_article_result = models.TextField(verbose_name='单个用户爬取的数据', null=True, blank=True)
+    user_article_result = models.TextField(verbose_name='单个用户爬取的数据', null=True, blank=True)  # 判断用户是否删除 aid title 发布时间
 
 # 公众号-文章表
 class xzh_article(models.Model):
@@ -95,6 +95,7 @@ class xzh_article(models.Model):
     DomainNameText = models.TextField(verbose_name='二级域名内容, 针对特殊用户', null=True, blank=True)
 
     is_delete = models.BooleanField(verbose_name='客户页面是否删除', default=False)
+    manualRelease = models.BooleanField(verbose_name='没有兼容客户，手动发布', default=False)
 
 # 关键词表
 class xzh_keywords(models.Model):
