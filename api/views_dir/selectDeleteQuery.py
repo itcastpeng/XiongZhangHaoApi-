@@ -28,12 +28,11 @@ def selectDeleteQuery(request, oper_type):
 
         print('q-----> ',q)
         # 查询据上次查询时间 超过xx小时
-        timeObjs = models.xzh_userprofile.objects.filter(q).order_by('create_date')
-        print(timeObjs)
+        timeObjs = models.xzh_article.objects.order_by('create_date')
         objs = models.xzh_userprofile.objects.filter(q)
         if objs:
             obj = objs[0]
-            models.xzh_customer_background_background_is_deleted.objects.filter(user_background_id=obj.id).delete()
+            obj.user_article_result = ''
             response.code = 200
             response.msg = '查询成功'
             response.data = {
@@ -49,20 +48,14 @@ def selectDeleteQuery(request, oper_type):
 
     # 插入数据库
     elif oper_type == 'deleteQueryModel':
-        print('=-=====================存入数据库')
+        # print('=-=====================存入数据库')
         result_data = request.POST.get('result_data')
         o_id = request.POST.get('o_id')
         if result_data and o_id:
-            querysetlist = []
-            for i in eval(result_data):
-                querysetlist.append(models.xzh_customer_background_background_is_deleted(
-                    user_background_id=o_id,
-                    aid=i.get('aid'),
-                    title=i.get('title'),
-                    releaseTime=i.get('releaseTime'),
-                ))
-
-            models.xzh_customer_background_background_is_deleted.objects.bulk_create(querysetlist)
+            objs = models.xzh_userprofile.objects.filter(id=o_id)
+            obj = objs[0]
+            obj.user_article_result = result_data
+            obj.save()
 
     # 定时器判断是否删除
     elif oper_type == 'judgeToDelete':
@@ -70,15 +63,11 @@ def selectDeleteQuery(request, oper_type):
             article_status=5
         )
         for obj in objs:
-            print(obj.aid, obj.title, obj.belongToUser_id)
-            backObjs = models.xzh_customer_background_background_is_deleted.objects.filter(
-                user_background_id=obj.belongToUser_id,
-                aid=obj.aid,
-                title=obj.title
-            )
+            user_article_result = obj.belongToUser.user_article_result
             is_delete = True
-            if backObjs:
+            if str(obj.aid) in user_article_result and obj.title.strip() in user_article_result:
                 is_delete = False
+
             obj.is_delete = is_delete
             obj.save()
     return JsonResponse(response.__dict__)

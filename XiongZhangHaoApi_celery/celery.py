@@ -45,10 +45,10 @@ app.conf.beat_schedule = {
     },
 
     # 判断文章是否被删除   #每一小时执行一次
-    # 'selectDeleteQuery':{
-    #     'task': 'XiongZhangHaoApi_celery.tasks.selectDeleteQuery',
-    #     'schedule': crontab("*/60", '*', '*', '*', '*'),  # 此处跟 linux 中 crontab 的格式一样
-    # },
+    'selectDeleteQuery':{
+        'task': 'XiongZhangHaoApi_celery.tasks.selectDeleteQuery',
+        'schedule': crontab("*/60", '*', '*', '*', '*'),  # 此处跟 linux 中 crontab 的格式一样
+    },
 
 }
 app.conf.update(

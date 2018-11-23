@@ -3,9 +3,11 @@ from openpyxl import Workbook
 from xiongzhanghao import models
 from xiongzhanghao.publicFunc import Response
 from xiongzhanghao.publicFunc import account
-from django.http import JsonResponse
+from django.http import JsonResponse, HttpResponse
 from django.views.decorators.csrf import csrf_exempt, csrf_protect
 from django.db.models import Q
+from backend.selectDeleteQuery import index
+
 
 # 统计覆盖报表详情
 @csrf_exempt
@@ -81,6 +83,7 @@ def statisticalReports(request):
     response.code = 200
     response.msg = '更新数据完成'
     return JsonResponse(response.__dict__)
+
 
 
 

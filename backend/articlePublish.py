@@ -88,7 +88,7 @@ class DeDe(object):
         select_tag = soup.find('select', id='typeid')
         print('select_tag -->', select_tag)
         retData = []
-        for option_tag in select_tag.find_all('option'):
+        for option_tag in select_tag.find_all('option', class_='option3'):
             class_id = int(option_tag.attrs.get('value'))
             class_name = option_tag.get_text()
             if class_id == 0:
@@ -116,7 +116,7 @@ class DeDe(object):
             # print('增加文章')
             url = self.home_url + '/article_add.php'
             print('发布url==================> ',url)
-            print('发布data------------------> ', data)
+            # print('发布data------------------> ', data)
             ret = self.requests_obj.post(url, data=data, cookies=self.cookies)
             # print('========> ', ret.text.strip())
             if '无法解析文档' not in ret.text.strip():
@@ -131,6 +131,7 @@ class DeDe(object):
                     if 'http:' in huilian:
                         huilian_right = huilian.split('http:')[1]
                         huilian = 'http:/' + huilian_right
+                    print('huilian=========> ',huilian)
                     time.sleep(0.5)
                     ret = self.requests_obj.get(huilian, cookies=self.cookies)
                     encode_ret = ret.apparent_encoding
@@ -140,7 +141,6 @@ class DeDe(object):
                     else:
                         ret.encoding = 'utf-8'
                     print('title==============> ',title)
-                    # print(ret.text)
                     if title in ret.text:
                         print('huilian=============> ', huilian)
                         # 更新文档url
@@ -182,7 +182,7 @@ class DeDe(object):
                             'code':301,
                         }
                 else:
-                    print('’发布失败=========================发布失败===================发布失败 500')
+                    print('’发布失败=========================没有成功发布文章===================发布失败 500')
                     return {
                         'huilian':'',
                          'code':500
@@ -223,7 +223,7 @@ class DeDe(object):
 
     # 查询文章是否被删除
     def deleteQuery(self, url, maxtime):
-        print('----查询文章是否被删除-----------》 ', url)
+        # print('----查询文章是否被删除-----------》 ', url)
         ret = self.requests_obj.get(url, cookies=self.cookies)
         # print('查询文章是否被删除==url==url====url===>', url)
         encode_ret = ret.apparent_encoding
@@ -244,7 +244,7 @@ class DeDe(object):
         data_list = []
         if page_num:
             page = page_num.find('span').get_text()
-            print('page==========> ',page)
+            # print('page==========> ',page)
             if page:
                 yema = page.split('页')[0].split('共')[1]
                 center_divs_all = soup.find_all('tr', align='center')
