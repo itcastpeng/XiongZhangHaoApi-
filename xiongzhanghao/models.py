@@ -66,6 +66,7 @@ class xzh_userprofile(models.Model):
     secondaryDomainName = models.CharField(verbose_name='二级域名,针对特殊用户', max_length=128, null=True, blank=True)
     xiongZhangHaoIndex = models.CharField(verbose_name='熊掌号主页', max_length=128, null=True, blank=True)
 
+    deletionTime = models.DateTimeField(verbose_name='判断删除时间', null=True, blank=True) # 查询间隔时间
 
 # 公众号-文章表
 class xzh_article(models.Model):
@@ -92,7 +93,6 @@ class xzh_article(models.Model):
     is_audit = models.BooleanField(verbose_name='是否审核', default=False)
     DomainNameText = models.TextField(verbose_name='二级域名内容, 针对特殊用户', null=True, blank=True)
 
-    deletionTime = models.DateTimeField(verbose_name='判断删除时间', null=True, blank=True)
     is_delete = models.BooleanField(verbose_name='客户页面是否删除', default=False)
 
 # 关键词表
@@ -136,3 +136,16 @@ class xzh_fugai_baobiao_detail(models.Model):
     cover_num = models.IntegerField(verbose_name="总覆盖")
     baobiao_url = models.TextField(verbose_name="报表地址")
     create_date = models.DateField(verbose_name="创建时间", auto_now_add=True)
+
+# 判断客户后台是否删除了文章 该表存取客户后台aid 和 标题
+class xzh_customer_background_background_is_deleted(models.Model):
+    user_background = models.ForeignKey('xzh_userprofile', verbose_name='文章归属人', null=True)
+    aid = models.IntegerField(verbose_name='aid')
+    title = models.CharField(verbose_name='标题', max_length=64)
+
+
+
+
+
+
+

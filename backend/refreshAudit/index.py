@@ -8,7 +8,7 @@ from api.public.token import start
 def refreshAudit():
     params = start()
     print(params)
-    # url = 'http://127.0.0.1:8003/api/articleScriptOper/refreshAudit'
+    # url = 'http://127.0.0.1:8003/api/articleScriptOper/refreshAudit?user_id=17&timestamp=123&rand_str=4297f44b13955235245b2497399d7a93'
     url = 'http://xiongzhanghao.zhugeyingxiao.com:8003/api/articleScriptOper/refreshAudit'
     ret = requests.get(url, params=params)
     result = json.loads(ret.text).get('data')
@@ -46,7 +46,7 @@ def refreshAudit():
             'userType': userType
         }
         print('vresult_data--00000000000000------------000000000--------> ',result_data)
-        # url = 'http://127.0.0.1:8003/api/articleScriptOper/refreshAuditModel'
+        # url = 'http://127.0.0.1:8003/api/articleScriptOper/refreshAuditModel?user_id=17&timestamp=123&rand_str=4297f44b13955235245b2497399d7a93'
         url = 'http://xiongzhanghao.zhugeyingxiao.com:8003/api/articleScriptOper/refreshAuditModel?user_id=44&timestamp=1542788198850&rand_str=86b24054d91240d9559e369296af06cd'
         ret = requests.post(url, data=result_data)
 
