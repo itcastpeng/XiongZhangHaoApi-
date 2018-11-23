@@ -127,7 +127,10 @@ def articleScriptOper(request, oper_type):
         print('===')
         objs = models.xzh_article.objects.filter(is_audit=True, article_status=4)
         note_content = ''
+        id_list = []
         for obj in objs:
+            id_list.append(obj.id) if obj.id not in id_list else id_list
+
             appid = obj.belongToUser.website_backstage_appid
             token = obj.belongToUser.website_backstage_token
             print('appid, token------------------> ',appid, token)
