@@ -73,7 +73,8 @@ def article(request):
                     'back_url':back_url,
                     'send_time':send_time,
                     'is_audit':obj.is_audit,
-                    'article_status_id':obj.article_status
+                    'article_status_id':obj.article_status,
+                    'is_delete':obj.is_delete
                 })
             #  查询成功 返回200 状态码
             response.code = 200
