@@ -138,11 +138,11 @@ class xzh_fugai_baobiao_detail(models.Model):
     create_date = models.DateField(verbose_name="创建时间", auto_now_add=True)
 
 # 判断客户后台是否删除了文章 该表存取客户后台aid 和 标题
-class xzh_customer_background_background_is_deleted(models.Model):
-    user_background = models.ForeignKey('xzh_userprofile', verbose_name='文章归属人', null=True)
-    aid = models.IntegerField(verbose_name='aid')
-    title = models.CharField(verbose_name='标题', max_length=64)
-    releaseTime = models.DateField(verbose_name='发布时间', null=True, blank=True)
+# class xzh_customer_background_background_is_deleted(models.Model):
+#     user_background = models.ForeignKey('xzh_userprofile', verbose_name='文章归属人', null=True)
+#     aid = models.IntegerField(verbose_name='aid')
+#     title = models.CharField(verbose_name='标题', max_length=64)
+#     releaseTime = models.DateField(verbose_name='发布时间', null=True, blank=True)
 
 
 
