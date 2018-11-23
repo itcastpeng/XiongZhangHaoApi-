@@ -35,11 +35,12 @@ def publishedArticles():
         content =  resultData.get('content')
         print('00000000000000000000000000website_backstage_url00000000000000000000000>',website_backstage_url)
         'http://m.oy120.com/@qz120_@/'
-        if 'http://m.chyy120.com/netadmin' in website_backstage_url or 'http://wap.tysgmr.com/dede' in website_backstage_url or 'http://m.oy120.com/@qz120_@/' in website_backstage_url:  # 判断utf8 还是 gbk
+        if 'http://m.chyy120.com/netadmin' in website_backstage_url or 'http://wap.tysgmr.com/dede' in website_backstage_url or 'http://m.oy120.com/@qz120_@' in website_backstage_url:  # 判断utf8 还是 gbk
             print('------==========----------------------GBK')
             title =  resultData.get('title').encode('gbk')
             summary =  resultData.get('summary').encode('gbk')
             content =  resultData.get('content').encode('gbk')
+
         article_data = {
             "channelid": "1",  # 表示普通文章
             "dopost": "save",  # 隐藏写死属性
@@ -63,6 +64,17 @@ def publishedArticles():
             "imageField.x": "30",
             "imageField.y": "12"
         }
+        if 'http://m.oy120.com/@qz120_@' in website_backstage_url:
+            article_data['litpic'] = '(binary)'
+            article_data['color'] = ''
+            article_data['keywords'] = ''
+            article_data['filename'] = ''
+            article_data['picname'] = ''
+            article_data['redirecturl'] = ''
+            article_data['voteid'] = ''
+            article_data['redirecturl'] = ''
+            article_data['tags'] = ''
+            article_data['shorttitle'] = ''
         print('domain, home_path, userid, pwd, cookie-----------------> ',domain, home_path, userid, pwd, cookie)
         DeDeObj = DeDe(domain, home_path, userid, pwd, cookie)
         cookie = DeDeObj.login()

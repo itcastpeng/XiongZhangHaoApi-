@@ -67,6 +67,7 @@ class xzh_userprofile(models.Model):
     xiongZhangHaoIndex = models.CharField(verbose_name='熊掌号主页', max_length=128, null=True, blank=True)
 
     deletionTime = models.DateTimeField(verbose_name='判断删除时间', null=True, blank=True) # 查询间隔时间
+    user_article_result = models.TextField(verbose_name='单个用户爬取的数据', null=True, blank=True)
 
 # 公众号-文章表
 class xzh_article(models.Model):

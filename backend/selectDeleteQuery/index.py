@@ -50,6 +50,7 @@ def electDeleteQuery():
             page = 0
             # flag, yema, data_list = DeDeObj.deleteQuery(website_backstage_url + '&pageno={}'.format(1), maxtime)
             result_data = []
+            print('查询中.........', maxtime)
             while True:
                 try:
                     page +=1
@@ -59,7 +60,7 @@ def electDeleteQuery():
                             if i not in result_data:
                                 # print('i====> ',i)
                                 result_data.append(i)
-                        print('flag=========================> ',yema, flag, page, data_list)
+                        # print('flag=========================> ',yema, flag, page, data_list)
 
                     if page >= int(yema) + 1:
                         break

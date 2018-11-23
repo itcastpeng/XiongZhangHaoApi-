@@ -48,6 +48,7 @@ urlpatterns = [
     # 查询客户网站该文章是否删除 做出提示
     url(r'selectDeleteQuery/(?P<oper_type>\w+)$', selectDeleteQuery.selectDeleteQuery), # 文章操作 审核 提交熊掌号 发布文章
 
+
 ]
 
 
