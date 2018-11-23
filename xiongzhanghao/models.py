@@ -142,7 +142,7 @@ class xzh_customer_background_background_is_deleted(models.Model):
     user_background = models.ForeignKey('xzh_userprofile', verbose_name='文章归属人', null=True)
     aid = models.IntegerField(verbose_name='aid')
     title = models.CharField(verbose_name='标题', max_length=64)
-
+    releaseTime = models.DateField(verbose_name='发布时间', null=True, blank=True)
 
 
 

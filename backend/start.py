@@ -1,6 +1,8 @@
 from backend.userGetCookieOper import index as userGetCookieOper
 from backend.publishedArticles import index as publishedArticles
 from backend.refreshAudit import index as refreshAudit
+from backend.selectDeleteQuery import index as selectDeleteQuery
+
 import requests
 import os
 from time import sleep
@@ -24,9 +26,9 @@ if __name__ == '__main__':
                 print("--> 判断是否审核")
                 refreshAudit.refreshAudit()
 
-            # elif task_id == 4:
-            #     print("--> 爬取客户后台 判断文章是否删除")
-                # refreshAudit.refreshAudit()
+            elif task_id == 4:
+                print("--> 爬取客户后台 判断文章是否删除")
+                selectDeleteQuery.electDeleteQuery()
 
 
         else:

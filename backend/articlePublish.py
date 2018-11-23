@@ -1,7 +1,7 @@
 import requests, json
 from bs4 import BeautifulSoup
 from backend.lianzhongDama import LianZhongDama
-import time
+import time, datetime
 
 class DeDe(object):
     def __init__(self, domain, home_path, userid, pwd, cookies=None):
@@ -222,37 +222,51 @@ class DeDe(object):
         return id, status
 
     # 查询文章是否被删除
-    def deleteQuery(self, url, title, aid):
-        # print('00000000000000000000> ', self.cookies)
+    def deleteQuery(self, url, maxtime):
+        print('----查询文章是否被删除-----------》 ', url)
         ret = self.requests_obj.get(url, cookies=self.cookies)
-        print('查询文章是否被删除==url==url====url===>', url)
+        # print('查询文章是否被删除==url==url====url===>', url)
         encode_ret = ret.apparent_encoding
         # print('encode_ret===========', encode_ret)
         if encode_ret == 'GB2312':
             ret.encoding = 'gbk'
         else:
             ret.encoding = 'utf-8'
+
+        time.sleep(0.5)
         soup = BeautifulSoup(ret.text, 'lxml')
 
-        flag = False
+        flag = 0
         yema = 0
         page_num = soup.find('div', class_='pagelistbox')
-        # print('page_num--------> ',page_num)
+        maxtime = datetime.datetime.strptime(maxtime, '%Y-%m-%d %H:%M:%S')
+        maxtime = maxtime.strftime('%Y-%m-%d')
+        data_list = []
         if page_num:
             page = page_num.find('span').get_text()
-            # print('page--------> ',page)
+            print('page==========> ',page)
             if page:
                 yema = page.split('页')[0].split('共')[1]
-                print('yema--------> ',yema)
                 center_divs_all = soup.find_all('tr', align='center')
                 for center_div in center_divs_all:
-                    if title and str(aid) in center_div.get_text():
-                        flag = True
+                    releaseTime = center_div.find_all('td')[3].get_text()
+                    if releaseTime >= maxtime:
+                        if center_div.find('a'):
+                            aid = center_div.find_all('td')[0].get_text().strip()
+                            title = center_div.find('a').get_text().strip()
+                            if aid:
+                                data_list.append({
+                                    'aid':aid,
+                                    'title':title,
+                                    'releaseTime':releaseTime
+                                })
+                    else:
+                        flag = 1
             else:
                 flag = 1
         else:
             flag = 1
-        return flag, yema
+        return flag, yema, data_list
 
 
 # if __name__ == '__main__':
