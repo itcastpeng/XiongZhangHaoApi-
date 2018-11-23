@@ -57,8 +57,9 @@ def fugai_baobiao(request):
 
             # 返回的数据
             ret_data = []
-
+            index = 0
             for obj in objs:
+                index += 1
 
                 #  将查询出来的数据 加入列表
                 ret_data.append({
@@ -70,7 +71,8 @@ def fugai_baobiao(request):
                     'total_cover': obj.total_cover,
                     'publish_num': obj.publish_num,
                     'status': obj.get_status_display(),
-                    'create_date': obj.create_date.strftime('%Y-%m-%d %H:%M:%S')
+                    'create_date': obj.create_date.strftime('%Y-%m-%d %H:%M:%S'),
+                    'keywordIndex': index
                 })
             #  查询成功 返回200 状态码
             response.code = 200

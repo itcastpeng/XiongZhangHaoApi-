@@ -15,6 +15,7 @@ class DeDe(object):
         self.home_url = self.domain + home_path
         self.cookies = cookies
 
+
     def login(self):
         if self.cookies:
             self.is_login()
@@ -126,6 +127,10 @@ class DeDe(object):
                     huilian_href = soup.find('a', text='查看文章').get('href')    # 文章id
                     huilian = self.domain + huilian_href
                     # print('huilian================> ',huilian)
+                    huilian = huilian.replace('//', '/')
+                    if 'http:' in huilian:
+                        huilian_right = huilian.split('http:')[1]
+                        huilian = 'http:/' + huilian_right
                     time.sleep(0.5)
                     ret = self.requests_obj.get(huilian, cookies=self.cookies)
                     encode_ret = ret.apparent_encoding
@@ -217,47 +222,37 @@ class DeDe(object):
         return id, status
 
     # 查询文章是否被删除
-    def deleteQuery(self, url):
-        print('00000000000000000000> ', self.cookies)
-        # url = url + '&pageno=1'
+    def deleteQuery(self, url, title, aid):
+        # print('00000000000000000000> ', self.cookies)
         ret = self.requests_obj.get(url, cookies=self.cookies)
         print('查询文章是否被删除==url==url====url===>', url)
         encode_ret = ret.apparent_encoding
-        print('encode_ret===========', encode_ret)
+        # print('encode_ret===========', encode_ret)
         if encode_ret == 'GB2312':
             ret.encoding = 'gbk'
         else:
             ret.encoding = 'utf-8'
         soup = BeautifulSoup(ret.text, 'lxml')
-        next_href = soup.find_all('a')
-        for i in next_href:
-            print('next_href==========> ',i)
 
-
-
-
-
-
-
-        # flag = False
-        # yema = 0
-        # page_num = soup.find('div', class_='pagelistbox')
+        flag = False
+        yema = 0
+        page_num = soup.find('div', class_='pagelistbox')
         # print('page_num--------> ',page_num)
-        # if page_num:
-        #     page = page_num.find('span').get_text()
-        #     print('page--------> ',page)
-        #     if page:
-        #         yema = page.split('页')[0].split('共')[1]
-        #         print('yema--------> ',yema)
-        #         center_divs_all = soup.find_all('tr', align='center')
-        #         for center_div in center_divs_all:
-        #             if '“北京长虹医院”千万别忽视急性前列腺炎的危害' in center_div.get_text():
-        #                 flag = True
-        #     else:
-        #         flag = 1
-        # else:
-        #     flag = 1
-        # return flag, int(yema)
+        if page_num:
+            page = page_num.find('span').get_text()
+            # print('page--------> ',page)
+            if page:
+                yema = page.split('页')[0].split('共')[1]
+                print('yema--------> ',yema)
+                center_divs_all = soup.find_all('tr', align='center')
+                for center_div in center_divs_all:
+                    if title and str(aid) in center_div.get_text():
+                        flag = True
+            else:
+                flag = 1
+        else:
+            flag = 1
+        return flag, yema
 
 
 # if __name__ == '__main__':

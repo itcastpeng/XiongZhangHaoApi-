@@ -110,7 +110,6 @@ def articleScriptOper(request, oper_type):
         o_id = request.POST.get('o_id')
         status = request.POST.get('status')
         userType = request.POST.get('userType')
-        print('status, o_id============> ', status, o_id, userType)
         article_status = 2
         if userType and o_id:
             if status == 'True':
@@ -118,7 +117,11 @@ def articleScriptOper(request, oper_type):
                 article_status = 4
                 if int(userType) == 2:  # 判断是否为特殊用户
                     article_status = 6
-        models.xzh_article.objects.filter(id=o_id).update(is_audit=status, article_status=article_status)
+        print('status, o_id============> ', status, o_id, 'userType:', userType , 'article_status: ', article_status)
+        models.xzh_article.objects.filter(id=o_id).update(
+            is_audit=status,
+            article_status=article_status
+        )
         response.code = 200
 
 
