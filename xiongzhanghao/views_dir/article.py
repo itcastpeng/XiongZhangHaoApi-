@@ -127,14 +127,14 @@ def article_oper(request, oper_type, o_id):
             if forms_obj.is_valid():
                 print("验证通过")
                 print("forms_obj.data.get('column_id')========> ",forms_obj.cleaned_data.get('column_id'))
-                # obj = models.xzh_article.objects.create(**forms_obj.cleaned_data)
-                # if manualRelease == 'true':
-                    # models.xzh_article.objects.filter(id=obj.id).update(
-                    #     article_status=4,
-                    #     back_url=back_url,
-                    #     is_audit=True,
-                        # articlePicName=articlePicName,  # 缩略图
-                    # )
+                obj = models.xzh_article.objects.create(**forms_obj.cleaned_data)
+                if manualRelease == 'true':
+                    models.xzh_article.objects.filter(id=obj.id).update(
+                        article_status=4,
+                        back_url=back_url,
+                        is_audit=True,
+                        articlePicName=articlePicName,  # 缩略图
+                    )
                 response.code = 200
                 response.msg = "添加成功"
             else:

@@ -51,13 +51,13 @@ def theScheduler(request):
         deletionTime = datetime.datetime.strptime(deletionTime, '%Y-%m-%d %H:%M:%S')
         q = Q(Q(deletionTime__isnull=True) | Q(deletionTime__lte=deletionTime))
         q.add(Q(role_id=61) & Q(userType=1) & Q(website_backstage_url__isnull=False), Q.AND)
-
-        deleteQuery = userObjs.filter(q)
+        print(q)
+        deleteQuery = models.xzh_userprofile.objects.select_related('role').filter(q)
         if deleteQuery:
+            print('deleteQuery---------------> ',deleteQuery[0].id)
             resule_data['flag'] = True
             resule_data['task_id'] = 4
             print('爬取客户网站，判断文章是否删除')
-
 
 
     response.code = 200
