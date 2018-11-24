@@ -99,8 +99,9 @@ def article(request):
 def article_oper(request, oper_type, o_id):
     response = Response.ResponseObj()
     if request.method == "POST":
-        user_id = request.GET.get('user_id')
+        back_url = request.POST.get('back_url')
         manualRelease = request.POST.get('manualRelease')
+        user_id = request.GET.get('user_id')
         belongToUser_id = request.POST.get('belongToUser_id')
         form_data = {
             'user_id': user_id,
@@ -121,7 +122,11 @@ def article_oper(request, oper_type, o_id):
                 print("forms_obj.data.get('column_id')========> ",forms_obj.cleaned_data.get('column_id'))
                 obj = models.xzh_article.objects.create(**forms_obj.cleaned_data)
                 if manualRelease:
-                    models.xzh_article.objects.filter(id=obj.id).update(article_status=4)
+                    models.xzh_article.objects.filter(id=obj.id).update(
+                        article_status=4,
+                        back_url=back_url,
+
+                    )
                 response.code = 200
                 response.msg = "添加成功"
             else:
