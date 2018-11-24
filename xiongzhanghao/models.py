@@ -63,7 +63,7 @@ class xzh_userprofile(models.Model):
         (2,'特殊用户')
     )
     userType = models.SmallIntegerField(verbose_name='用户类型', default=1)
-    secondaryDomainName = models.CharField(verbose_name='二级域名,针对特殊用户', max_length=128, null=True, blank=True)
+    secondaryDomainName = models.CharField(verbose_name='二级域名,针对特殊用户', max_length=128, null=True, blank=True)  # 存放域名 拼接本地链接 请求到服务器
     xiongZhangHaoIndex = models.CharField(verbose_name='熊掌号主页', max_length=128, null=True, blank=True)
 
     deletionTime = models.DateTimeField(verbose_name='判断删除时间', null=True, blank=True) # 查询间隔时间
