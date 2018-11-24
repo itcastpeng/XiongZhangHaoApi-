@@ -54,7 +54,9 @@ def article(request):
                 column = eval(obj.column_id) if obj.column_id else {}
                 print('column============> ', column)
                 back_url = obj.back_url if obj.back_url else ''
-
+                articlePicName = ''
+                if obj.articlePicName:
+                    articlePicName = obj.articlePicName
                 send_time = obj.send_time.strftime('%Y-%m-%d %H:%M:%S') if obj.send_time else ''
                 ret_data.append({
                     'id': obj.id,
@@ -75,7 +77,8 @@ def article(request):
                     'is_audit':obj.is_audit,
                     'article_status_id':obj.article_status,
                     'is_delete':obj.is_delete,
-                    'manualRelease':obj.manualRelease
+                    'manualRelease':obj.manualRelease,
+                    'articlePicName':articlePicName
                 })
             #  查询成功 返回200 状态码
             response.code = 200
@@ -100,15 +103,10 @@ def article_oper(request, oper_type, o_id):
     response = Response.ResponseObj()
     if request.method == "POST":
         back_url = request.POST.get('back_url')  # 如果手动发布 回链必填
-        articlePicName = request.POST.get('articlePicName')    # 文章缩略图
         manualRelease = request.POST.get('manualRelease')
         user_id = request.GET.get('user_id')
         belongToUser_id = request.POST.get('belongToUser_id')
-
-
-
-
-        print('====articlePicName=======articlePicName========> ',articlePicName)
+        articlePicName = request.POST.get('articlePicName')    # 文章缩略图
 
         form_data = {
             'user_id': user_id,
@@ -120,13 +118,14 @@ def article_oper(request, oper_type, o_id):
             'belongToUser_id': belongToUser_id,
             'send_time': request.POST.get('send_time'),
             'manualRelease': manualRelease,
+            'articlePicName':articlePicName
         }
         if oper_type == "add":
             #  创建 form验证 实例（参数默认转成字典）
             forms_obj = AddForm(form_data)
             if forms_obj.is_valid():
                 print("验证通过")
-                print("forms_obj.data.get('column_id')========> ",forms_obj.cleaned_data.get('column_id'))
+                print("forms_obj.data.get('column_id')========> ",forms_obj.cleaned_data.get('articlePicName'))
                 obj = models.xzh_article.objects.create(**forms_obj.cleaned_data)
                 if manualRelease == 'true':
                     models.xzh_article.objects.filter(id=obj.id).update(
