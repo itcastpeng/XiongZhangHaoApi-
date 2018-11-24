@@ -80,10 +80,10 @@ def specialUserGenerateThePage(request):
 
 # 查询二级域名
 @csrf_exempt
-def SearchSecondaryDomainName(request, article_id):
+def SearchSecondaryDomainName(request, article):
     response = Response.ResponseObj()
-    print('article_id============> ',article_id)
-    article_id = article_id.split('.html')[0]
+    print('article_id============> ',article)
+    article_id = article.split('.html')[0]
     objs = models.xzh_article.objects.get(id=article_id)
     if objs:
         return render(request, 'index.html',{
