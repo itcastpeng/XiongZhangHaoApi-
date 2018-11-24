@@ -25,7 +25,7 @@ def select_keywords_cover(request):
         q = Q(Q(select_date__lt=now_date) | Q(select_date__isnull=True)) & Q(get_date__lt=dtime) | Q(get_date__isnull=True)
 
         print('q -->', q)
-        objs = models.xzh_keywords.objects.select_related('user').filter(q).order_by('?')
+        objs = models.xzh_keywords.objects.select_related('user').filter(q)
 
         ret_data = []
         if objs:
