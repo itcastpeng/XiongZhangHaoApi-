@@ -18,6 +18,12 @@ print('params----------------> ',params)
 @app.task
 def specialUserGenerateThePage():
     print('==========================生成二级域名===========================')
+    timestamp = str(int(time.time() * 1000))
+    params = {
+        'user_id': user_id,
+        'rand_str': str_encrypt(timestamp + token),
+        'timestamp': timestamp,
+    }
     url = 'http://xiongzhanghao.zhugeyingxiao.com:8003/api/specialUserGenerateThePage'
     print('url -->', url)
     requests.get(url, params=params)

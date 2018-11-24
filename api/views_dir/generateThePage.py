@@ -17,6 +17,7 @@ from urllib.parse import urlparse
 def specialUserGenerateThePage(request):
     response = Response.ResponseObj()
     objs = models.xzh_article.objects.filter(article_status=6)
+    print('specialUserGenerateThePage -------->')
     for obj in objs:
 
         website_backstage_url = obj.belongToUser.website_backstage_url

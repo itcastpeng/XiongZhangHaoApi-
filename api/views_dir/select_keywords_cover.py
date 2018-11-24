@@ -19,14 +19,16 @@ from api.forms.select_keywords_cover import AddForm
 def select_keywords_cover(request):
     response = Response.ResponseObj()
     if request.method == "GET":     # 获取查覆盖的关键词
+        start_time = time.time()
+        print('start_time --->', start_time)
         dtime = datetime.datetime.now() - datetime.timedelta(minutes=10)
         now_date = datetime.datetime.now().strftime("%Y-%m-%d")
 
-        q = Q(Q(select_date__lt=now_date) | Q(select_date__isnull=True)) & Q(get_date__lt=dtime) | Q(get_date__isnull=True)
+        q = Q(select_date__lt=now_date) | Q(select_date__isnull=True) & Q(get_date__lt=dtime) | Q(get_date__isnull=True)
 
         print('q -->', q)
-        objs = models.xzh_keywords.objects.select_related('user').filter(q).order_by('?')
-
+        objs = models.xzh_keywords.objects.select_related('user').filter(q).order_by('?')[:10]
+        # print(objs.query)
         ret_data = []
         if objs:
             obj = objs[0]
@@ -38,6 +40,8 @@ def select_keywords_cover(request):
             obj.get_date = datetime.datetime.now()
             obj.save()
 
+        stop_time = time.time()
+        print('stop_time --->', stop_time, stop_time - start_time)
         response.code = 200
         response.data = ret_data
     else:   # 提交查询关键词覆盖的结果
@@ -45,16 +49,18 @@ def select_keywords_cover(request):
         print('保存查覆盖结果')
         form_obj = AddForm(request.POST)
         if form_obj.is_valid():
+            rank = form_obj.cleaned_data.get('rank')
             keywords_id = form_obj.cleaned_data.get('keywords_id')
             models.xzh_keywords.objects.filter(id=keywords_id).update(select_date=datetime.datetime.now())
-
-            models.xzh_keywords_detail.objects.create(
-                xzh_keywords_id=form_obj.cleaned_data.get('keywords_id'),
-                url=form_obj.cleaned_data.get('url'),
-                rank=form_obj.cleaned_data.get('rank'),
-            )
+            print('rank -->', rank, type(rank))
+            if rank > 0:
+                models.xzh_keywords_detail.objects.create(
+                    xzh_keywords_id=form_obj.cleaned_data.get('keywords_id'),
+                    url=form_obj.cleaned_data.get('url'),
+                    rank=form_obj.cleaned_data.get('rank'),
+                )
         else:
-            print(form_obj.errors.as_json())
+            print('form_obj.errors.as_json() -->', form_obj.errors.as_json())
     return JsonResponse(response.__dict__)
 
 #
