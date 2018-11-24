@@ -233,6 +233,9 @@ def user_oper(request, oper_type, o_id):
             if o_id == user_id:
                 response.code = 301
                 response.msg = '不能删除自己'
+            elif int(o_id) == 54:
+                response.code = 301
+                response.msg = '不能删除该用户'
             else:
                 objs = models.xzh_userprofile.objects.get(id=o_id)
                 if objs:

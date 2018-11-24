@@ -30,7 +30,7 @@ urlpatterns = [
     url(r'select_keywords_cover$', select_keywords_cover.select_keywords_cover),
 
     # 二级域名
-    url(r'SearchSecondary/(?P<article_id>\d+)$', generateThePage.SearchSecondaryDomainName),  # 查询二级域名
+    url(r'SearchSecondary/(?P<article>\w+).html$', generateThePage.SearchSecondaryDomainName),  # 查询二级域名
     url(r'specialUserGenerateThePage$', generateThePage.specialUserGenerateThePage),  # 生成二级域名
 
     # 获取栏目及cookie
