@@ -41,7 +41,7 @@ def select_keywords_cover(request):
             obj.save()
 
         stop_time = time.time()
-        print('stop_time --->', stop_time)
+        print('stop_time --->', stop_time, stop_time - start_time)
         response.code = 200
         response.data = ret_data
     else:   # 提交查询关键词覆盖的结果
