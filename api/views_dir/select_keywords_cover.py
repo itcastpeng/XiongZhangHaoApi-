@@ -28,7 +28,8 @@ def select_keywords_cover(request):
 
         print('q -->', q)
         objs = models.xzh_keywords.objects.select_related('user').filter(q).order_by('?')[:10]
-
+        print(objs.query())
+        print(objs.query)
         ret_data = []
         if objs:
             obj = objs[0]
