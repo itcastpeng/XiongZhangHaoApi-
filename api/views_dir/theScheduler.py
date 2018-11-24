@@ -50,7 +50,7 @@ def theScheduler(request):
         deletionTime = (now - datetime.timedelta(hours=2)).strftime('%Y-%m-%d %H:%M:%S')
         deletionTime = datetime.datetime.strptime(deletionTime, '%Y-%m-%d %H:%M:%S')
         q = Q(Q(deletionTime__isnull=True) | Q(deletionTime__lte=deletionTime))
-        q.add(Q(role_id=61) & Q(userType=1), Q.AND)
+        q.add(Q(role_id=61) & Q(userType=1) & Q(website_backstage_url__isnull=False), Q.AND)
 
         deleteQuery = userObjs.filter(q)
         if deleteQuery:
