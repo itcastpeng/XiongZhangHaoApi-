@@ -19,6 +19,7 @@ def electDeleteQuery():
     url = 'http://xiongzhanghao.zhugeyingxiao.com:8003/api/selectDeleteQuery/deleteQuery'
     ret = requests.get(url, params=params)
     if ret:
+        print('ret.text=================> ',ret.text)
         result = json.loads(ret.text).get('data')
         website_backstage_url = result.get('website_backstage_url')
         if website_backstage_url:
