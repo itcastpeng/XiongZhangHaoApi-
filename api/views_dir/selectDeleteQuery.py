@@ -29,7 +29,8 @@ def selectDeleteQuery(request, oper_type):
         print('q-----> ',q)
         # 查询据上次查询时间 超过xx小时
         timeObjs = models.xzh_article.objects.order_by('create_date')
-        objs = models.xzh_userprofile.objects.filter(q)
+        # objs = models.xzh_userprofile.objects.filter(q)
+        objs = models.xzh_userprofile.objects.select_related('role').filter(q)
         if objs:
             obj = objs[0]
             obj.user_article_result = ''

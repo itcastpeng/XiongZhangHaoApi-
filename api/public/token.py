@@ -2,8 +2,8 @@ import time
 from xiongzhanghao.publicFunc.account import str_encrypt
 
 def start():
-    token = 'a66b1a82b4ba3ca9d444322c8524e844'
-    user_id = 44
+    token = '87358e1e762b76cca29de2a14dd2a70f'
+    user_id = 54
     timestamp = str(int(time.time() * 1000))
     params = {
         'user_id': user_id,
