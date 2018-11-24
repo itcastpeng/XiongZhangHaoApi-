@@ -31,6 +31,7 @@ def publishedArticles():
         if resultData.get('cookies'):
             cookie = eval(resultData.get('cookies'))
         title = resultData.get('title')
+        picname = resultData.get('picname')
         summary = resultData.get('summary')
         content =  resultData.get('content')
         print('00000000000000000000000000website_backstage_url00000000000000000000000>',website_backstage_url)
@@ -64,12 +65,14 @@ def publishedArticles():
             "imageField.x": "30",
             "imageField.y": "12"
         }
+        article_data['picname'] = ''   # 缩略图
+        if picname:
+            article_data['picname'] = picname
         if 'http://m.oy120.com/@qz120_@' in website_backstage_url:
             article_data['litpic'] = '(binary)'
             article_data['color'] = ''
             article_data['keywords'] = ''
             article_data['filename'] = ''
-            article_data['picname'] = ''
             article_data['redirecturl'] = ''
             article_data['voteid'] = ''
             article_data['redirecturl'] = ''
@@ -78,7 +81,7 @@ def publishedArticles():
         print('domain, home_path, userid, pwd, cookie-----------------> ',domain, home_path, userid, pwd, cookie)
         DeDeObj = DeDe(domain, home_path, userid, pwd, cookie)
         cookie = DeDeObj.login()
-        print("===============-----999999999999999999999999999999999990000000-----------> ",resultData.get('title'))
+        print("===============-----9999999999999999999999999999999999900-----------> ",resultData.get('title'))
         resultData = DeDeObj.sendArticle(article_data, resultData.get('title'))
 
         result_data = {

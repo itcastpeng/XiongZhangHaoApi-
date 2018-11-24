@@ -76,6 +76,7 @@ class xzh_article(models.Model):
     title = models.CharField(verbose_name='文章标题', max_length=128)
     summary = models.TextField(verbose_name='文章摘要', null=True, blank=True)
     content = models.TextField(verbose_name='文章内容', null=True, blank=True)
+    articlePicName = models.CharField(verbose_name='文章图片', max_length=64, null=True, blank=True)
     column_id = models.CharField(verbose_name='栏目', max_length=64, null=True, blank=True)
     create_date = models.DateTimeField(verbose_name="创建时间", auto_now_add=True)
     article_status_choices = (

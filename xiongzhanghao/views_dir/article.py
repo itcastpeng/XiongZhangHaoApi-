@@ -99,10 +99,17 @@ def article(request):
 def article_oper(request, oper_type, o_id):
     response = Response.ResponseObj()
     if request.method == "POST":
-        back_url = request.POST.get('back_url')
+        back_url = request.POST.get('back_url')  # 如果手动发布 回链必填
+        articlePicName = request.POST.get('articlePicName')    # 文章缩略图
         manualRelease = request.POST.get('manualRelease')
         user_id = request.GET.get('user_id')
         belongToUser_id = request.POST.get('belongToUser_id')
+
+
+
+
+        print('====articlePicName=======articlePicName========> ',articlePicName)
+
         form_data = {
             'user_id': user_id,
             'title': request.POST.get('title'),
@@ -112,7 +119,7 @@ def article_oper(request, oper_type, o_id):
             'create_date': datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S'),
             'belongToUser_id': belongToUser_id,
             'send_time': request.POST.get('send_time'),
-            'manualRelease': manualRelease
+            'manualRelease': manualRelease,
         }
         if oper_type == "add":
             #  创建 form验证 实例（参数默认转成字典）
@@ -120,13 +127,14 @@ def article_oper(request, oper_type, o_id):
             if forms_obj.is_valid():
                 print("验证通过")
                 print("forms_obj.data.get('column_id')========> ",forms_obj.cleaned_data.get('column_id'))
-                obj = models.xzh_article.objects.create(**forms_obj.cleaned_data)
-                if manualRelease:
-                    models.xzh_article.objects.filter(id=obj.id).update(
-                        article_status=4,
-                        back_url=back_url,
-
-                    )
+                # obj = models.xzh_article.objects.create(**forms_obj.cleaned_data)
+                # if manualRelease == 'true':
+                    # models.xzh_article.objects.filter(id=obj.id).update(
+                    #     article_status=4,
+                    #     back_url=back_url,
+                    #     is_audit=True,
+                        # articlePicName=articlePicName,  # 缩略图
+                    # )
                 response.code = 200
                 response.msg = "添加成功"
             else:
@@ -156,6 +164,8 @@ def article_oper(request, oper_type, o_id):
                             content = objForm.get('content'),
                             belongToUser_id = objForm.get('belongToUser_id'),
                             column_id = objForm.get('column_id'),
+                            back_url=back_url,
+                            articlePicName=articlePicName,  # 缩略图
                         )
                         if send_time:
                             objs.update(send_time=send_time)
@@ -198,8 +208,41 @@ def article_oper(request, oper_type, o_id):
             response.msg = '重新发布成功'
 
     else:
-        response.code = 402
-        response.msg = "请求异常"
+        if oper_type == 'thumbnail':   # 查询缩略图
+            img_list = []
+            for i in range(5):
+                i += 1
+                url = 'http://192.168.10.207:8003/statics/thumbnailPic/thumbnail0{}.png'.format(i)
+                img_list.append(url)
+            for i in range(2):
+                i += 1
+                url = 'http://192.168.10.207:8003/statics/thumbnailPic/thumbnail00{}.gif'.format(i)
+                img_list.append(url)
+            for i in range(63):
+                i += 1
+                url = 'http://192.168.10.207:8003/statics/thumbnailPic/thumbnail{}.jpg'.format(i)
+                img_list.append(url)
 
+            # for i in range(5):
+            #     i += 1
+            #     url = 'http://xiongzhanghao.zhugeyingxiao.com:8003/statics/thumbnailPic/thumbnail0{}.png'.format(i)
+            #     img_list.append(url)
+            # for i in range(2):
+            #     i += 1
+            #     url = 'http://xiongzhanghao.zhugeyingxiao.com:8003/statics/thumbnailPic/thumbnail00{}.gif'.format(i)
+            #     img_list.append(url)
+            # for i in range(63):
+            #     i += 1
+            #     url = 'http://xiongzhanghao.zhugeyingxiao.com:8003/statics/thumbnailPic/thumbnail{}.jpg'.format(i)
+            #     img_list.append(url)
+
+
+            response.code = 200
+            response.msg = '查询成功'
+            response.data = img_list
+
+        else:
+            response.code = 402
+            response.msg = "请求异常"
     return JsonResponse(response.__dict__)
 

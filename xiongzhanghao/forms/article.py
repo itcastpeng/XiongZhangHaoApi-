@@ -55,10 +55,16 @@ class AddForm(forms.Form):
             'required': '发送时间格式错误'
         }
     )
-    manualRelease= forms.BooleanField(
+    manualRelease = forms.BooleanField(
         required=False,
         error_messages={
             'required': '手动发布格式错误'
+        }
+    )
+    articlePicName = forms.CharField(
+        required=False,
+        error_messages={
+            'required': '文章缩略图格式错误'
         }
     )
 
