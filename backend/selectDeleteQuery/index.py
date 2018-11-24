@@ -38,7 +38,7 @@ def electDeleteQuery():
             cookie = ''
             if result.get('cookie'):
                 cookie = eval(result.get('cookie'))
-            # print('home_path--------------->? ', domain, home_path, userid, pwd, cookie)
+            print('home_path--------------->? ', domain, home_path, userid, pwd, cookie)
             DeDeObj = DeDe(domain, home_path, userid, pwd, cookie)
             cookie = DeDeObj.login()
             if website_backstage_url[-1] == '/':
@@ -49,7 +49,7 @@ def electDeleteQuery():
             if 'http' not in website_backstage_url:
                 website_backstage_url = 'http://' + website_backstage_url
             page = 0
-            # flag, yema, data_list = DeDeObj.deleteQuery(website_backstage_url + '&pageno={}'.format(1), maxtime)
+            flag, yema, data_list = DeDeObj.deleteQuery(website_backstage_url + '&pageno={}'.format(1), maxtime)
             result_data = []
             print('查询中.........', maxtime)
             while True:
