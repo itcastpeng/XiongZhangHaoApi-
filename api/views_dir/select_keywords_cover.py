@@ -19,6 +19,8 @@ from api.forms.select_keywords_cover import AddForm
 def select_keywords_cover(request):
     response = Response.ResponseObj()
     if request.method == "GET":     # 获取查覆盖的关键词
+        start_time = time.time()
+        print('start_time --->', start_time)
         dtime = datetime.datetime.now() - datetime.timedelta(minutes=10)
         now_date = datetime.datetime.now().strftime("%Y-%m-%d")
 
@@ -38,6 +40,8 @@ def select_keywords_cover(request):
             obj.get_date = datetime.datetime.now()
             obj.save()
 
+        stop_time = time.time()
+        print('stop_time --->', stop_time)
         response.code = 200
         response.data = ret_data
     else:   # 提交查询关键词覆盖的结果
