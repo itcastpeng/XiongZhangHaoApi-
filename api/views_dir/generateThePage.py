@@ -63,12 +63,17 @@ def specialUserGenerateThePage(request):
                 href = domain + link_href
                 result_data = result_data.replace(link_href, href)
 
+
+
+
+
         domain = obj.belongToUser.secondaryDomainName
         back_url = domain + 'article/{}.html'.format(obj.id)
         # back_url = 'article/{}.html'.format(obj.id)
         obj.back_url = back_url
-        obj.DomainNameText = result_data
-        obj.article_status = 4
+        obj.DomainNameText = result_data  # 二级域名内容
+        # obj.article_status = 4
+        obj.article_status = 0          # 测试
         obj.save()
     response.code = 200
     response.msg = '生成完成'

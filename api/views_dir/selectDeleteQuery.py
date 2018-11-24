@@ -65,10 +65,12 @@ def selectDeleteQuery(request, oper_type):
         for obj in objs:
             user_article_result = obj.belongToUser.user_article_result
             is_delete = True
+            note_content = ''
             if str(obj.aid) in user_article_result and obj.title.strip() in user_article_result:
                 is_delete = False
-
+                note_content = '客户后台可能被删除,请管理员查看'
             obj.is_delete = is_delete
+            obj.note_content = note_content
             obj.save()
     return JsonResponse(response.__dict__)
 

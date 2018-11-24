@@ -28,7 +28,8 @@ def articleScriptOper(request, oper_type):
         ).order_by('create_date')
         print('objs========================> ',objs)
         if objs:
-            if objs[0].title and objs[0].column_id and objs[0].summary and objs[0].content:
+            obj = objs[0]
+            if obj.title and obj.column_id and obj.summary and obj.content:
                 result_data = {
                     'website_backstage_url': objs[0].belongToUser.website_backstage_url.strip(),
                     'website_backstage_username': objs[0].belongToUser.website_backstage_username,
@@ -40,6 +41,9 @@ def articleScriptOper(request, oper_type):
                     'typeid': eval(objs[0].column_id).get('Id'),
                     'o_id':objs[0].id
                 }
+                if obj.articlePicName:
+                    result_data['picname'] = obj.articlePicName
+
                 response.data = result_data
         response.code = 200
 

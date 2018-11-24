@@ -33,7 +33,7 @@ def electDeleteQuery():
             pwd = result.get('website_backstage_password')
             o_id = result.get('o_id')
             maxtime = result.get('maxtime')
-
+            print('===============================> ',o_id)
             cookie = ''
             if result.get('cookie'):
                 cookie = eval(result.get('cookie'))
