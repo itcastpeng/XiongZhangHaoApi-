@@ -35,7 +35,6 @@ def publishedArticles():
         summary = resultData.get('summary')
         content =  resultData.get('content')
         print('00000000000000000000000000website_backstage_url00000000000000000000000>',website_backstage_url)
-        'http://m.oy120.com/@qz120_@/'
         if 'http://m.chyy120.com/netadmin' in website_backstage_url or 'http://wap.tysgmr.com/dede' in website_backstage_url or 'http://m.oy120.com/@qz120_@' in website_backstage_url:  # 判断utf8 还是 gbk
             print('------==========----------------------GBK')
             title =  resultData.get('title').encode('gbk')

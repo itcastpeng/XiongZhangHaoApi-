@@ -15,9 +15,8 @@ from urllib.parse import urlparse
 @csrf_exempt
 @account.is_token(models.xzh_userprofile)
 def specialUserGenerateThePage(request):
-    print('===================---------------------')
     response = Response.ResponseObj()
-    objs = models.xzh_article.objects.filter(article_status=6)
+    objs = models.xzh_article.objects.filter(article_status=6, belongToUser__userType=2)
     for obj in objs:
         if obj.back_url:
             website_backstage_url = obj.belongToUser.website_backstage_url
@@ -26,7 +25,6 @@ def specialUserGenerateThePage(request):
                 domain = 'http://' + url.hostname
             else:
                 domain = 'http://' + website_backstage_url.split('/')[0]
-            print('===============================================================')
             ret = requests.get(obj.back_url)
             encode_ret = ret.apparent_encoding
             if encode_ret == 'GB2312':
@@ -64,7 +62,16 @@ def specialUserGenerateThePage(request):
                     href = domain + link_href
                     result_data = result_data.replace(link_href, href)
 
-
+            # 关键词
+            for keyword in obj.articleTextKeyword.split('/'):
+                if keyword.strip():
+                    print('keyword=-============------------> ',keyword)
+                    result_data = result_data.replace("{keyword}".format(
+                        keyword=keyword
+                    ), "<a href='{articleTextUrl}' style='color:#66397a'>{keyword}</a>".format(
+                        keyword=keyword,
+                        articleTextUrl=obj.articleTextUrl  # 超链
+                    ))
 
             domain = obj.belongToUser.secondaryDomainName
             back_url = domain + 'api/SearchSecondary/{}.html'.format(obj.id)
@@ -72,35 +79,25 @@ def specialUserGenerateThePage(request):
             obj.back_url = back_url
             obj.DomainNameText = result_data  # 二级域名内容
             # obj.article_status = 4
-            obj.article_status = 0          # 测试
+            obj.article_status = 0  # 测试
             obj.save()
     response.code = 200
     response.msg = '生成完成'
     return JsonResponse(response.__dict__)
 
+
 # 查询二级域名
 @csrf_exempt
 def SearchSecondaryDomainName(request, article):
     response = Response.ResponseObj()
-    print('article_id============> ',article)
+    print('article_id============> ', article)
     article_id = article.split('.html')[0]
     objs = models.xzh_article.objects.get(id=article_id)
     if objs:
-        return render(request, 'index.html',{
-            'my_message':objs.DomainNameText
+        return render(request, 'index.html', {
+            'my_message': objs.DomainNameText
         })
     else:
         response.code = 301
         response.msg = '无此id'
         return JsonResponse(response.__dict__)
-
-
-
-
-
-
-
-
-
-
-
