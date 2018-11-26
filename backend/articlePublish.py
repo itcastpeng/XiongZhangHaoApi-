@@ -173,7 +173,7 @@ class DeDe(object):
                             #     ret2 = self.requests_obj.get(updateIndexUrl)
                             #     print('ret2-=--> ', ret2, ret2.url)
                             print('’发布成功=========================发布成功===================发布成功')
-                            if 'http://4g.scgcyy.com/ddqaz' in self.home_url:  # 四川肛肠  没有发布生成权限 需要拼接回链
+                            if 'http://4g.scgcyy.com' in self.home_url:  # 四川肛肠  没有发布生成权限 需要拼接回链
                                 huilian = 'http://4g.scgcyy.com/all/xzh/{}.html'.format(aid)
                             return {
                                 'huilian':huilian,
