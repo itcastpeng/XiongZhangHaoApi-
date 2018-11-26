@@ -62,16 +62,32 @@ def specialUserGenerateThePage(request):
                     href = domain + link_href
                     result_data = result_data.replace(link_href, href)
 
-            # 关键词
-            for keyword in obj.articleTextKeyword.split('/'):
-                if keyword.strip():
-                    print('keyword=-============------------> ',keyword)
-                    result_data = result_data.replace("{keyword}".format(
-                        keyword=keyword
-                    ), "<a href='{articleTextUrl}' style='color:#66397a'>{keyword}</a>".format(
-                        keyword=keyword,
-                        articleTextUrl=obj.articleTextUrl  # 超链
-                    ))
+            head_div = soup.find('head')
+            body_div = soup.find('body')
+            title = ''
+            if body_div.find('title'):
+                title = body_div.find('title').get_text()
+            elif body_div.find('h1'):
+                title = body_div.find('h1').get_text()
+
+            script_json = head_div.find('script', type='application/ld+json')
+            if not script_json:
+                insert_script = """
+                <script type="application/ld+json">
+                    {   
+                        "@context": "https://ziyuan.baidu.com/contexts/cambrian.jsonld",
+                        "@id": "http://3g.meilianchen.cn//zxmr/kczx/19845102220.html",
+                        "appid": "1616001968255226",
+                        "title": "%s",
+                        "images": [
+                            "http://m.meilianchen.cn/new/images/sy.jpg"
+                        ], 
+                        "pubDate": "%s"
+                    }
+                </script>
+                """ % (title, obj.create_date.strftime('%Y-%m-%dT%H:%M:%S'))
+                result_data = result_data.replace('</head>', insert_script)
+
 
             domain = obj.belongToUser.secondaryDomainName
             back_url = domain + 'api/SearchSecondary/{}.html'.format(obj.id)

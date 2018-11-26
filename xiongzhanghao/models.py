@@ -99,9 +99,6 @@ class xzh_article(models.Model):
     is_delete = models.BooleanField(verbose_name='客户页面是否删除', default=False)
     manualRelease = models.BooleanField(verbose_name='没有兼容客户，手动发布', default=False)   # 判断是否手动发布
 
-    articleTextUrl = models.CharField(verbose_name='二级域名文章内部添加的url', max_length=128, null=True, blank=True)
-    articleTextKeyword = models.CharField(verbose_name='二级域名文章内部添加的关键词', max_length=128, null=True, blank=True)
-
 
 # 关键词表
 class xzh_keywords(models.Model):

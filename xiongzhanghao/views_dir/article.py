@@ -150,27 +150,13 @@ def article_oper(request, oper_type, o_id):
 
                     articleObjs = models.xzh_article.objects.filter(id=obj.id)
                     article_status = 4
-                    articleTextUrl = request.POST.get('articleTextUrl')  # 特殊用户 二级域名内部添加的 url
-                    articleTextKeyword = request.POST.get('articleTextKeyword')  # 特殊用户 二级域名内部添加的 关键词
                     if int(articleObjs[0].belongToUser.userType) == 2:  # 特殊用户
-                        if not articleTextUrl:
-                            response.code = 301
-                            response.msg = '二级域名文章内部超链不能为空'
-                            return JsonResponse(response.__dict__)
-                        if not articleTextKeyword:
-                            response.code = 301
-                            response.msg = '二级域名文章内部关键词不能为空'
-                            return JsonResponse(response.__dict__)
-
                         article_status = 6
                     articleObjs.update(
                         article_status=article_status,
                         back_url=back_url,
                         is_audit=True,
                         articlePicName=articlePicName,  # 缩略图
-                        articleTextUrl=articleTextUrl,
-                        articleTextKeyword=articleTextKeyword,
-
                     )
                 response.code = 200
                 response.msg = "添加成功"
