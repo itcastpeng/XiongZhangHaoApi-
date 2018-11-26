@@ -133,7 +133,7 @@ class DeDe(object):
                         huilian = 'http:/' + huilian_right
                     print('huilian=========> ',huilian)
                     time.sleep(0.5)
-                    if 'http://m.glamzx.com/admin_2230_zbj_2017' not in self.home_url:
+                    if 'http://m.glamzx.com/admin_2230_zbj_2017' not in self.home_url:  # 北京克莱美舍 发不完请求不到 审核完才可以
                         ret = self.requests_obj.get(huilian, cookies=self.cookies)
                         encode_ret = ret.apparent_encoding
                         # print('encode_ret===========', encode_ret)
@@ -141,8 +141,10 @@ class DeDe(object):
                             ret.encoding = 'gbk'
                         else:
                             ret.encoding = 'utf-8'
-                        print('title==============> ',ret.text)
-                        if title in ret.text:
+
+                        # print('title-------------> ',title)
+                        # print('ret.text==============> ',ret.text)
+                        if title.strip() in ret.text:
                             print('huilian=============> ', huilian)
                             # 更新文档url
                             # updateWordUrl = '{home_url}/task_do.php?typeid={cid}&aid={aid}&dopost=makeprenext&nextdo=makeindex,makeparenttype'.format(
@@ -171,6 +173,8 @@ class DeDe(object):
                             #     ret2 = self.requests_obj.get(updateIndexUrl)
                             #     print('ret2-=--> ', ret2, ret2.url)
                             print('’发布成功=========================发布成功===================发布成功')
+                            if 'http://4g.scgcyy.com' in self.home_url:  # 四川肛肠  没有发布生成权限 需要拼接回链
+                                huilian = 'http://4g.scgcyy.com/all/xzh/{}.html'.format(aid)
                             return {
                                 'huilian':huilian,
                                 'aid':aid,
@@ -217,13 +221,26 @@ class DeDe(object):
             ret.encoding = 'gbk'
         else:
             ret.encoding = 'utf-8'
+        # print('ret.text======================> ',ret.text)
         soup = BeautifulSoup(ret.text, 'lxml')
         center_divs_all = soup.find_all('tr', align='center')
+        print('center_divs_all=>',len(center_divs_all))
         status = False
         for center_div in center_divs_all:
-            if int(center_div.attrs.get('height') )== 26:
-                if int(center_div.find_all('td')[0].get_text().strip()) == int(aid):
-                    auditHtml = center_div.find_all('td')[6].get_text().strip()
+            if 'http://m.glamzx.com/admin_2230_zbj_2017' not in url: # 北京克莱美舍 匹配条件与其他不一样
+                height = 26
+                index = 0
+                index1 = 6
+            else:
+                height = 35
+                index = 1
+                index1 = 5
+            if int(center_div.attrs.get('height') )== height:
+                aid_text = int(center_div.find_all('td')[index].get_text().strip())
+                if aid_text == int(aid):
+                    print('===========================================', )
+                    auditHtml = center_div.find_all('td')[index1].get_text().strip()
+                    print('auditHtml------------->',auditHtml)
                     if auditHtml == '已生成':
                         status = True
                         break

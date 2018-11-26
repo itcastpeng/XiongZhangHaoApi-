@@ -2,7 +2,7 @@ from backend.articlePublish import DeDe
 import json, requests, datetime
 from urllib.parse import urlparse
 from api.public.token import start
-
+from random import randint
 # 发布文章
 def publishedArticles():
     params = start()
@@ -55,7 +55,7 @@ def publishedArticles():
             "spsize": "5",
             "body": content,
             "notpost": "0",
-            "click": "63",
+            "click": randint(100, 200),
             "sortup": "0",
             "arcrank": "0",
             "money": "0",

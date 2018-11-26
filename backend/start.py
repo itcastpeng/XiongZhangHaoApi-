@@ -31,11 +31,11 @@ if __name__ == '__main__':
                 elif task_id == 4:
                     print("--> 爬取客户后台 判断文章是否删除")
                     selectDeleteQuery.electDeleteQuery()
+            else:
+                print('=================休息5分钟')
+                sleep(300)
         except Exception:
             continue
-        else:
-            print('=================休息5分钟')
-            sleep(300)
 
 
 
