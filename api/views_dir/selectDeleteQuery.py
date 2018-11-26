@@ -61,14 +61,17 @@ def selectDeleteQuery(request, oper_type):
     # 定时器判断是否删除
     elif oper_type == 'judgeToDelete':
         objs = models.xzh_article.objects.filter(
-            article_status=5
+            article_status=5,
+            belongToUser__userType=1
         )
         for obj in objs:
             user_article_result = obj.belongToUser.user_article_result
-            is_delete = True
             note_content = ''
             if str(obj.aid) in user_article_result and obj.title.strip() in user_article_result:
+                print(obj.aid, obj.title, 'user_article_result========>',user_article_result)
                 is_delete = False
+            else:
+                is_delete = True
                 note_content = '客户后台可能被删除,请管理员查看'
             obj.is_delete = is_delete
             obj.note_content = note_content
