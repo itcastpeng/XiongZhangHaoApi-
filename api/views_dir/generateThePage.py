@@ -15,9 +15,8 @@ from urllib.parse import urlparse
 @csrf_exempt
 @account.is_token(models.xzh_userprofile)
 def specialUserGenerateThePage(request):
-    print('===================---------------------')
     response = Response.ResponseObj()
-    objs = models.xzh_article.objects.filter(article_status=6)
+    objs = models.xzh_article.objects.filter(article_status=6, belongToUser__userType=2)
     for obj in objs:
         if obj.back_url:
             website_backstage_url = obj.belongToUser.website_backstage_url
@@ -26,7 +25,6 @@ def specialUserGenerateThePage(request):
                 domain = 'http://' + url.hostname
             else:
                 domain = 'http://' + website_backstage_url.split('/')[0]
-            print('===============================================================')
             ret = requests.get(obj.back_url)
             encode_ret = ret.apparent_encoding
             if encode_ret == 'GB2312':
@@ -64,6 +62,31 @@ def specialUserGenerateThePage(request):
                     href = domain + link_href
                     result_data = result_data.replace(link_href, href)
 
+            head_div = soup.find('head')
+            body_div = soup.find('body')
+            title = ''
+            if body_div.find('title'):
+                title = body_div.find('title').get_text()
+            elif body_div.find('h1'):
+                title = body_div.find('h1').get_text()
+
+            script_json = head_div.find('script', type='application/ld+json')
+            if not script_json:
+                insert_script = """
+                <script type="application/ld+json">
+                    {   
+                        "@context": "https://ziyuan.baidu.com/contexts/cambrian.jsonld",
+                        "@id": "http://3g.meilianchen.cn//zxmr/kczx/19845102220.html",
+                        "appid": "1616001968255226",
+                        "title": "%s",
+                        "images": [
+                            "http://m.meilianchen.cn/new/images/sy.jpg"
+                        ], 
+                        "pubDate": "%s"
+                    }
+                </script>
+                """ % (title, obj.create_date.strftime('%Y-%m-%dT%H:%M:%S'))
+                result_data = result_data.replace('</head>', insert_script)
 
 
             domain = obj.belongToUser.secondaryDomainName
@@ -72,35 +95,25 @@ def specialUserGenerateThePage(request):
             obj.back_url = back_url
             obj.DomainNameText = result_data  # 二级域名内容
             # obj.article_status = 4
-            obj.article_status = 0          # 测试
+            obj.article_status = 0  # 测试
             obj.save()
     response.code = 200
     response.msg = '生成完成'
     return JsonResponse(response.__dict__)
 
+
 # 查询二级域名
 @csrf_exempt
 def SearchSecondaryDomainName(request, article):
     response = Response.ResponseObj()
-    print('article_id============> ',article)
+    print('article_id============> ', article)
     article_id = article.split('.html')[0]
     objs = models.xzh_article.objects.get(id=article_id)
     if objs:
-        return render(request, 'index.html',{
-            'my_message':objs.DomainNameText
+        return render(request, 'index.html', {
+            'my_message': objs.DomainNameText
         })
     else:
         response.code = 301
         response.msg = '无此id'
         return JsonResponse(response.__dict__)
-
-
-
-
-
-
-
-
-
-
-

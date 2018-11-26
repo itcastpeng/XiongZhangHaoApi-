@@ -12,7 +12,10 @@ from urllib.parse import urlparse
 import json, requests, datetime
 
 
-def init_data(request):
+# cerf  token验证 用户展示模块
+@csrf_exempt
+@account.is_token(models.xzh_userprofile)
+def user(request):
     response = Response.ResponseObj()
     forms_obj = SelectForm(request.GET)
     if forms_obj.is_valid():
@@ -23,7 +26,7 @@ def init_data(request):
         field_dict = {
             'id': '',
             'role_id': '',
-            'name': '__contains',
+            'username': '__contains',
             'create_date': '',
             'oper_user__username': '__contains',
             'is_debug': 'bool',
@@ -75,10 +78,10 @@ def init_data(request):
                 'website_backstage_password': obj.website_backstage_password,
                 'create_date': obj.create_date.strftime('%Y-%m-%d %H:%M:%S'),
                 'oper_user__username': oper_user_username,
-                'website_backstage_url':obj.website_backstage_url,
-                'is_debug':is_debug,
-                'website_backstage_token':obj.website_backstage_token,
-                'website_backstage_appid':obj.website_backstage_appid,
+                'website_backstage_url': obj.website_backstage_url,
+                'is_debug': is_debug,
+                'website_backstage_token': obj.website_backstage_token,
+                'website_backstage_appid': obj.website_backstage_appid,
                 'xiongZhangHaoIndex': obj.xiongZhangHaoIndex
 
             })
@@ -93,18 +96,6 @@ def init_data(request):
     else:
         response.code = 301
         response.data = json.loads(forms_obj.errors.as_json())
-    return response
-
-# cerf  token验证 用户展示模块
-@csrf_exempt
-@account.is_token(models.xzh_userprofile)
-def user(request):
-    response = Response.ResponseObj()
-    if request.method == "GET":
-        response = init_data(request)
-    else:
-        response.code = 402
-        response.msg = '请求异常'
     return JsonResponse(response.__dict__)
 
 
@@ -239,13 +230,18 @@ def user_oper(request, oper_type, o_id):
             else:
                 objs = models.xzh_userprofile.objects.get(id=o_id)
                 if objs:
-                    if objs.id == user_id:
+                    userObjs = models.xzh_article.objects.filter(belongToUser_id=o_id)
+                    if userObjs:
                         response.code = 301
-                        response.msg = '不可删除自己'
+                        response.msg = '含有文章子级,请先删除该用户文章'
                     else:
-                        objs.delete()
-                        response.code = 200
-                        response.msg = "删除成功"
+                        if objs.id == user_id:
+                            response.code = 301
+                            response.msg = '不可删除自己'
+                        else:
+                            objs.delete()
+                            response.code = 200
+                            response.msg = "删除成功"
                 else:
                     response.code = 302
                     response.msg = '删除ID不存在'
@@ -282,25 +278,6 @@ def user_oper(request, oper_type, o_id):
     return JsonResponse(response.__dict__)
 
 
-
-
-
-# 供脚本查询 用户
-# @csrf_exempt
-# def script_user(request):
-#     response = Response.ResponseObj()
-#     if request.method == "GET":
-#         response = init_data(request)
-#     else:
-#         response.code = 402
-#         response.msg = '请求异常'
-#     return JsonResponse(response.__dict__)
-
-
-
-
-
-# 定时刷新 调试用户 获取cookies和所有栏目
 
 
 

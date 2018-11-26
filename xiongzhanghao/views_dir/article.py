@@ -6,9 +6,7 @@ from django.views.decorators.csrf import csrf_exempt, csrf_protect
 from xiongzhanghao.publicFunc.condition_com import conditionCom
 from xiongzhanghao.forms.article import AddForm, UpdateForm, SelectForm
 import json, datetime, requests, os
-from urllib.parse import urlparse
-from backend.articlePublish import DeDe
-from urllib import parse
+from django.db.models import Q
 
 # from xiongzhanghao.views_dir.user import objLogin
 
@@ -26,6 +24,7 @@ def article(request):
             print('forms_obj.cleaned_data -->', forms_obj.cleaned_data)
             order = request.GET.get('order', '-create_date')
             user_id = request.GET.get('user_id')
+            start_time = request.GET.get('start_time')
             field_dict = {
                 'id': '',
                 'title': '__contains',
@@ -36,6 +35,13 @@ def article(request):
                 'belongToUser_id': '',
             }
             q = conditionCom(request, field_dict)
+            print('start_time============>',start_time)
+            if start_time:
+                start_time = json.loads(start_time)
+                stop_time = start_time[1]
+                start_time = start_time[0]
+                q.add(Q(articlePublishedDate__gte=start_time) & Q(articlePublishedDate__lte=stop_time), Q.AND)
+
             print('q -->', q)
             objs = models.xzh_article.objects.select_related('user').filter(q).order_by(order)
             count = objs.count()
@@ -57,6 +63,11 @@ def article(request):
                 articlePicName = ''
                 if obj.articlePicName:
                     articlePicName = obj.articlePicName
+                articlePublishedDate = ''
+                if obj.articlePublishedDate:
+                    articlePublishedDate = obj.articlePublishedDate
+
+
                 send_time = obj.send_time.strftime('%Y-%m-%d %H:%M:%S') if obj.send_time else ''
                 ret_data.append({
                     'id': obj.id,
@@ -78,7 +89,8 @@ def article(request):
                     'article_status_id':obj.article_status,
                     'is_delete':obj.is_delete,
                     'manualRelease':obj.manualRelease,
-                    'articlePicName':articlePicName
+                    'articlePicName':articlePicName,
+                    'articlePublishedDate':articlePublishedDate, #发布时间
                 })
             #  查询成功 返回200 状态码
             response.code = 200
@@ -120,6 +132,8 @@ def article_oper(request, oper_type, o_id):
             'manualRelease': manualRelease,
             'articlePicName':articlePicName
         }
+
+        print('form_data===============> ',form_data)
         if oper_type == "add":
             #  创建 form验证 实例（参数默认转成字典）
             forms_obj = AddForm(form_data)
@@ -128,8 +142,18 @@ def article_oper(request, oper_type, o_id):
                 print("forms_obj.data.get('column_id')========> ",forms_obj.cleaned_data.get('articlePicName'))
                 obj = models.xzh_article.objects.create(**forms_obj.cleaned_data)
                 if manualRelease == 'true':
-                    models.xzh_article.objects.filter(id=obj.id).update(
-                        article_status=4,
+                    print('手动添加===========手动添加===========================手动添加')
+                    if not back_url:
+                        response.msg = '回链不能为空'
+                        response.code = 301
+                        return JsonResponse(response.__dict__)
+
+                    articleObjs = models.xzh_article.objects.filter(id=obj.id)
+                    article_status = 4
+                    if int(articleObjs[0].belongToUser.userType) == 2:  # 特殊用户
+                        article_status = 6
+                    articleObjs.update(
+                        article_status=article_status,
                         back_url=back_url,
                         is_audit=True,
                         articlePicName=articlePicName,  # 缩略图

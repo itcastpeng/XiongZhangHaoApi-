@@ -79,6 +79,7 @@ class xzh_article(models.Model):
     articlePicName = models.CharField(verbose_name='文章图片', max_length=128, null=True, blank=True)
     column_id = models.CharField(verbose_name='栏目', max_length=64, null=True, blank=True)
     create_date = models.DateTimeField(verbose_name="创建时间", auto_now_add=True)
+    articlePublishedDate = models.DateField(verbose_name="文章发布时间", null=True, blank=True)
     article_status_choices = (
         (1, '发布中'),
         (2, '发布成功, 待审核'),
@@ -93,10 +94,11 @@ class xzh_article(models.Model):
     send_time = models.DateTimeField(verbose_name='定时发送文章', null=True, blank=True)
     aid = models.IntegerField(verbose_name='文章发布id', null=True, blank=True)
     is_audit = models.BooleanField(verbose_name='是否审核', default=False)
-    DomainNameText = models.TextField(verbose_name='二级域名内容, 针对特殊用户', null=True, blank=True)
+    DomainNameText = models.TextField(verbose_name='二级域名内容, 针对特殊用户', null=True, blank=True)  # 存放二级域名内容的字段
 
     is_delete = models.BooleanField(verbose_name='客户页面是否删除', default=False)
-    manualRelease = models.BooleanField(verbose_name='没有兼容客户，手动发布', default=False)
+    manualRelease = models.BooleanField(verbose_name='没有兼容客户，手动发布', default=False)   # 判断是否手动发布
+
 
 # 关键词表
 class xzh_keywords(models.Model):

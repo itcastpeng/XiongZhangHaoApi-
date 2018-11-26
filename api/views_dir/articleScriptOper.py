@@ -30,6 +30,9 @@ def articleScriptOper(request, oper_type):
         if objs:
             obj = objs[0]
             if obj.title and obj.column_id and obj.summary and obj.content:
+                models.xzh_article.objects.filter(id=obj.id).update(
+                    articlePublishedDate=datetime.datetime.now()
+                )
                 result_data = {
                     'website_backstage_url': objs[0].belongToUser.website_backstage_url.strip(),
                     'website_backstage_username': objs[0].belongToUser.website_backstage_username,

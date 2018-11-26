@@ -133,53 +133,61 @@ class DeDe(object):
                         huilian = 'http:/' + huilian_right
                     print('huilian=========> ',huilian)
                     time.sleep(0.5)
-                    ret = self.requests_obj.get(huilian, cookies=self.cookies)
-                    encode_ret = ret.apparent_encoding
-                    # print('encode_ret===========', encode_ret)
-                    if encode_ret == 'GB2312':
-                        ret.encoding = 'gbk'
-                    else:
-                        ret.encoding = 'utf-8'
-                    print('title==============> ',title)
-                    if title in ret.text:
-                        print('huilian=============> ', huilian)
-                        # 更新文档url
-                        # updateWordUrl = '{home_url}/task_do.php?typeid={cid}&aid={aid}&dopost=makeprenext&nextdo=makeindex,makeparenttype'.format(
-                        #     home_url=self.home_url,
-                        #     aid=aid,
-                        #     cid=cid
-                        # )
-                        # # 更新主页url
-                        # updateIndexUrl = '{home_url}/task_do.php?f=0&typeid={cid}&aid={aid}&dopost=makeindex&nextdo=makeparenttype'.format(
-                        #     home_url=self.home_url,
-                        #     aid=aid,
-                        #     cid=cid
-                        # )
+                    if 'http://m.glamzx.com/admin_2230_zbj_2017' not in self.home_url:
+                        ret = self.requests_obj.get(huilian, cookies=self.cookies)
+                        encode_ret = ret.apparent_encoding
+                        # print('encode_ret===========', encode_ret)
+                        if encode_ret == 'GB2312':
+                            ret.encoding = 'gbk'
+                        else:
+                            ret.encoding = 'utf-8'
+                        print('title==============> ',ret.text)
+                        if title in ret.text:
+                            print('huilian=============> ', huilian)
+                            # 更新文档url
+                            # updateWordUrl = '{home_url}/task_do.php?typeid={cid}&aid={aid}&dopost=makeprenext&nextdo=makeindex,makeparenttype'.format(
+                            #     home_url=self.home_url,
+                            #     aid=aid,
+                            #     cid=cid
+                            # )
+                            # # 更新主页url
+                            # updateIndexUrl = '{home_url}/task_do.php?f=0&typeid={cid}&aid={aid}&dopost=makeindex&nextdo=makeparenttype'.format(
+                            #     home_url=self.home_url,
+                            #     aid=aid,
+                            #     cid=cid
+                            # )
 
-                        # if objCookies:
-                        #     ret1 = self.requests_obj.get(updateWordUrl, cookies=objCookies)
-                        #     print('ret1--> ',ret1, ret1.url)
-                        #
-                        #     ret2 = self.requests_obj.get(updateIndexUrl, cookies=objCookies)
-                        #     print('ret2-=--> ',ret2, ret2.url)
-                        #
-                        # else:
-                        #     print('===============else=============else')
-                        #     ret1 = self.requests_obj.get(updateWordUrl)
-                        #     print('ret1--> ', ret1, ret1.url)
-                        #     ret2 = self.requests_obj.get(updateIndexUrl)
-                        #     print('ret2-=--> ', ret2, ret2.url)
-                        print('’发布成功=========================发布成功===================发布成功')
-                        return {
-                            'huilian':huilian,
-                            'aid':aid,
-                            'code':200
-                            # 'code':305
-                            }
+                            # if objCookies:
+                            #     ret1 = self.requests_obj.get(updateWordUrl, cookies=objCookies)
+                            #     print('ret1--> ',ret1, ret1.url)
+                            #
+                            #     ret2 = self.requests_obj.get(updateIndexUrl, cookies=objCookies)
+                            #     print('ret2-=--> ',ret2, ret2.url)
+                            #
+                            # else:
+                            #     print('===============else=============else')
+                            #     ret1 = self.requests_obj.get(updateWordUrl)
+                            #     print('ret1--> ', ret1, ret1.url)
+                            #     ret2 = self.requests_obj.get(updateIndexUrl)
+                            #     print('ret2-=--> ', ret2, ret2.url)
+                            print('’发布成功=========================发布成功===================发布成功')
+                            return {
+                                'huilian':huilian,
+                                'aid':aid,
+                                'code':200
+                                # 'code':305
+                                }
+                        else:
+                            print('=============没有查到该标题=============')
+                            return {
+                                'code':301,
+                         }
                     else:
-                        print('=============没有查到该标题=============')
                         return {
-                            'code':301,
+                            'huilian': huilian,
+                            'aid': aid,
+                            'code': 200
+                            # 'code':305
                         }
                 else:
                     print('’发布失败=========================没有成功发布文章===================发布失败 500')

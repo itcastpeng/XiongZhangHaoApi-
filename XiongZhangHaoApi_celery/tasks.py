@@ -54,7 +54,7 @@ def update_fugai_baobiao_detail():
 # 判断文章是否被删除
 @app.task
 def selectDeleteQuery():
-    print('======================更新覆盖报表详情=====================')
+    print('======================判断文章是否被删除=====================')
     url = 'http://xiongzhanghao.zhugeyingxiao.com:8003/api/selectDeleteQuery/judgeToDelete'
     requests.get(url, params=params)
 
