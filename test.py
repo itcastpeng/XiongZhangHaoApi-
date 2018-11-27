@@ -51,7 +51,7 @@ def deleteQuery():
 # if __name__ == '__main__':
 #     deleteQuery()
 
-# p = [{'aid': '119', 'title': '“北京长虹医院”婚后一直有遗精 该引起重视了'}, {'aid': '148', 'title': '北京长虹告诉你前列腺肿大有哪些饮食禁忌'}, {'aid': '95', 'title': '包皮手术前要了解这些事'}]
+# p = [{'aid': '119', 'title': '“北京长虹医院”婚k后一直有遗精 该引起重视了'}, {'aid': '148', 'title': '北京长虹告诉你前列腺肿大有哪些饮食禁忌'}, {'aid': '95', 'title': '包皮手术前要了解这些事'}]
 # o = []
 # for i in p:
 #     print(i)
@@ -72,13 +72,16 @@ headers = {
 
 ret = requests_obj.get(url, headers=headers)
 ret1 = requests_obj.get(url1, headers=headers)
-print(ret1.url)
-print(ret1.text)
-print(ret1)
 
-soup = BeautifulSoup(ret1.text, 'lxml')
-for i in soup.find_all('a'):
-    print('i=========> ', i)
+
+result = ret1.text.split('BigPipe.onPageletArrive(')[1]
+result = result[:-2]
+
+print(result)
+html = json.loads(result)['html']
+soup = BeautifulSoup(html, 'lxml')
+
+
 
 
 

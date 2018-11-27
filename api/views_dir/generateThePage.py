@@ -73,11 +73,14 @@ def specialUserGenerateThePage(request):
                 title = body_div.find('h1').get_text()
 
             script_json = head_div.find('script', type='application/ld+json')
-            articlePublishedDate = obj.articlePublishedDate.strftime('%Y-%m-%dT') + '12:00:00'
+            articlePublishedDate = obj.create_date.strftime('%Y-%m-%dT%H:%M:%S')
 
-            appid = '1616001968255226'
-            print('website_backstage_url-----------> ',obj.back_url)
+            appid = obj.belongToUser.website_backstage_appid
+
             print('id, appid, articlePublishedDate============> ',id, appid, title, articlePublishedDate)
+
+            domain = obj.belongToUser.secondaryDomainName
+            back_url = domain + '{}.html'.format(obj.id)
             insert_script = """
                 <script type="application/ld+json">
                     {
@@ -93,15 +96,14 @@ def specialUserGenerateThePage(request):
                 </script>
                 <script src="//msite.baidu.com/sdk/c.js?appid=%s"></script>
                 </head>
-                """ % (obj.back_url, appid, title, articlePublishedDate, appid)
+                """ % (back_url, appid, title, articlePublishedDate, appid)
 
             if not script_json:
                 result_data = result_data.replace('</head>', insert_script)
             else:
                 result_data = result_data.replace(str(script_json), insert_script)
 
-            domain = obj.belongToUser.secondaryDomainName
-            back_url = domain + 'api/SearchSecondary/{}.html'.format(obj.id)
+
             # back_url = 'article/{}.html'.format(obj.id)
             # obj.article_status = 4
             obj.back_url = back_url
