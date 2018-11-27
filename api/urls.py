@@ -1,13 +1,13 @@
 """XiongZhangHaoApi URL Configuration
 
-The `urlpatterns` list routes URLs to views. For more information please see:
+The `urlpatterns` list routes URLs to views_dir. For more information please see:
     https://docs.djangoproject.com/en/2.0/topics/http/urls/
 Examples:
-Function views
-    1. Add an import:  from my_app import views
-    2. Add a URL to urlpatterns:  path('', views.home, name='home')
-Class-based views
-    1. Add an import:  from other_app.views import Home
+Function views_dir
+    1. Add an import:  from my_app import views_dir
+    2. Add a URL to urlpatterns:  path('', views_dir.home, name='home')
+Class-based views_dir
+    1. Add an import:  from other_app.views_dir import Home
     2. Add a URL to urlpatterns:  path('', Home.as_view(), name='home')
 Including another URLconf
     1. Import the include() function: from django.urls import include, path
@@ -15,7 +15,7 @@ Including another URLconf
 """
 from django.conf.urls import url, include
 from api.views_dir import select_keywords_cover, generateThePage, getCookieAndColumn, articleScriptOper, \
-    theScheduler, init_fugai_baobiao, init_fugai_detail, selectDeleteQuery
+    theScheduler, init_fugai_baobiao, init_fugai_detail, selectDeleteQuery, addFansGetTask
 
 urlpatterns = [
 
@@ -48,6 +48,8 @@ urlpatterns = [
     # 查询客户网站该文章是否删除 做出提示
     url(r'selectDeleteQuery/(?P<oper_type>\w+)$', selectDeleteQuery.selectDeleteQuery), # 文章操作 审核 提交熊掌号 发布文章
 
+    # 加粉任务
+    url(r'addFansGetTask/(?P<oper_type>\w+)$', addFansGetTask.addFansGetTask),
 
 ]
 

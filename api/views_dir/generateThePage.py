@@ -72,11 +72,13 @@ def specialUserGenerateThePage(request):
 
             script_json = head_div.find('script', type='application/ld+json')
             if not script_json:
+                url = website_backstage_url.split('.html')[0]
+                id = url.split('/')[-1]
                 insert_script = """
                 <script type="application/ld+json">
                     {   
                         "@context": "https://ziyuan.baidu.com/contexts/cambrian.jsonld",
-                        "@id": "http://3g.meilianchen.cn//zxmr/kczx/19845102220.html",
+                        "@id": "http://3g.meilianchen.cn//zxmr/kczx/%d.html",
                         "appid": "1616001968255226",
                         "title": "%s",
                         "images": [
@@ -85,7 +87,8 @@ def specialUserGenerateThePage(request):
                         "pubDate": "%s"
                     }
                 </script>
-                """ % (title, obj.create_date.strftime('%Y-%m-%dT%H:%M:%S'))
+                </head>
+                """ % (id, title, obj.articlePublishedDate.strftime('%Y-%m-%dT12:00:00'))
                 result_data = result_data.replace('</head>', insert_script)
 
 
