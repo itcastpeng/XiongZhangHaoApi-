@@ -18,6 +18,7 @@ def specialUserGenerateThePage(request):
     response = Response.ResponseObj()
     objs = models.xzh_article.objects.filter(article_status=6, belongToUser__userType=2)
     for obj in objs:
+        print('obj.id----------> ',obj.id)
         if obj.back_url:
             website_backstage_url = obj.belongToUser.website_backstage_url
             url = urlparse(website_backstage_url)
@@ -25,6 +26,7 @@ def specialUserGenerateThePage(request):
                 domain = 'http://' + url.hostname
             else:
                 domain = 'http://' + website_backstage_url.split('/')[0]
+            print('website_backstage_url==========> ',website_backstage_url)
             ret = requests.get(obj.back_url)
             encode_ret = ret.apparent_encoding
             if encode_ret == 'GB2312':
@@ -71,33 +73,39 @@ def specialUserGenerateThePage(request):
                 title = body_div.find('h1').get_text()
 
             script_json = head_div.find('script', type='application/ld+json')
-            if not script_json:
-                url = website_backstage_url.split('.html')[0]
-                id = url.split('/')[-1]
-                insert_script = """
+            articlePublishedDate = obj.articlePublishedDate.strftime('%Y-%m-%dT') + '12:00:00'
+
+            appid = '1616001968255226'
+            print('website_backstage_url-----------> ',obj.back_url)
+            print('id, appid, articlePublishedDate============> ',id, appid, title, articlePublishedDate)
+            insert_script = """
                 <script type="application/ld+json">
-                    {   
+                    {
                         "@context": "https://ziyuan.baidu.com/contexts/cambrian.jsonld",
-                        "@id": "http://3g.meilianchen.cn//zxmr/kczx/%d.html",
-                        "appid": "1616001968255226",
+                        "@id": "%s",
+                        "appid": %s,
                         "title": "%s",
                         "images": [
                             "http://m.meilianchen.cn/new/images/sy.jpg"
-                        ], 
+                        ],
                         "pubDate": "%s"
                     }
                 </script>
+                <script src="//msite.baidu.com/sdk/c.js?appid=%s"></script>
                 </head>
-                """ % (id, title, obj.articlePublishedDate.strftime('%Y-%m-%dT12:00:00'))
-                result_data = result_data.replace('</head>', insert_script)
+                """ % (obj.back_url, appid, title, articlePublishedDate, appid)
 
+            if not script_json:
+                result_data = result_data.replace('</head>', insert_script)
+            else:
+                result_data = result_data.replace(str(script_json), insert_script)
 
             domain = obj.belongToUser.secondaryDomainName
             back_url = domain + 'api/SearchSecondary/{}.html'.format(obj.id)
             # back_url = 'article/{}.html'.format(obj.id)
+            # obj.article_status = 4
             obj.back_url = back_url
             obj.DomainNameText = result_data  # 二级域名内容
-            # obj.article_status = 4
             obj.article_status = 0  # 测试
             obj.save()
     response.code = 200
