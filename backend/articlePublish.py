@@ -136,7 +136,7 @@ class DeDe(object):
                         huilian = 'http:/' + huilian_right
                     # print('huilian=========> ',huilian)
                     time.sleep(0.5)
-                    if 'http://m.glamzx.com/admin_2230_zbj_2017' not in self.home_url:  # 北京克莱美舍 发不完请求不到 审核完才可以
+                    if 'http://m.glamzx.com' not in self.home_url:  # 张冰洁整形 发不完请求不到 审核完才可以
                         ret = self.requests_obj.get(huilian, cookies=self.cookies)
                         encode_ret = ret.apparent_encoding
                         # print('encode_ret===========', encode_ret)

@@ -77,11 +77,12 @@ ret1 = requests_obj.get(url1, headers=headers)
 result = ret1.text.split('BigPipe.onPageletArrive(')[1]
 result = result[:-2]
 
-print(result)
 html = json.loads(result)['html']
 soup = BeautifulSoup(html, 'lxml')
-
-
+interaction = soup.find('div', id='interaction')
+fans = interaction.find('div', class_='fans')
+fans_num = fans.find('span').get_text()
+print(fans_num)
 
 
 

@@ -81,8 +81,8 @@ def user(request):
                 'is_debug': is_debug,
                 'website_backstage_token': obj.website_backstage_token,
                 'website_backstage_appid': obj.website_backstage_appid,
-                'xiongZhangHaoIndex': obj.xiongZhangHaoIndex
-
+                'xiongZhangHaoIndex': obj.xiongZhangHaoIndex,
+                'secondaryDomainName': obj.secondaryDomainName
             })
         #  查询成功 返回200 状态码
         response.code = 200
@@ -120,6 +120,7 @@ def user_oper(request, oper_type, o_id):
                 'website_backstage_token': request.POST.get('website_backstage_token'),
                 'website_backstage_appid': request.POST.get('website_backstage_appid'),
                 'xiongZhangHaoIndex': request.POST.get('xiongZhangHaoIndex'),
+                'secondaryDomainName': request.POST.get('secondaryDomainName'),
             }
             print('form_data----->',form_data)
             #  创建 form验证 实例（参数默认转成字典）
