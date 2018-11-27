@@ -57,18 +57,28 @@ def deleteQuery():
 #     print(i)
 #     o.append(i)
 
-import requests
-url = 'http://127.0.0.1:8003/api/addFansGetTask/judgmentTask'
+import requests, json
+from bs4 import BeautifulSoup
 
-ret = requests.get(url)
+requests_obj = requests.session()
+# url1 = 'https://author.baidu.com/profil'
+url1 = 'https://author.baidu.com/profile?context={%22from%22:%22dusite_sresults%22,%22app_id%22:%221604474303074024%22}&cmdType=&pagelets=root&reqID=0&ispeed=1'
+url = 'https://author.baidu.com/home/1604474303074024?from=dusite_sresults'
 
-result = ret.json()
-print(result['data']['flag'])
+headers = {
+    'User-Agent': 'Mozilla/5.0 (Linux; Android 6.0; Nexus 5 Build/MRA58N) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/70.0.3538.102 Mobile Safari/537.36',
+    'Referer': 'https://author.baidu.com/home/1604474303074024?from=dusite_sresults',
+}
 
+ret = requests_obj.get(url, headers=headers)
+ret1 = requests_obj.get(url1, headers=headers)
+print(ret1.url)
+print(ret1.text)
+print(ret1)
 
-
-
-
+soup = BeautifulSoup(ret1.text, 'lxml')
+for i in soup.find_all('a'):
+    print('i=========> ', i)
 
 
 

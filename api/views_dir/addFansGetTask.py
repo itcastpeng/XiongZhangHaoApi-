@@ -80,14 +80,17 @@ def addFansGetTask(request, oper_type):
         # if objs:
         #     obj = objs[0]
         # obj.xiongzhanghao_url
-        xiongzhanghao_url = 'https://m.baidu.com/s?word={}'.format(keyword)
+        xiongzhanghao_url = 'https://author.baidu.com/home/1604474303074024?from=dusite_sresults'
+        url = 'https://m.baidu.com/s?word={}'.format(keyword)
         print('=xiongzhanghao_url===================> ',xiongzhanghao_url)
-        ret = requests.get(xiongzhanghao_url, headers=headers)
-        # print(ret.text)
+        ret = requests.get(url, headers=headers)
         soup = BeautifulSoup(ret.text, 'lxml')
-        main_div = soup.find('div', class_='wa-guanfanghao-main')
-        for i in main_div.find_all('div', class_='c-gap-top-small'):
-            print('i---------------------> ', i.find('a'))
+        main_divs = soup.find('div', class_='wa-guanfanghao-main')
+        main_div = main_divs.find_all('div', class_='c-gap-top-small')[0]
+        data_url = main_div.find('a').attrs.get('data-url')
+        if xiongzhanghao_url == data_url or xiongzhanghao_url in data_url:
+            print(data_url)
+
 
 
     # 加粉后 查询 粉丝数量
