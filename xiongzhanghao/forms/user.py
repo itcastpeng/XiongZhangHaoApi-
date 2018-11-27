@@ -81,7 +81,12 @@ class AddForm(forms.Form):
             'required': "熊掌号主页不能为空"
         }
     )
-
+    secondaryDomainName = forms.CharField(
+        required=False,
+        error_messages={
+            'required': "二级链接类型错误"
+        }
+    )
 
     # 查询名称是否存在
     def clean_username(self):

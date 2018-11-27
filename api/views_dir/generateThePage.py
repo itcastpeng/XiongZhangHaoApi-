@@ -105,10 +105,10 @@ def specialUserGenerateThePage(request):
 
 
             # back_url = 'article/{}.html'.format(obj.id)
-            # obj.article_status = 4
+            obj.article_status = 4
             obj.back_url = back_url
             obj.DomainNameText = result_data  # 二级域名内容
-            obj.article_status = 0  # 测试
+            # obj.article_status = 0  # 测试
             obj.save()
     response.code = 200
     response.msg = '生成完成'

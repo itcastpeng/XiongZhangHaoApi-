@@ -5,7 +5,7 @@ from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt, csrf_protect
 from bs4 import BeautifulSoup
 
-import requests, random
+import requests, random, json
 
 pcRequestHeader = [
     'Mozilla/5.0 (Windows NT 5.1; rv:6.0.2) Gecko/20100101 Firefox/6.0.2',
@@ -71,28 +71,40 @@ def addFansGetTask(request, oper_type):
         o_id = request.GET.get('o_id')
 
 
-    # 加粉前 查询 粉丝数量
-    elif oper_type == 'befor':
-        headers = {'User-Agent': 'Mozilla/5.0 (iPhone; CPU iPhone OS 11_0 like Mac OS X) AppleWebKit/604.1.38 (KHTML, like Gecko) Version/11.0 Mobile/15A372 Safari/604.1'}
-        requests_obj = requests.session()
-        appid = '1604474303074024'
-
-        url1 = 'https://author.baidu.com/profile?context={%22from%22:%22dusite_sresults%22,%22app_id%22:%22{}%22}&cmdType=&pagelets=root&reqID=0&ispeed=1'.format(appid)
-        url = 'https://author.baidu.com/home/{}?from=dusite_sresults'.format(appid)
-
-        headers = {
-            'User-Agent': 'Mozilla/5.0 (Linux; Android 6.0; Nexus 5 Build/MRA58N) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/70.0.3538.102 Mobile Safari/537.36',
-            'Referer': 'https://author.baidu.com/home/{}?from=dusite_sresults'.format(appid),
-        }
-        ret = requests_obj.get(url, headers=headers)
-        ret1 = requests_obj.get(url1, headers=headers)
-
-
-
-        # 加粉后 查询 粉丝数量
-    elif oper_type == 'after':
-        pass
-
+    # 加粉前后 查询 粉丝数量
+    elif oper_type == 'beforAfter':
+        objs = models.xzh_add_fans.objects.filter(status__in=[1,3])
+        for obj in objs:
+            appid = obj.xiongzhanghao_url
+            # requests_obj = requests.session()
+            #
+            # url1 = 'https://author.baidu.com/profile?context={%22from%22:%22dusite_sresults%22,%22app_id%22:%22{}%22}&cmdType=&pagelets=root&reqID=0&ispeed=1'.format(appid)
+            # url = 'https://author.baidu.com/home/{}?from=dusite_sresults'.format(appid)
+            #
+            # headers = {
+            #     'User-Agent': 'Mozilla/5.0 (Linux; Android 6.0; Nexus 5 Build/MRA58N) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/70.0.3538.102 Mobile Safari/537.36',
+            #     'Referer': 'https://author.baidu.com/home/{}?from=dusite_sresults'.format(appid),
+            # }
+            #
+            # ret = requests_obj.get(url, headers=headers)
+            # ret1 = requests_obj.get(url1, headers=headers)
+            # result = ret1.text.split('BigPipe.onPageletArrive(')[1]
+            # result = result[:-2]
+            #
+            # html = json.loads(result)['html']
+            # soup = BeautifulSoup(html, 'lxml')
+            # interaction = soup.find('div', id='interaction')
+            # fans = interaction.find('div', class_='fans')
+            # fans_num = fans.find('span').get_text()
+            # if obj.status == 1:
+            #     obj.status = 2
+            #     obj.befor_add_fans=int(fans_num)
+            # if obj.status == 3:
+            #     obj.status = 4
+            #     obj.after_add_fans=int(fans_num)
+            # obj.save()
+        response.code = 200
+        response.msg = '粉前查询'
     return JsonResponse(response.__dict__)
 
 
