@@ -70,19 +70,23 @@ headers = {
     'Referer': 'https://author.baidu.com/home/1604474303074024?from=dusite_sresults',
 }
 
-ret = requests_obj.get(url, headers=headers)
-ret1 = requests_obj.get(url1, headers=headers)
+# ret = requests_obj.get(url, headers=headers)
+# ret1 = requests_obj.get(url1, headers=headers)
+#
+#
+# result = ret1.text.split('BigPipe.onPageletArrive(')[1]
+# result = result[:-2]
+#
+# html = json.loads(result)['html']
+# soup = BeautifulSoup(html, 'lxml')
+# interaction = soup.find('div', id='interaction')
+# fans = interaction.find('div', class_='fans')
+# fans_num = fans.find('span').get_text()
+# print(fans_num)
 
 
-result = ret1.text.split('BigPipe.onPageletArrive(')[1]
-result = result[:-2]
 
-html = json.loads(result)['html']
-soup = BeautifulSoup(html, 'lxml')
-interaction = soup.find('div', id='interaction')
-fans = interaction.find('div', class_='fans')
-fans_num = fans.find('span').get_text()
-print(fans_num)
+url = 'http://127.0.0.1:8003/api/addFansGetTask/getTask?user_id=17&timestamp=123&rand_str=4297f44b13955235245b2497399d7a93'
+ret = requests.get(url)
 
-
-
+print(ret.json().get('data'))

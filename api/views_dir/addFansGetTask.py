@@ -4,8 +4,8 @@ from xiongzhanghao.publicFunc import account
 from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt, csrf_protect
 from bs4 import BeautifulSoup
-
-import requests, random, json
+from django.db.models import Q
+import requests, random, json, datetime
 
 pcRequestHeader = [
     'Mozilla/5.0 (Windows NT 5.1; rv:6.0.2) Gecko/20100101 Firefox/6.0.2',
@@ -31,9 +31,17 @@ pcRequestHeader = [
 @account.is_token(models.xzh_userprofile)
 def addFansGetTask(request, oper_type):
     response = Response.ResponseObj()
+
+    # now = datetime.datetime.now()
+    # deletionTime = (now - datetime.timedelta(hours=2)).strftime('%Y-%m-%d %H:%M:%S')
+    # deletionTime = datetime.datetime.strptime(deletionTime, '%Y-%m-%d %H:%M:%S')
+    q = Q()
+    q.add(Q(status=2), Q.AND)
+    # q.add(Q(taskTimeBetween__isnull=True) | Q(taskTimeBetween__lte=deletionTime), Q.AND)
+
     # 判断是否有任务
     if oper_type == 'judgmentTask':
-        objs = models.xzh_add_fans.objects.filter(status=2)[:1]
+        objs = models.xzh_add_fans.objects.filter(q)[:1]
         flag = False
         if objs:
             flag = True
@@ -44,65 +52,81 @@ def addFansGetTask(request, oper_type):
 
     # 获取任务
     elif oper_type == 'getTask':
-        objs = models.xzh_add_fans.objects.filter(status=2).order_by('?')[:10]
-        flag = False
-        if not objs:
-            response.data = {
-                'flag':flag
-            }
-        else:
-            flag = True
+        objs = models.xzh_add_fans.objects.filter(q).order_by('?')[:1]
+        if objs:
+            # now = datetime.datetime.now()
+            # objs[0].taskTimeBetween=now
+            # objs[0].save()
             obj = objs[0]
             obj.status = 2
             response.code = 200
             response.msg = '查询成功'
-            response.data = {
-                'flag': flag,
-                'o_id':obj.id,
-                'xiongzhanghao_url':obj.xiongzhanghao_url,
-                'add_fans_num':obj.add_fans_num,
-            }
+            response.data = obj.search_keyword
             obj.save()
 
     # 返回任务 更改状态
-    elif oper_type == 'getTaskModel':
-        o_id = request.GET.get('o_id')
-        o_id = request.GET.get('o_id')
-        o_id = request.GET.get('o_id')
+    # elif oper_type == 'getTaskModel':
+    #     o_id = request.GET.get('o_id')
+    #     objs = models.xzh_add_fans.objects.filter(id=o_id)
+    #     if objs and objs[0].status == 2:
+    #         obj = objs[0]
+    #         obj.status = 3
+    #         obj.save()
+    #     response.code = 200
+    #     response.msg = '更新成功'
 
 
     # 加粉前后 查询 粉丝数量
     elif oper_type == 'beforAfter':
-        objs = models.xzh_add_fans.objects.filter(status__in=[1,3])
+        objs = models.xzh_add_fans.objects.order_by('?')[:10]
         for obj in objs:
-            appid = obj.xiongzhanghao_url
-            # requests_obj = requests.session()
-            #
-            # url1 = 'https://author.baidu.com/profile?context={%22from%22:%22dusite_sresults%22,%22app_id%22:%22{}%22}&cmdType=&pagelets=root&reqID=0&ispeed=1'.format(appid)
-            # url = 'https://author.baidu.com/home/{}?from=dusite_sresults'.format(appid)
-            #
-            # headers = {
-            #     'User-Agent': 'Mozilla/5.0 (Linux; Android 6.0; Nexus 5 Build/MRA58N) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/70.0.3538.102 Mobile Safari/537.36',
-            #     'Referer': 'https://author.baidu.com/home/{}?from=dusite_sresults'.format(appid),
-            # }
-            #
-            # ret = requests_obj.get(url, headers=headers)
-            # ret1 = requests_obj.get(url1, headers=headers)
-            # result = ret1.text.split('BigPipe.onPageletArrive(')[1]
-            # result = result[:-2]
-            #
-            # html = json.loads(result)['html']
-            # soup = BeautifulSoup(html, 'lxml')
-            # interaction = soup.find('div', id='interaction')
-            # fans = interaction.find('div', class_='fans')
-            # fans_num = fans.find('span').get_text()
-            # if obj.status == 1:
-            #     obj.status = 2
-            #     obj.befor_add_fans=int(fans_num)
-            # if obj.status == 3:
-            #     obj.status = 4
-            #     obj.after_add_fans=int(fans_num)
-            # obj.save()
+            appid = obj.xiongzhanghaoID
+            requests_obj = requests.session()
+            url = 'https://author.baidu.com/home/{}?from=dusite_sresults'.format(appid)
+            data = '%22from%22:%22dusite_sresults%22,%22app_id%22:%22{appid}%22'.format(appid=appid)
+            url1 = 'https://author.baidu.com/profile?context={%s}&cmdType=&pagelets=root&reqID=0&ispeed=1' % data
+            print('url-------------> ',url)
+            print('url1-------------> ',url1)
+            headers = {
+                'User-Agent': 'Mozilla/5.0 (Linux; Android 6.0; Nexus 5 Build/MRA58N) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/70.0.3538.102 Mobile Safari/537.36',
+                'Referer': 'https://author.baidu.com/home/{}?from=dusite_sresults'.format(appid),
+            }
+
+            ret = requests_obj.get(url, headers=headers)
+            ret1 = requests_obj.get(url1, headers=headers)
+            print('ret1.text--------> ', ret1.text)
+
+            result = ret1.text.split('BigPipe.onPageletArrive(')[1]
+            print('result--------->==========',result)
+            result = result[:-2]
+            if result:
+                html = json.loads(result).get('html')
+                if html:
+                    soup = BeautifulSoup(html, 'lxml')
+                    interaction = soup.find('div', id='interaction')
+                    print('interaction--------> ',interaction)
+                    fans = interaction.find('div', class_='fans')
+                    fans_num = fans.find('span').get_text()
+                    print('当前粉丝数量------------------------------> ',fans_num)
+                    if obj.status == 1:
+                        print('粉前=============查询')
+                        obj.status = 2
+                        obj.befor_add_fans=int(fans_num)
+
+                    elif obj.status == 2:
+                        print('加粉中=-------------------')
+                        if int(fans_num) >= obj.add_fans_num:
+                            obj.status = 3
+
+                    elif obj.status == 3:
+                        print('粉后-=========查询')
+                        obj.status = 4
+                        obj.after_add_fans=int(fans_num)
+
+                else:
+                    obj.status = 0
+                    print('未请求到==================================')
+                obj.save()
         response.code = 200
         response.msg = '粉前查询'
     return JsonResponse(response.__dict__)
