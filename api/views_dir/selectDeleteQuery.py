@@ -67,7 +67,7 @@ def selectDeleteQuery(request, oper_type):
         for obj in objs:
             user_article_result = obj.belongToUser.user_article_result
             note_content = ''
-            if str(obj.aid) in user_article_result and obj.title.strip() in user_article_result:
+            if obj.aid in user_article_result and obj.title.strip() in user_article_result:
                 print(obj.aid, obj.title, 'user_article_result========>',user_article_result)
                 is_delete = False
             else:

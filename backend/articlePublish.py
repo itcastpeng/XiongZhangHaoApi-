@@ -125,13 +125,16 @@ class DeDe(object):
                     aid_href = soup.find('a', text='更改文章').get('href')    # 文章id
                     aid = aid_href.split('?')[1].split('&')[0].split('aid=')[-1]
                     huilian_href = soup.find('a', text='查看文章').get('href')    # 文章id
-                    huilian = self.domain + huilian_href
+                    if 'http://www.zjnbsznfk120.com' not in self.home_url:
+                        huilian = self.domain + huilian_href
+                    else:
+                        huilian = huilian_href
                     # print('huilian================> ',huilian)
                     huilian = huilian.replace('//', '/')
                     if 'http:' in huilian:
                         huilian_right = huilian.split('http:')[1]
                         huilian = 'http:/' + huilian_right
-                    print('huilian=========> ',huilian)
+                    # print('huilian=========> ',huilian)
                     time.sleep(0.5)
                     if 'http://m.glamzx.com/admin_2230_zbj_2017' not in self.home_url:  # 北京克莱美舍 发不完请求不到 审核完才可以
                         ret = self.requests_obj.get(huilian, cookies=self.cookies)
@@ -145,7 +148,7 @@ class DeDe(object):
                         # print('title-------------> ',title)
                         # print('ret.text==============> ',ret.text)
                         if title.strip() in ret.text:
-                            print('huilian=============> ', huilian)
+                            # print('huilian=============> ', huilian)
                             # 更新文档url
                             # updateWordUrl = '{home_url}/task_do.php?typeid={cid}&aid={aid}&dopost=makeprenext&nextdo=makeindex,makeparenttype'.format(
                             #     home_url=self.home_url,

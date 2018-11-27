@@ -62,14 +62,13 @@ def user(request):
                 role_name = obj.role.name
 
             is_debug = '已调试' if obj.is_debug else '未调试'
-            status = '已启用' if obj.status == 1 else '未启用'
 
             #  将查询出来的数据 加入列表
             ret_data.append({
                 'id': obj.id,
                 'username': obj.username,
                 'get_status_display': obj.get_status_display(),
-                'status': status,
+                'status': obj.status,
                 'role_id': role_id,
                 'role_name': role_name,
                 'website_backstage_id': obj.website_backstage,
@@ -107,6 +106,7 @@ def user_oper(request, oper_type, o_id):
     response = Response.ResponseObj()
     user_id = request.GET.get('user_id')
     if request.method == "POST":
+        user_id = request.GET.get('user_id')
         if oper_type == "add":
             form_data = {
                 'oper_user_id': request.GET.get('user_id'),
@@ -259,6 +259,25 @@ def user_oper(request, oper_type, o_id):
             else:
                 response.code = 301
                 response.msg = "用户ID不存在"
+
+        elif oper_type == 'updateStatus':
+            userObj = models.xzh_userprofile.objects
+            objs = userObj.filter(id=user_id)
+            if objs and int(objs[0].role_id) in [64, 66]:
+                obj = userObj.filter(id=o_id)
+                obj = obj[0]
+                if int(obj.status) == 1:
+                    status = 2
+                else:
+                    status = 1
+                obj.status = status
+                obj.save()
+                response.code = 200
+                response.msg = '修改成功'
+            else:
+                response.code = 301
+                response.msg = '该角色不可修改状态'
+
     else:
         # 查询该用户所有栏目
         if oper_type == 'getColumn':

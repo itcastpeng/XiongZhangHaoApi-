@@ -1,14 +1,5 @@
 from django.db import models
 
-
-#
-# # 公司表
-# class xzh_company(models.Model):
-#     name = models.CharField(verbose_name="公司名称", max_length=128)
-#     create_date = models.DateTimeField(verbose_name="创建时间", auto_now_add=True)
-#     oper_user = models.ForeignKey('xzh_userprofile', verbose_name="创建用户", related_name='company_userprofile')
-#
-
 # 角色表
 class xzh_role(models.Model):
     name = models.CharField(verbose_name="角色名称", max_length=128)
@@ -69,7 +60,7 @@ class xzh_userprofile(models.Model):
     deletionTime = models.DateTimeField(verbose_name='判断删除时间', null=True, blank=True) # 查询间隔时间
     user_article_result = models.TextField(verbose_name='单个用户爬取的数据', null=True, blank=True)  # 判断用户是否删除 aid title 发布时间
 
-# 公众号-文章表
+# 文章表
 class xzh_article(models.Model):
     user = models.ForeignKey('xzh_userprofile', verbose_name='文章创建人', null=True)
     belongToUser = models.ForeignKey('xzh_userprofile', verbose_name='文章属于谁', null=True, related_name='belongToUser')
@@ -142,12 +133,102 @@ class xzh_fugai_baobiao_detail(models.Model):
     baobiao_url = models.TextField(verbose_name="报表地址")
     create_date = models.DateField(verbose_name="创建时间", auto_now_add=True)
 
-# 判断客户后台是否删除了文章 该表存取客户后台aid 和 标题
-# class xzh_customer_background_background_is_deleted(models.Model):
-#     user_background = models.ForeignKey('xzh_userprofile', verbose_name='文章归属人', null=True)
-#     aid = models.IntegerField(verbose_name='aid')
-#     title = models.CharField(verbose_name='标题', max_length=64)
-#     releaseTime = models.DateField(verbose_name='发布时间', null=True, blank=True)
+# 熊掌号加粉
+class xzh_add_fans(models.Model):
+    oper_user = models.ForeignKey('xzh_userprofile', verbose_name='创建用户', related_name='xzh_add_fans_oper_user')
+    belong_user = models.ForeignKey('xzh_userprofile', verbose_name='加粉用户')
+    befor_add_fans = models.IntegerField(verbose_name='加粉前 粉丝数量', null=True, blank=True)
+    after_add_fans = models.IntegerField(verbose_name='加粉后 粉丝数量', null=True, blank=True)
+    add_fans_num = models.IntegerField(verbose_name='加粉数量', default=1)
+    xiongzhanghao_url = models.CharField(verbose_name='熊掌号官微', max_length=128, null=True, blank=True)
+    # search_keyword = models.CharField(verbose_name='搜索关键词', max_length=64)
+    create_date = models.DateField(verbose_name="创建时间", auto_now_add=True)
+    taskTimeBetween = models.DateTimeField(verbose_name="获取任务间隔", null=True, blank=True)
+    status_choices = (
+        (1, "未查询"),
+        (2, "加粉中.."),
+        (3, "加粉完成"),
+        (4, "已完成")
+    )
+    status = models.SmallIntegerField(verbose_name='状态', choices=status_choices, default=1)
+
+#===============================================================百度小程序===================================================================================
+
+
+# 角色表
+class xcx_role(models.Model):
+    name = models.CharField(verbose_name="角色名称", max_length=128)
+    create_date = models.DateTimeField(verbose_name="创建时间", auto_now_add=True)
+    oper_user = models.ForeignKey('xcx_userprofile', verbose_name="创建用户", related_name='role_user')
+    permissions = models.ManyToManyField('xcx_permissions', verbose_name="拥有权限")
+
+
+# 权限表
+class xcx_permissions(models.Model):
+    name = models.CharField(verbose_name="权限名称", max_length=128)
+    title = models.CharField(verbose_name="权限标题", max_length=128)
+    pid = models.ForeignKey('self', verbose_name="父级权限", null=True, blank=True)
+    create_date = models.DateTimeField(verbose_name="创建时间", auto_now_add=True)
+    oper_user = models.ForeignKey('xcx_userprofile', verbose_name="创建用户", related_name='permissions_user')
+
+
+# 用户表
+class xcx_userprofile(models.Model):
+    username = models.CharField(verbose_name="用户账号", max_length=128)
+    password = models.CharField(verbose_name="用户密码", max_length=128)
+    token = models.CharField(verbose_name="token值", max_length=128)
+    oper_user = models.ForeignKey('xcx_userprofile', verbose_name="创建用户", related_name='userprofile_self', null=True, blank=True)
+
+    create_date = models.DateTimeField(verbose_name="创建时间", auto_now_add=True)
+
+    status_choices = (
+        (1, '启用'),
+        (2, '不启用'),
+    )
+    status = models.SmallIntegerField(verbose_name="状态", choices=status_choices, default=2)
+    role = models.ForeignKey('xcx_role', verbose_name='所属角色', null=True, blank=True)
+
+
+# 栏目管理
+class xcx_program_management(models.Model):
+    program_name = models.CharField(verbose_name='栏目名称', max_length=64)
+
+    program_type_choices = (
+        (1, '列表页'),
+        (2, '单页')
+    )
+    program_type = models.SmallIntegerField(verbose_name='栏目类型', choices=program_type_choices, default=1)
+    program_text = models.TextField(verbose_name='单页设置内容', null=True, blank=True)
+
+# 文章表
+class xcx_article(models.Model):
+    user = models.ForeignKey('xcx_userprofile', verbose_name='文章创建人', null=True)
+    belongToUser = models.ForeignKey('xcx_userprofile', verbose_name='文章属于谁', null=True, related_name='belongToUser')
+    title = models.CharField(verbose_name='文章标题', max_length=128)
+    summary = models.TextField(verbose_name='文章摘要', null=True, blank=True)
+    content = models.TextField(verbose_name='文章内容', null=True, blank=True)
+    create_date = models.DateTimeField(verbose_name="创建时间", auto_now_add=True)
+    articlePublishedDate = models.DateField(verbose_name="文章发布时间", null=True, blank=True)
+    article_status_choices = (
+        (1, '发布中'),
+        (2, '发布成功, 待审核'),
+        (3, '发布失败'),
+        (4, '审核成功, 提交中'),
+        (5, '已完成'),
+        (6, '特殊用户, 生成页面中'),
+    )
+    article_status = models.SmallIntegerField(verbose_name='文章状态',choices=article_status_choices, default=1)
+    article_program = models.ForeignKey('xcx_program_management', verbose_name='归属栏目')
+
+
+
+
+
+
+
+
+
+
 
 
 

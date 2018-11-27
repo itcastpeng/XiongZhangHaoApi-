@@ -4,7 +4,7 @@ from xiongzhanghao.publicFunc import account
 from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt, csrf_protect
 from xiongzhanghao.publicFunc.condition_com import conditionCom
-from xiongzhanghao.forms.permissions import AddForm, UpdateForm, SelectForm
+from baiduxiaochengxu.forms.permissions import AddForm, UpdateForm, SelectForm
 import json
 
 
@@ -15,7 +15,7 @@ def init_data(pid=None, selected_list=None):
     :return:
     """
     result_data = []
-    objs = models.xzh_permissions.objects.filter(pid_id=pid)
+    objs = models.xcx_permissions.objects.filter(pid_id=pid)
     for obj in objs:
         current_data = {
             'title': obj.title,
@@ -36,7 +36,7 @@ def init_data(pid=None, selected_list=None):
 
 # cerf  token验证 用户展示模块
 @csrf_exempt
-@account.is_token(models.xzh_userprofile)
+@account.is_token(models.xcx_userprofile)
 def permissions(request):
     response = Response.ResponseObj()
     if request.method == "GET":
@@ -56,7 +56,7 @@ def permissions(request):
             q = conditionCom(request, field_dict)
             print('q -->', q)
 
-            objs = models.xzh_permissions.objects.select_related('pid').filter(q).order_by(order)
+            objs = models.xcx_permissions.objects.select_related('pid').filter(q).order_by(order)
             count = objs.count()
 
             if length != 0:
@@ -104,7 +104,7 @@ def permissions(request):
 #  增删改
 #  csrf  token验证
 @csrf_exempt
-@account.is_token(models.xzh_userprofile)
+@account.is_token(models.xcx_userprofile)
 def permissions_oper(request, oper_type, o_id):
     response = Response.ResponseObj()
     if request.method == "POST":
@@ -122,7 +122,7 @@ def permissions_oper(request, oper_type, o_id):
                 # print(forms_obj.cleaned_data)
                 #  添加数据库
                 print('forms_obj.cleaned_data-->',forms_obj.cleaned_data)
-                models.xzh_permissions.objects.create(**forms_obj.cleaned_data)
+                models.xcx_permissions.objects.create(**forms_obj.cleaned_data)
                 response.code = 200
                 response.msg = "添加成功"
             else:
@@ -151,7 +151,7 @@ def permissions_oper(request, oper_type, o_id):
                 title = forms_obj.cleaned_data['title']
                 pid_id = forms_obj.cleaned_data['pid_id']
                 #  查询数据库  用户id
-                objs = models.xzh_permissions.objects.filter(
+                objs = models.xcx_permissions.objects.filter(
                     id=o_id
                 )
                 #  更新 数据
@@ -178,10 +178,10 @@ def permissions_oper(request, oper_type, o_id):
 
         elif oper_type == "delete":
             # 删除 ID
-            objs = models.xzh_permissions.objects.filter(id=o_id)
+            objs = models.xcx_permissions.objects.filter(id=o_id)
             if objs:
                 obj = objs[0]
-                if models.xzh_permissions.objects.filter(pid_id=obj.id).count() > 0:
+                if models.xcx_permissions.objects.filter(pid_id=obj.id).count() > 0:
                     response.code = 304
                     response.msg = "含有子级数据,请先删除或转移子级数据"
                 else:

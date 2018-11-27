@@ -159,6 +159,7 @@ def articleScriptOper(request, oper_type):
                         print('==---------------------------不合法的url=-----------------------------')
                         note_content = '不合法的url'
                     else:
+                        note_content = ''
                         obj.article_status = 5
                 else:
                     note_content = 'appid 或 token 有问题, 建议重新获取token'

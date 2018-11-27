@@ -43,7 +43,7 @@ def article(request):
                 q.add(Q(articlePublishedDate__gte=start_time) & Q(articlePublishedDate__lte=stop_time), Q.AND)
 
             print('q -->', q)
-            objs = models.xzh_article.objects.select_related('user').filter(q).order_by(order)
+            objs = models.xzh_article.objects.select_related('user', 'belongToUser').filter(q).order_by(order)
             count = objs.count()
 
             if length != 0:
@@ -69,6 +69,11 @@ def article(request):
 
 
                 send_time = obj.send_time.strftime('%Y-%m-%d %H:%M:%S') if obj.send_time else ''
+                belongToUser = ''
+                belongToUser_id = ''
+                if obj.belongToUser:
+                    belongToUser_id = obj.belongToUser_id
+                    belongToUser = obj.belongToUser.username
                 ret_data.append({
                     'id': obj.id,
                     'title':obj.title,
@@ -79,8 +84,8 @@ def article(request):
                     'create_date':obj.create_date.strftime('%Y-%m-%d %H:%M:%S'),
                     'user_id':obj.user.id,
                     'user_name':obj.user.username,
-                    'belongToUser_id':obj.belongToUser_id,
-                    'belongToUser_name': obj.belongToUser.username,
+                    'belongToUser_id':belongToUser_id,
+                    'belongToUser_name': belongToUser,
                     'article_status': obj.get_article_status_display(),
                     'note_content':obj.note_content,
                     'back_url':back_url,

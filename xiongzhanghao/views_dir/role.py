@@ -21,6 +21,10 @@ def role(request):
             length = forms_obj.cleaned_data['length']
             print('forms_obj.cleaned_data -->', forms_obj.cleaned_data)
             order = request.GET.get('order', '-create_date')
+            user_id = request.GET.get('user_id')
+            userObjs = models.xzh_userprofile.objects.filter(id=user_id)
+
+            print('user_id-----------------------------------> ',user_id)
             field_dict = {
                 'id': '',
                 'name': '__contains',
@@ -30,6 +34,10 @@ def role(request):
             q = conditionCom(request, field_dict)
             print('q -->', q)
             objs = models.xzh_role.objects.filter(q).order_by(order)
+            if int(userObjs[0].role_id) == 66:
+                objs = models.xzh_role.objects.filter(q).order_by(order).exclude(id=64)
+            elif int(userObjs[0].role_id) == 61:
+                objs = models.xzh_role.objects.filter(q).order_by(order).exclude(id__in=[64, 66])
             count = objs.count()
 
             if length != 0:
@@ -186,6 +194,7 @@ def role_oper(request, oper_type, o_id):
     else:
         # 获取角色对应的权限
         if oper_type == "get_rules":
+
             objs = models.xzh_role.objects.filter(id=o_id)
             if objs:
                 obj = objs[0]
@@ -197,6 +206,7 @@ def role_oper(request, oper_type, o_id):
 
                 response.code = 200
                 response.msg = "查询成功"
+
         else:
             response.code = 402
             response.msg = "请求异常"
