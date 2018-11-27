@@ -74,26 +74,22 @@ def addFansGetTask(request, oper_type):
     # 加粉前 查询 粉丝数量
     elif oper_type == 'befor':
         headers = {'User-Agent': 'Mozilla/5.0 (iPhone; CPU iPhone OS 11_0 like Mac OS X) AppleWebKit/604.1.38 (KHTML, like Gecko) Version/11.0 Mobile/15A372 Safari/604.1'}
-        keyword = '宁波送子鸟妇科医院 熊掌号'
-        # headers = {'User-Agent': pcRequestHeader[random.randint(0, len(pcRequestHeader) - 1)], }
-        # objs = models.xzh_add_fans.objects.filter(status=1)[:10]
-        # if objs:
-        #     obj = objs[0]
-        # obj.xiongzhanghao_url
-        xiongzhanghao_url = 'https://author.baidu.com/home/1604474303074024?from=dusite_sresults'
-        url = 'https://m.baidu.com/s?word={}'.format(keyword)
-        print('=xiongzhanghao_url===================> ',xiongzhanghao_url)
-        ret = requests.get(url, headers=headers)
-        soup = BeautifulSoup(ret.text, 'lxml')
-        main_divs = soup.find('div', class_='wa-guanfanghao-main')
-        main_div = main_divs.find_all('div', class_='c-gap-top-small')[0]
-        data_url = main_div.find('a').attrs.get('data-url')
-        if xiongzhanghao_url == data_url or xiongzhanghao_url in data_url:
-            print(data_url)
+        requests_obj = requests.session()
+        appid = '1604474303074024'
+
+        url1 = 'https://author.baidu.com/profile?context={%22from%22:%22dusite_sresults%22,%22app_id%22:%22{}%22}&cmdType=&pagelets=root&reqID=0&ispeed=1'.format(appid)
+        url = 'https://author.baidu.com/home/{}?from=dusite_sresults'.format(appid)
+
+        headers = {
+            'User-Agent': 'Mozilla/5.0 (Linux; Android 6.0; Nexus 5 Build/MRA58N) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/70.0.3538.102 Mobile Safari/537.36',
+            'Referer': 'https://author.baidu.com/home/{}?from=dusite_sresults'.format(appid),
+        }
+        ret = requests_obj.get(url, headers=headers)
+        ret1 = requests_obj.get(url1, headers=headers)
 
 
 
-    # 加粉后 查询 粉丝数量
+        # 加粉后 查询 粉丝数量
     elif oper_type == 'after':
         pass
 
