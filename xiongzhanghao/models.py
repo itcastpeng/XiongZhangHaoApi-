@@ -140,7 +140,7 @@ class xzh_add_fans(models.Model):
     befor_add_fans = models.IntegerField(verbose_name='加粉前 粉丝数量', null=True, blank=True)
     after_add_fans = models.IntegerField(verbose_name='加粉后 粉丝数量', null=True, blank=True)
     add_fans_num = models.IntegerField(verbose_name='加粉数量', default=1)
-    xiongzhanghao_url = models.CharField(verbose_name='熊掌号官微', max_length=128, null=True, blank=True)
+    # xiongzhanghao_url = models.CharField(verbose_name='熊掌号官微', max_length=128, null=True, blank=True)
     xiongzhanghaoID = models.CharField(verbose_name='熊掌号官微id', max_length=128, null=True, blank=True)
     search_keyword = models.CharField(verbose_name='搜索关键词', max_length=64, null=True, blank=True)
     create_date = models.DateField(verbose_name="创建时间", auto_now_add=True)
