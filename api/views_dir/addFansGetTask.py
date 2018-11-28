@@ -77,7 +77,7 @@ def addFansGetTask(request, oper_type):
 
 
     # 加粉前后 查询 粉丝数量
-    elif oper_type == 'beforAfter':
+    elif oper_type == 'queryFollowersNum':
         objs = models.xzh_add_fans.objects.order_by('?')[:10]
         for obj in objs:
             appid = obj.xiongzhanghaoID
@@ -109,26 +109,25 @@ def addFansGetTask(request, oper_type):
                     fans_num = fans.find('span').get_text()
                     print('当前粉丝数量------------------------------> ',fans_num)
                     if obj.status == 1:
-                        print('粉前=============查询')
+                        print('粉前查询--------------=============')
                         obj.status = 2
                         obj.befor_add_fans=int(fans_num)
 
                     elif obj.status == 2:
-                        print('加粉中=-------------------')
+                        print('加粉中=-------------------=================')
                         if int(fans_num) >= obj.add_fans_num:
                             obj.status = 3
 
                     elif obj.status == 3:
-                        print('粉后-=========查询')
+                        print('粉后查询==========-----------------=========')
                         obj.status = 4
                         obj.after_add_fans=int(fans_num)
-
                 else:
                     obj.status = 0
                     print('未请求到==================================')
                 obj.save()
         response.code = 200
-        response.msg = '粉前查询'
+        response.msg = '查询粉丝数量'
     return JsonResponse(response.__dict__)
 
 

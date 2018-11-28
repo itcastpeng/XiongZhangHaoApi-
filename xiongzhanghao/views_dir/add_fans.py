@@ -51,13 +51,13 @@ def fans(request):
             #  将查询出来的数据 加入列表
             ret_data.append({
                 'id': obj.id,
-                'belong_user_id':obj.belong_user_id,
-                'belong_user':obj.belong_user.username,
-                'befor_add_fans':obj.befor_add_fans,
-                'after_add_fans':obj.after_add_fans,
-                'add_fans_num':obj.add_fans_num,
-                'xiongzhanghao_url':obj.xiongzhanghao_url,
-                'search_keyword':obj.search_keyword,
+                'belong_user_id':obj.belong_user_id,    # 归属人ID
+                'belong_user':obj.belong_user.username, # 归属人名字
+                'befor_add_fans':obj.befor_add_fans,    # 加粉前 粉丝数量
+                'after_add_fans':obj.after_add_fans,    # 加分后 粉丝数量
+                'add_fans_num':obj.add_fans_num,        # 添加的粉丝数量
+                'xiongzhanghaoID':obj.xiongzhanghaoID,  # 熊掌号ID
+                'search_keyword':obj.search_keyword,    # 熊掌号搜索关键词
             })
         #  查询成功 返回200 状态码
         response.code = 200
@@ -84,7 +84,7 @@ def fans_oper(request, oper_type, o_id):
             'oper_user_id': request.GET.get('user_id'),
             'belong_user_id': request.POST.get('belong_user_id'),
             'add_fans_num': request.POST.get('add_fans_num'),
-            'xiongzhanghao_url': request.POST.get('xiongzhanghao_url'),
+            'xiongzhanghaoID': request.POST.get('xiongzhanghaoID'),
             'search_keyword': request.POST.get('search_keyword'),
         }
         if oper_type == "add":
@@ -112,7 +112,7 @@ def fans_oper(request, oper_type, o_id):
                 models.xzh_add_fans.objects.filter(id=o_id).update(
                     belong_user_id=formObjs.get('belong_user_id'),
                     add_fans_num=formObjs.get('add_fans_num'),
-                    xiongzhanghao_url=formObjs.get('xiongzhanghao_url'),
+                    xiongzhanghaoID=formObjs.get('xiongzhanghaoID'),
                     search_keyword=formObjs.get('search_keyword'),
                 )
                 response.code = 200
@@ -142,33 +142,9 @@ def fans_oper(request, oper_type, o_id):
                     response.msg = '删除ID不存在'
             response.data = {}
 
-        elif oper_type == "update_status":
-            status = request.POST.get('status')
-            company_id = request.GET.get('company_id')
-            print('status -->', status)
-            objs = models.xzh_userprofile.objects.filter(id=o_id, company_id=company_id)
-            if objs:
-                objs.update(status=status)
-                response.code = 200
-                response.msg = "状态修改成功"
-            else:
-                response.code = 301
-                response.msg = "用户ID不存在"
     else:
-        # 查询该用户所有栏目
-        if oper_type == 'getColumn':
-            Id = request.GET.get('Id')
-            obj = models.xzh_userprofile.objects.get(id=Id)
-            response.code = 200
-            response.msg = '查询成功'
-            response.data = obj.column_all
-            if not response.data:
-                response.data = json.dumps([])
-
-
-        else:
-            response.code = 402
-            response.msg = "请求异常"
+        response.code = 402
+        response.msg = "请求异常"
 
     return JsonResponse(response.__dict__)
 

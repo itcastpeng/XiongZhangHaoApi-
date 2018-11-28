@@ -28,10 +28,10 @@ class AddForm(forms.Form):
         }
     )
 
-    xiongzhanghao_url = forms.CharField(
+    xiongzhanghaoID = forms.CharField(
         required=True,
         error_messages={
-            'required': "熊掌号url不能为空"
+            'required': "熊掌号ID不能为空"
         }
     )
 

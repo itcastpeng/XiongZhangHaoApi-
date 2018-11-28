@@ -73,11 +73,11 @@ def specialUserGenerateThePage(request):
                 title = body_div.find('h1').get_text()
 
             script_json = head_div.find('script', type='application/ld+json')
-            articlePublishedDate = obj.create_date.strftime('%Y-%m-%dT%H:%M:%S')
+            create_date = obj.create_date.strftime('%Y-%m-%dT%H:%M:%S')
 
             appid = obj.belongToUser.website_backstage_appid
 
-            print('id, appid, articlePublishedDate============> ',id, appid, title, articlePublishedDate)
+            print('id, appid, articlePublishedDate============> ',id, appid, title, create_date)
 
             domain = obj.belongToUser.secondaryDomainName
             back_url = domain + '{}.html'.format(obj.id)
@@ -96,7 +96,7 @@ def specialUserGenerateThePage(request):
                 </script>
                 <script src="//msite.baidu.com/sdk/c.js?appid=%s"></script>
                 </head>
-                """ % (back_url, appid, title, articlePublishedDate, appid)
+                """ % (back_url, appid, title, create_date, appid)
 
             if not script_json:
                 result_data = result_data.replace('</head>', insert_script)

@@ -40,7 +40,7 @@ def article(request):
                 start_time = json.loads(start_time)
                 stop_time = start_time[1]
                 start_time = start_time[0]
-                q.add(Q(articlePublishedDate__gte=start_time) & Q(articlePublishedDate__lte=stop_time), Q.AND)
+                q.add(Q(create_date___gte=start_time) & Q(create_date__lte=stop_time), Q.AND)
 
             print('q -->', q)
             objs = models.xzh_article.objects.select_related('user', 'belongToUser').filter(q).order_by(order)
@@ -63,9 +63,9 @@ def article(request):
                 articlePicName = ''
                 if obj.articlePicName:
                     articlePicName = obj.articlePicName
-                articlePublishedDate = ''
-                if obj.articlePublishedDate:
-                    articlePublishedDate = obj.articlePublishedDate
+                # articlePublishedDate = ''
+                # if obj.articlePublishedDate:
+                #     articlePublishedDate = obj.articlePublishedDate
 
 
                 send_time = obj.send_time.strftime('%Y-%m-%d %H:%M:%S') if obj.send_time else ''
@@ -95,7 +95,6 @@ def article(request):
                     'is_delete':obj.is_delete,
                     'manualRelease':obj.manualRelease,
                     'articlePicName':articlePicName,
-                    'articlePublishedDate':articlePublishedDate, #发布时间
                 })
             #  查询成功 返回200 状态码
             response.code = 200

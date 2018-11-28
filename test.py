@@ -86,7 +86,40 @@ headers = {
 
 
 
-url = 'http://127.0.0.1:8003/api/addFansGetTask/getTask?user_id=17&timestamp=123&rand_str=4297f44b13955235245b2497399d7a93'
-ret = requests.get(url)
+# url = 'http://127.0.0.1:8003/api/addFansGetTask/getTask?user_id=17&timestamp=123&rand_str=4297f44b13955235245b2497399d7a93'
+# ret = requests.get(url)
+#
+# print(ret.json().get('data'))
 
-print(ret.json().get('data'))
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

@@ -58,4 +58,9 @@ def selectDeleteQuery():
     url = 'http://xiongzhanghao.zhugeyingxiao.com:8003/api/selectDeleteQuery/judgeToDelete'
     requests.get(url, params=params)
 
-
+# 定时刷新 粉丝量
+@app.task
+def queryFollowersNum():
+    print('======================定时刷新 粉丝量=====================')
+    url = 'http://xiongzhanghao.zhugeyingxiao.com:8003/api/addFansGetTask/queryFollowersNum'
+    requests.get(url, params=params)

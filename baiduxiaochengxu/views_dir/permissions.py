@@ -95,9 +95,11 @@ def permissions(request):
                 'data_count': count,
             }
         else:
-            response.code = 402
-            response.msg = "请求异常"
+            response.code = 301
             response.data = json.loads(forms_obj.errors.as_json())
+    else:
+        response.code = 402
+        response.msg = "请求异常"
     return JsonResponse(response.__dict__)
 
 

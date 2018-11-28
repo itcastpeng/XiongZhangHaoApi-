@@ -70,7 +70,7 @@ class xzh_article(models.Model):
     articlePicName = models.CharField(verbose_name='文章图片', max_length=128, null=True, blank=True)
     column_id = models.CharField(verbose_name='栏目', max_length=64, null=True, blank=True)
     create_date = models.DateTimeField(verbose_name="创建时间", auto_now_add=True)
-    articlePublishedDate = models.DateField(verbose_name="文章发布时间", null=True, blank=True)
+    # articlePublishedDate = models.DateField(verbose_name="文章发布时间", null=True, blank=True)
     article_status_choices = (
         (1, '发布中'),
         (2, '发布成功, 待审核'),
@@ -132,6 +132,7 @@ class xzh_fugai_baobiao_detail(models.Model):
     cover_num = models.IntegerField(verbose_name="总覆盖")
     baobiao_url = models.TextField(verbose_name="报表地址")
     create_date = models.DateField(verbose_name="创建时间", auto_now_add=True)
+    create_datetime = models.DateTimeField(verbose_name="创建时间,时分秒", auto_now_add=True)
 
 # 熊掌号加粉
 class xzh_add_fans(models.Model):
@@ -209,7 +210,7 @@ class xcx_article(models.Model):
     summary = models.TextField(verbose_name='文章摘要', null=True, blank=True)
     content = models.TextField(verbose_name='文章内容', null=True, blank=True)
     create_date = models.DateTimeField(verbose_name="创建时间", auto_now_add=True)
-    articlePublishedDate = models.DateField(verbose_name="文章发布时间", null=True, blank=True)
+    # articlePublishedDate = models.DateField(verbose_name="文章发布时间", null=True, blank=True)
     article_status_choices = (
         (1, '发布中'),
         (2, '发布成功, 待审核'),

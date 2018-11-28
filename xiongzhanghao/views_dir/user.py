@@ -19,6 +19,8 @@ def user(request):
     response = Response.ResponseObj()
     forms_obj = SelectForm(request.GET)
     if forms_obj.is_valid():
+        user_id = request.GET.get('user_id')
+        userObj = models.xzh_userprofile.objects.get(id=user_id)
         current_page = forms_obj.cleaned_data['current_page']
         length = forms_obj.cleaned_data['length']
         print('forms_obj.cleaned_data -->', forms_obj.cleaned_data)
@@ -35,9 +37,15 @@ def user(request):
         role_id = request.GET.get('role_id')
         if role_id:
             q.add(Q(role_id=role_id), Q.AND)
-
         print('q -->', q)
-        objs = models.xzh_userprofile.objects.select_related('role').filter(q).order_by(order)
+
+        user_objs = models.xzh_userprofile.objects.select_related('role').filter(q)
+        if userObj.role_id == 64:
+            objs = user_objs.order_by(order)
+        elif userObj.role_id == 66:
+            objs = user_objs.order_by(order).exclude(role_id=64)
+        else:
+            objs = user_objs.order_by(order).exclude(role_id__in=[64,66])
         count = objs.count()
 
         if length != 0:
