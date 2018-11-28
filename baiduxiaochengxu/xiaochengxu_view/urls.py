@@ -15,7 +15,7 @@ Including another URLconf
 """
 from django.conf.urls import url, include
 from baiduxiaochengxu.views_dir import login, user,  article, program
-from baiduxiaochengxu.xiaochengxu_view import *
+
 urlpatterns = [
     # ==============================================后台=====================================================
     # 登录
@@ -35,9 +35,6 @@ urlpatterns = [
 
 
     # =============================================小程序========================================================
-
-
-
 ]
 
 

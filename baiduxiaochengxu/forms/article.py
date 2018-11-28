@@ -21,13 +21,6 @@ class AddForm(forms.Form):
         }
     )
 
-    summary = forms.CharField(
-        required=True,
-        error_messages={
-            'required': '文章摘要不能为空'
-        }
-    )
-
     content = forms.CharField(
         required=True,
         error_messages={
@@ -87,13 +80,6 @@ class UpdateForm(forms.Form):
         required=True,
         error_messages={
             'required': "文章标题不能为空"
-        }
-    )
-
-    summary = forms.CharField(
-        required=True,
-        error_messages={
-            'required': '文章摘要不能为空'
         }
     )
 

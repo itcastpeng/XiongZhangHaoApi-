@@ -52,7 +52,6 @@ def article(request):
                 ret_data.append({
                     'id': obj.id,
                     'title':obj.title,
-                    'summary':obj.summary,
                     'content':obj.content,
                     'create_date':obj.create_date.strftime('%Y-%m-%d %H:%M:%S'),
                     'user_id':obj.user.id,
@@ -83,7 +82,6 @@ def article_oper(request, oper_type, o_id):
         form_data = {
             'user_id': request.GET.get('user_id'),
             'title': request.POST.get('title'),     # 标题
-            'summary': request.POST.get('summary'), # 摘要
             'content': request.POST.get('content'), # 内容
             'belongToUser_id': request.POST.get('belongToUser_id'),# 归属用户
             'article_program_id':request.POST.get('article_program_id')

@@ -23,16 +23,16 @@ def user(request):
         order = request.GET.get('order', '-create_date')
         field_dict = {
             'id': '',
-            'role_id': '',
+            # 'role_id': '',
             'username': '__contains',
             'create_date': '',
             'oper_user__username': '__contains',
             'is_debug': 'bool',
         }
         q = conditionCom(request, field_dict)
-        role_id = request.GET.get('role_id')
-        if role_id:
-            q.add(Q(role_id=role_id), Q.AND)
+        # role_id = request.GET.get('role_id')
+        # if role_id:
+        #     q.add(Q(role_id=role_id), Q.AND)
 
         print('q -->', q)
         objs = models.xcx_userprofile.objects.filter(q).order_by(order)
@@ -54,9 +54,9 @@ def user(request):
                 'username': obj.username,
                 'oper_user_id': obj.oper_user_id,
                 'oper_user': obj.oper_user.username,
-                'create_date': obj.create_date,
-                'role': obj.role_id,
-                'role_name':obj.role.name,
+                'create_date': obj.create_date.strftime('%Y-%m-%d %H:%M:%S'),
+                # 'role': obj.role_id,
+                # 'role_name':obj.role.name,
 
             })
         #  查询成功 返回200 状态码
@@ -83,7 +83,7 @@ def user_oper(request, oper_type, o_id):
             'o_id':o_id,
             'oper_user_id': request.GET.get('user_id'),
             'username': request.POST.get('username'),
-            'role_id': request.POST.get('role_id'),
+            # 'role_id': request.POST.get('role_id'),
             'password': request.POST.get('password'),
         }
         if oper_type == "add":
@@ -115,7 +115,7 @@ def user_oper(request, oper_type, o_id):
                     response.msg = "修改成功"
                     objs.update(
                         username=formObjs.get('username'),
-                        role_id=formObjs.get('role_id'),
+                        # role_id=formObjs.get('role_id'),
 
                     )
                 else:

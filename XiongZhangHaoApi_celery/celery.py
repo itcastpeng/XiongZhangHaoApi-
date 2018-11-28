@@ -50,11 +50,11 @@ app.conf.beat_schedule = {
         'schedule': crontab("*/60", '*', '*', '*', '*'),  # 此处跟 linux 中 crontab 的格式一样
     },
 
-    # 定时刷新 粉丝量 30s
+    # 定时刷新 粉丝量 60s
     'queryFollowersNum':{
         'task': 'XiongZhangHaoApi_celery.tasks.queryFollowersNum',
         # 'schedule': crontab("*/60", '*', '*', '*', '*'),  # 此处跟 linux 中 crontab 的格式一样
-        'schedule':30
+        'schedule':60
     },
 
 }

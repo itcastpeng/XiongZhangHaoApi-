@@ -174,13 +174,14 @@ class xcx_userprofile(models.Model):
 # 栏目管理
 class xcx_program_management(models.Model):
     program_name = models.CharField(verbose_name='栏目名称', max_length=64)
-
+    belongUser = models.ForeignKey('xcx_userprofile', verbose_name="创建用户", null=True, blank=True)
     program_type_choices = (
         (1, '列表页'),
         (2, '单页')
     )
     program_type = models.SmallIntegerField(verbose_name='栏目类型', choices=program_type_choices, default=1)
     program_text = models.TextField(verbose_name='单页设置内容', null=True, blank=True)
+    create_date = models.DateTimeField(verbose_name="创建时间", auto_now_add=True)
 
 # 文章表
 class xcx_article(models.Model):

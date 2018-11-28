@@ -23,17 +23,16 @@ def program(request):
             order = request.GET.get('order', '-create_date')
             field_dict = {
                 'id': '',
-                'title': '__contains',
                 'create_date': '',
-                'summary': '__contains',
-                'content': '__contains',
-                'article_status': '',
+                'program_name': '__contains',
+                'program_type': '',
+                'program_text': '',
                 'belongToUser_id': '',
             }
             q = conditionCom(request, field_dict)
 
             print('q -->', q)
-            objs = models.xcx_article.objects.select_related('belongToUser').filter(q).order_by(order)
+            objs = models.xcx_program_management.objects.select_related('belongUser').filter(q).order_by(order)
             count = objs.count()
 
             if length != 0:
@@ -43,26 +42,29 @@ def program(request):
 
             # 返回的数据
             ret_data = []
-
+            num = 0
             for obj in objs:
+
                 print('obj.id--------------> ',obj.id)
                 #  将查询出来的数据 加入列表
                 ret_data.append({
                     'id': obj.id,
-                    'title':obj.title,
-                    'summary':obj.summary,
-                    'content':obj.content,
+                    'program_name':obj.program_name,
+                    'belongUser_id':obj.belongUser_id,
+                    'belongUser':obj.belongUser.username,
+                    'program_type_id':obj.program_type,
+                    'program_type':obj.get_program_type_display(),
                     'create_date':obj.create_date.strftime('%Y-%m-%d %H:%M:%S'),
-                    'user_id':obj.user.id,
-                    'user_name':obj.user.username,
-                    'belongToUser_id':obj.belongToUser_id,
-                    'belongToUser_name': obj.belongToUser.username,
                 })
+                if int(obj.program_type) == 2:
+                    ret_data[num]['program_text'] = obj.program_text
+                num += 1
             #  查询成功 返回200 状态码
             response.code = 200
             response.msg = '查询成功'
             response.data = {
-                'ret_data': ret_data
+                'ret_data': ret_data,
+                'type_list': models.xcx_program_management.program_type_choices
             }
         else:
             response.code = 402
@@ -79,63 +81,71 @@ def program_oper(request, oper_type, o_id):
     response = Response.ResponseObj()
     if request.method == "POST":
         form_data = {
-            'user_id': request.GET.get('user_id'),
-            'title': request.POST.get('title'),     # 标题
-            'summary': request.POST.get('summary'), # 摘要
-            'content': request.POST.get('content'), # 内容
-            'belongToUser_id': request.POST.get('belongToUser_id'),# 归属用户
-            'article_program_id':request.POST.get('article_program_id')
+            'belongUser_id': request.GET.get('user_id'),
+            'program_name': request.POST.get('program_name'),     # 栏目名称
+            'program_type': request.POST.get('program_type'),     # 栏目类型
+            'program_text': request.POST.get('program_text', '')     # 单页设置内容
         }
-
-        print('form_data===============> ',form_data)
-        if oper_type == "add":
-            #  创建 form验证 实例（参数默认转成字典）
-            forms_obj = AddForm(form_data)
-            if forms_obj.is_valid():
-                models.xcx_article.objects.create(**forms_obj.cleaned_data)
-                response.code = 200
-                response.msg = "添加成功"
-            else:
-                print("验证不通过")
-                response.code = 301
-                response.msg = json.loads(forms_obj.errors.as_json())
-
-        elif oper_type == "update":
-            # 获取需要修改的信息
-            forms_obj = UpdateForm(form_data)
-            if forms_obj.is_valid():
-                print("验证通过")
-                #  查询数据库  用户id
-                objs = models.xcx_article.objects.filter(
-                    id=o_id
-                )
-                #  更新 数据
-                print(forms_obj.cleaned_data)
-                if objs:
-                    objs.update(**forms_obj.cleaned_data)
+        program_type = form_data.get('program_type')
+        program_text = form_data.get('program_text')
+        if program_type and program_text and int(program_type) == 1:
+            response.code = 301
+            response.msg = '栏目类型为单页是, 可添加单页内容'
+        else:
+            print('form_data===============> ',form_data)
+            if oper_type == "add":
+                #  创建 form验证 实例（参数默认转成字典）
+                forms_obj = AddForm(form_data)
+                if forms_obj.is_valid():
+                    models.xcx_program_management.objects.create(**forms_obj.cleaned_data)
                     response.code = 200
-                    response.msg = "修改成功"
+                    response.msg = "添加成功"
                 else:
-                    response.code = 303
+                    print("验证不通过")
+                    response.code = 301
                     response.msg = json.loads(forms_obj.errors.as_json())
-            else:
-                print("验证不通过")
-                # print(forms_obj.errors)
-                response.code = 301
-                # print(forms_obj.errors.as_json())
-                #  字符串转换 json 字符串
-                response.msg = json.loads(forms_obj.errors.as_json())
 
-        elif oper_type == "delete":
-            # 删除 ID
-            objs = models.xcx_article.objects.filter(id=o_id)
-            if objs:
-                objs.delete()
-                response.code = 200
-                response.msg = "删除成功"
-            else:
-                response.code = 302
-                response.msg = '删除ID不存在'
+            elif oper_type == "update":
+                # 获取需要修改的信息
+                forms_obj = UpdateForm(form_data)
+                if forms_obj.is_valid():
+                    print("验证通过")
+                    #  查询数据库  用户id
+                    objs = models.xcx_program_management.objects.filter(
+                        id=o_id
+                    )
+                    #  更新 数据
+                    print(forms_obj.cleaned_data)
+                    if objs:
+                        objs.update(**forms_obj.cleaned_data)
+                        response.code = 200
+                        response.msg = "修改成功"
+                    else:
+                        response.code = 303
+                        response.msg = json.loads(forms_obj.errors.as_json())
+                else:
+                    print("验证不通过")
+                    # print(forms_obj.errors)
+                    response.code = 301
+                    # print(forms_obj.errors.as_json())
+                    #  字符串转换 json 字符串
+                    response.msg = json.loads(forms_obj.errors.as_json())
+
+            elif oper_type == "delete":
+                # 删除 ID
+                objs = models.xcx_program_management.objects.filter(id=o_id)
+                if objs:
+                    articleObj = models.xcx_article.objects.filter(article_program_id=o_id)
+                    if not articleObj:
+                        objs.delete()
+                        response.code = 200
+                        response.msg = "删除成功"
+                    else:
+                        response.code = 301
+                        response.msg = '该栏目含有文章, 不可删除'
+                else:
+                    response.code = 302
+                    response.msg = '删除ID不存在'
 
     else:
         response.code = 402
