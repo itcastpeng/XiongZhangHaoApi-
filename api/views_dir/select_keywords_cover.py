@@ -10,6 +10,7 @@ import datetime
 from django.db.models import Q
 
 from api.forms.select_keywords_cover import AddForm
+import random
 
 
 # cerf  token验证
@@ -31,7 +32,7 @@ def select_keywords_cover(request):
         # print(objs.query)
         ret_data = []
         if objs:
-            obj = objs[0]
+            obj = objs[random.randint(0, objs.count())]
             ret_data = {
                 'keywords_id': obj.id,
                 'keywords': obj.keywords,
