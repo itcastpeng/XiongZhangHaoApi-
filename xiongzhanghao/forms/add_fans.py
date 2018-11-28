@@ -84,13 +84,6 @@ class UpdateForm(forms.Form):
         }
     )
 
-    xiongzhanghao_url = forms.CharField(
-        required=True,
-        error_messages={
-            'required': "熊掌号url不能为空"
-        }
-    )
-
     search_keyword = forms.CharField(
         required=True,
         error_messages={
