@@ -156,24 +156,6 @@ class xzh_add_fans(models.Model):
 
 #===============================================================百度小程序===================================================================================
 
-
-# 角色表
-class xcx_role(models.Model):
-    name = models.CharField(verbose_name="角色名称", max_length=128)
-    create_date = models.DateTimeField(verbose_name="创建时间", auto_now_add=True)
-    oper_user = models.ForeignKey('xcx_userprofile', verbose_name="创建用户", related_name='role_user')
-    permissions = models.ManyToManyField('xcx_permissions', verbose_name="拥有权限")
-
-
-# 权限表
-class xcx_permissions(models.Model):
-    name = models.CharField(verbose_name="权限名称", max_length=128)
-    title = models.CharField(verbose_name="权限标题", max_length=128)
-    pid = models.ForeignKey('self', verbose_name="父级权限", null=True, blank=True)
-    create_date = models.DateTimeField(verbose_name="创建时间", auto_now_add=True)
-    oper_user = models.ForeignKey('xcx_userprofile', verbose_name="创建用户", related_name='permissions_user')
-
-
 # 用户表
 class xcx_userprofile(models.Model):
     username = models.CharField(verbose_name="用户账号", max_length=128)
@@ -188,8 +170,6 @@ class xcx_userprofile(models.Model):
         (2, '不启用'),
     )
     status = models.SmallIntegerField(verbose_name="状态", choices=status_choices, default=2)
-    role = models.ForeignKey('xcx_role', verbose_name='所属角色', null=True, blank=True)
-
 
 # 栏目管理
 class xcx_program_management(models.Model):
@@ -207,17 +187,11 @@ class xcx_article(models.Model):
     user = models.ForeignKey('xcx_userprofile', verbose_name='文章创建人', null=True)
     belongToUser = models.ForeignKey('xcx_userprofile', verbose_name='文章属于谁', null=True, related_name='belongToUser')
     title = models.CharField(verbose_name='文章标题', max_length=128)
-    summary = models.TextField(verbose_name='文章摘要', null=True, blank=True)
     content = models.TextField(verbose_name='文章内容', null=True, blank=True)
     create_date = models.DateTimeField(verbose_name="创建时间", auto_now_add=True)
-    # articlePublishedDate = models.DateField(verbose_name="文章发布时间", null=True, blank=True)
     article_status_choices = (
-        (1, '发布中'),
-        (2, '发布成功, 待审核'),
-        (3, '发布失败'),
-        (4, '审核成功, 提交中'),
-        (5, '已完成'),
-        (6, '特殊用户, 生成页面中'),
+        (1, '显示'),
+        (2, '不显示'),
     )
     article_status = models.SmallIntegerField(verbose_name='文章状态',choices=article_status_choices, default=1)
     article_program = models.ForeignKey('xcx_program_management', verbose_name='归属栏目')

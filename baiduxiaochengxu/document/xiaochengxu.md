@@ -10,55 +10,6 @@ username                    POST            是                       用户名
 password                    POST            是                       用户密码
 ```
 
-#### 角色管理 添加说明
-``` 
-http请求：POST
-http请求url：http://127.0.0.1:8003/xiaochengxu/role/add/0?user_id=1&timestamp=123&rand_str=e43ad72eb271958a26328f4a81af3812
-参数                      请求方式           必须                     说明
-company_id                  GET             是                       公司ID
-name                        POST            是                       角色名称
-permissionsList             POST            是                       权限 可选多个 [1,2,3]数组格式
-
-返回说明 （正常时返回的json数据 示例）
-{
-    "code": 200,
-    "msg": "添加成功",
-    "data": {
-        "testCase": 6
-    }
-}
-```
-
-#### 角色管理 修改说明
-``` 
-http请求：POST
-http请求url:http://127.0.0.1:8003/xiaochengxu/role/update/6?user_id=1&timestamp=123&rand_str=e43ad72eb271958a26328f4a81af3812
-参数                      请求方式           必须                     说明
-name                        POST            否                     角色名称  
-permissionsList             POST            否                     权限 可选多个 [1,2,3]数组格式
-
-返回说明 （正常时返回的json数据 示例）
-{
-    "data": {},
-    "msg": "修改成功",
-    "code": 200
-}
-```
-
-#### 角色管理 删除说明
-``` 
-http请求：POST
-http请求url:http://127.0.0.1:8003/xiaochengxu/role/delete/6?user_id=1&timestamp=123&rand_str=e43ad72eb271958a26328f4a81af3812
-参数                      请求方式           必须                     说明
-
-返回说明 （正常时返回的json数据 示例）
-{
-    "data": {},
-    "msg": "删除成功",
-    "code": 200
-}
-```
-
 #### 角色管理 查询说明
 ``` 
 http请求：GET
@@ -163,79 +114,6 @@ http请求url:http://127.0.0.1:8003/xiaochengxu/user?user_id=1&timestamp=123&ran
             }
         ]
     }
-}
-```
-
-#### 权限管理 添加说明
-``` 
-http请求：POST
-http请求url:http://127.0.0.1:8003/xiaochengxu/permissions/add/0?user_id=1&timestamp=123&rand_str=e43ad72eb271958a26328f4a81af3812
-参数                      请求方式           必须                     说明
-name                       POST             是                      权限名称
-title                      POST             是                      权限标题           
-pid_id                     POST             否                      父级权限
-
-返回说明 （正常时返回的json数据 示例）
-{
-    "code": 200,
-    "msg": "添加成功",
-    "data": {}
-}
-```
-
-#### 权限管理 修改说明
-``` 
-http请求：POST
-http请求url:http://127.0.0.1:8003/xiaochengxu/permissions/update/0?user_id=1&timestamp=123&rand_str=e43ad72eb271958a26328f4a81af3812
-参数                      请求方式           必须                     说明
-name                       POST             是                      权限名称
-title                      POST             是                      权限标题           
-pid_id                     POST             否                      父级权限
-
-返回说明 （正常时返回的json数据 示例）
-{
-    "code": 200,
-    "msg": "修改成功",
-    "data": {}
-}
-```
-
-#### 权限管理 删除说明
-``` 
-http请求：POST
-http请求url:http://127.0.0.1:8003/xiaochengxu/permissions/delete/0?user_id=1&timestamp=123&rand_str=e43ad72eb271958a26328f4a81af3812
-
-返回说明 （正常时返回的json数据 示例）
-{
-    "code": 200,
-    "msg": "删除成功",
-    "data": {}
-}
-```
-
-#### 权限管理 查询说明
-``` 
-http请求：GET
-http请求url:http://127.0.0.1:8003/xiaochengxu/permissions?user_id=1&timestamp=123&rand_str=e43ad72eb271958a26328f4a81af3812
-
-返回说明 （正常时返回的json数据 示例）
-{
-    "code": 200,
-    "data": {
-        "data_count": 1,
-        "ret_data": [
-            {
-                "oper_user__username": "赵欣鹏",
-                "create_date": "2018-11-26 19:57:39",
-                "name": "权限",
-                "title": "权限",
-                "id": 1,
-                "pid_title": "",
-                "pid_id": null
-            }
-        ]
-    },
-    "msg": "查询成功"
 }
 ```
 
