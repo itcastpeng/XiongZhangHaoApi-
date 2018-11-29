@@ -109,6 +109,8 @@ def queryAgain(request):
             obj = models.xzh_keywords.objects.filter(select_date__lte=stop, select_date__gte=start)
             obj.update(select_date=None)
             models.xzh_fugai_baobiao_detail.objects.filter(xzh_fugai_baobiao__user_id=o_id).filter(create_date=now).delete()
+            response.code = 200
+            response.msg = '重查成功'
         else:
             response.code = 301
             response.msg = '无此用户'

@@ -60,7 +60,7 @@ def fugai_baobiao(request):
             index = 0
             for obj in objs:
                 index += 1
-
+                print('obj.id----------------------------------------> ',obj.id)
                 #  将查询出来的数据 加入列表
                 ret_data.append({
                     'id': obj.id,

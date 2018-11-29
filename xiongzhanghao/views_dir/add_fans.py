@@ -60,7 +60,9 @@ def fans(request):
                 'search_keyword':obj.search_keyword,    # 熊掌号搜索关键词
                 'status':obj.get_status_display(),
                 'status_id':obj.status,
-                'create_date':obj.create_date.strftime('%Y-%m-%d %H:%M:%S')
+                'create_date':obj.create_date.strftime('%Y-%m-%d %H:%M:%S'),
+                'errorText':obj.errorText ,              # 错误日志
+
             })
         #  查询成功 返回200 状态码
         response.code = 200

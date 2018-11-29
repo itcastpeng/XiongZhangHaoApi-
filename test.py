@@ -123,11 +123,7 @@ class PcV9(object):
             # url ='http://m.evercarebj.com/index.php?m=content&c=content&a=add&menuid=&catid={}&pc_hash=XfRWUu&pc_hash=XfRWUu'.format(catid)
             url = 'http://m.evercarebj.com/index.php?m=content&c=content&a=add'
             print('发布url==================> ',url)
-            headers = {
-                'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/70.0.3538.110 Safari/537.36',
-                'Referer':'http://m.evercarebj.com/index.php?m=content&c=content&a=add&menuid=&catid=115&pc_hash=XfRWUu&pc_hash=XfRWUu',
-            }
-            ret = self.requests_obj.post(url, data=data, cookies=self.cookies, headers=headers)
+            ret = self.requests_obj.post(url, data=data, cookies=self.cookies)
             print('========> ', ret.text.strip())
             # if '无法解析文档' not in ret.text.strip():
             #     if '成功发布文章' in ret.text:
@@ -135,7 +131,6 @@ class PcV9(object):
             #         aid_href = soup.find('a', text='更改文章').get('href')    # 文章id
             #         aid = aid_href.split('?')[1].split('&')[0].split('aid=')[-1]
             #         huilian_href = soup.find('a', text='查看文章').get('href')    # 文章id
-            #
             #         ret = self.requests_obj.get(huilian_href, cookies=self.cookies)
             #         encode_ret = ret.apparent_encoding
             #         # print('encode_ret===========', encode_ret)
@@ -337,7 +332,7 @@ if __name__ == '__main__':
         'info[groupids_view]':1,
         'info[voteid]':'',
         'dosubmit':'保存后自动关闭',
-        'pc_hash':'XfRWUu'
+        'pc_hash':'Nwghhk'
     }
     objs = PcV9(user_id, password, cookie)
     objs.login()

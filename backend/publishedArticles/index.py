@@ -64,9 +64,13 @@ def publishedArticles():
             "imageField.x": "30",
             "imageField.y": "12"
         }
-        article_data['picname'] = ''   # 缩略图
+        articlePicName = ''
         if picname:
-            article_data['picname'] = picname
+            if 'http://www.zjnbsznfk120.com' in picname:
+                articlePicName = picname.split('http://www.zjnbsznfk120.com')[-1]
+            elif 'http://www.zjsznnk.com' in picname:
+                articlePicName = picname.split('http://www.zjsznnk.com')[-1]
+        article_data['picname'] = articlePicName
         if 'http://m.oy120.com/@qz120_@' in website_backstage_url:
             article_data['litpic'] = '(binary)'
             article_data['color'] = ''

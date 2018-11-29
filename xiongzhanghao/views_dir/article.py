@@ -63,11 +63,6 @@ def article(request):
                 articlePicName = ''
                 if obj.articlePicName:
                     articlePicName = obj.articlePicName
-                # articlePublishedDate = ''
-                # if obj.articlePublishedDate:
-                #     articlePublishedDate = obj.articlePublishedDate
-
-
                 send_time = obj.send_time.strftime('%Y-%m-%d %H:%M:%S') if obj.send_time else ''
                 belongToUser = ''
                 belongToUser_id = ''
@@ -123,124 +118,120 @@ def article_oper(request, oper_type, o_id):
         user_id = request.GET.get('user_id')
         belongToUser_id = request.POST.get('belongToUser_id')
         articlePicName = request.POST.get('articlePicName')    # 文章缩略图
-        if 'http://www.zjnbsznfk120.com' in articlePicName:
-            articlePicName = articlePicName.split('http://www.zjnbsznfk120.com')[-1]
-        elif 'http://www.zjsznnk.com' in articlePicName:
-            articlePicName = articlePicName.split('http://www.zjsznnk.com')[-1]
+        if 'http://www.zjnbsznfk120.com' or 'http://www.zjsznnk.com'  in articlePicName:
+            form_data = {
+                'user_id': user_id,
+                'title': request.POST.get('title'),
+                'summary': request.POST.get('summary'),
+                'content': request.POST.get('content'),
+                'column_id': request.POST.get('column_id'),
+                'create_date': datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S'),
+                'belongToUser_id': belongToUser_id,
+                'send_time': request.POST.get('send_time'),
+                'manualRelease': manualRelease,
+                'articlePicName':articlePicName
+            }
+
+            print('form_data===============> ',form_data)
+            if oper_type == "add":
+                #  创建 form验证 实例（参数默认转成字典）
+                forms_obj = AddForm(form_data)
+                if forms_obj.is_valid():
+                    print("验证通过")
+                    print("forms_obj.data.get('column_id')========> ",forms_obj.cleaned_data.get('articlePicName'))
+                    obj = models.xzh_article.objects.create(**forms_obj.cleaned_data)
+                    if manualRelease == 'true':
+                        print('手动添加===========手动添加===========================手动添加')
+                        if not back_url:
+                            response.msg = '回链不能为空'
+                            response.code = 301
+                            return JsonResponse(response.__dict__)
+
+                        articleObjs = models.xzh_article.objects.filter(id=obj.id)
+                        article_status = 4
+                        if int(articleObjs[0].belongToUser.userType) == 2:  # 特殊用户
+                            article_status = 6
+                        articleObjs.update(
+                            article_status=article_status,
+                            back_url=back_url,
+                            is_audit=True,
+                            articlePicName=articlePicName,  # 缩略图
+                        )
+                    response.code = 200
+                    response.msg = "添加成功"
+                else:
+                    print("验证不通过")
+                    response.code = 301
+                    response.msg = json.loads(forms_obj.errors.as_json())
+
+            elif oper_type == "update":
+                # 获取需要修改的信息
+                forms_obj = UpdateForm(form_data)
+                if forms_obj.is_valid():
+                    print("验证通过")
+                    #  查询数据库  用户id
+                    objs = models.xzh_article.objects.filter(
+                        id=o_id
+                    )
+                    #  更新 数据
+                    if objs:
+                        print('objs[0].article_status===============> ',objs[0].article_status)
+                        if objs[0].article_status != 2:
+                            objForm = forms_obj.cleaned_data
+                            send_time = objForm.get('send_time')
+                            objs.update(
+                                user_id =objForm.get('user_id'),
+                                title = objForm.get('title'),
+                                summary = objForm.get('summary'),
+                                content = objForm.get('content'),
+                                belongToUser_id = objForm.get('belongToUser_id'),
+                                column_id = objForm.get('column_id'),
+                                back_url=back_url,
+                                articlePicName=articlePicName,  # 缩略图
+                            )
+                            if send_time:
+                                objs.update(send_time=send_time)
+
+                            response.code = 200
+                            response.msg = "修改成功"
+                        else:
+                            response.code = 301
+                            response.msg = '发布成功, 不可修改'
+                    else:
+                        response.code = 303
+                        response.msg = json.loads(forms_obj.errors.as_json())
+
+                else:
+                    print("验证不通过")
+                    # print(forms_obj.errors)
+                    response.code = 301
+                    # print(forms_obj.errors.as_json())
+                    #  字符串转换 json 字符串
+                    response.msg = json.loads(forms_obj.errors.as_json())
+
+            elif oper_type == "delete":
+                # 删除 ID
+                company_id = request.GET.get('company_id')
+                objs = models.xzh_article.objects.filter(id=o_id)
+                if objs:
+                    objs.delete()
+                    response.code = 200
+                    response.msg = "删除成功"
+                else:
+                    response.code = 302
+                    response.msg = '删除ID不存在'
+
+            # 重新发布文章
+            elif oper_type == 'redistribution':
+                objs = models.xzh_article.objects.filter(id=o_id)
+                if objs[0].article_status != 2:
+                    objs.update(article_status=1,note_content='')
+                response.code = 200
+                response.msg = '重新发布成功'
+
         else:
             response.code = 301
             response.msg = '缩略图异常'
-            return JsonResponse(response.__dict__)
-        form_data = {
-            'user_id': user_id,
-            'title': request.POST.get('title'),
-            'summary': request.POST.get('summary'),
-            'content': request.POST.get('content'),
-            'column_id': request.POST.get('column_id'),
-            'create_date': datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S'),
-            'belongToUser_id': belongToUser_id,
-            'send_time': request.POST.get('send_time'),
-            'manualRelease': manualRelease,
-            'articlePicName':articlePicName
-        }
-
-        print('form_data===============> ',form_data)
-        if oper_type == "add":
-            #  创建 form验证 实例（参数默认转成字典）
-            forms_obj = AddForm(form_data)
-            if forms_obj.is_valid():
-                print("验证通过")
-                print("forms_obj.data.get('column_id')========> ",forms_obj.cleaned_data.get('articlePicName'))
-                obj = models.xzh_article.objects.create(**forms_obj.cleaned_data)
-                if manualRelease == 'true':
-                    print('手动添加===========手动添加===========================手动添加')
-                    if not back_url:
-                        response.msg = '回链不能为空'
-                        response.code = 301
-                        return JsonResponse(response.__dict__)
-
-                    articleObjs = models.xzh_article.objects.filter(id=obj.id)
-                    article_status = 4
-                    if int(articleObjs[0].belongToUser.userType) == 2:  # 特殊用户
-                        article_status = 6
-                    articleObjs.update(
-                        article_status=article_status,
-                        back_url=back_url,
-                        is_audit=True,
-                        articlePicName=articlePicName,  # 缩略图
-                    )
-                response.code = 200
-                response.msg = "添加成功"
-            else:
-                print("验证不通过")
-                response.code = 301
-                response.msg = json.loads(forms_obj.errors.as_json())
-
-        elif oper_type == "update":
-            # 获取需要修改的信息
-            forms_obj = UpdateForm(form_data)
-            if forms_obj.is_valid():
-                print("验证通过")
-                #  查询数据库  用户id
-                objs = models.xzh_article.objects.filter(
-                    id=o_id
-                )
-                #  更新 数据
-                if objs:
-                    print('objs[0].article_status===============> ',objs[0].article_status)
-                    if objs[0].article_status != 2:
-                        objForm = forms_obj.cleaned_data
-                        send_time = objForm.get('send_time')
-                        objs.update(
-                            user_id =objForm.get('user_id'),
-                            title = objForm.get('title'),
-                            summary = objForm.get('summary'),
-                            content = objForm.get('content'),
-                            belongToUser_id = objForm.get('belongToUser_id'),
-                            column_id = objForm.get('column_id'),
-                            back_url=back_url,
-                            articlePicName=articlePicName,  # 缩略图
-                        )
-                        if send_time:
-                            objs.update(send_time=send_time)
-
-                        response.code = 200
-                        response.msg = "修改成功"
-                    else:
-                        response.code = 301
-                        response.msg = '发布成功, 不可修改'
-                else:
-                    response.code = 303
-                    response.msg = json.loads(forms_obj.errors.as_json())
-
-            else:
-                print("验证不通过")
-                # print(forms_obj.errors)
-                response.code = 301
-                # print(forms_obj.errors.as_json())
-                #  字符串转换 json 字符串
-                response.msg = json.loads(forms_obj.errors.as_json())
-
-        elif oper_type == "delete":
-            # 删除 ID
-            company_id = request.GET.get('company_id')
-            objs = models.xzh_article.objects.filter(id=o_id)
-            if objs:
-                objs.delete()
-                response.code = 200
-                response.msg = "删除成功"
-            else:
-                response.code = 302
-                response.msg = '删除ID不存在'
-
-        # 重新发布文章
-        elif oper_type == 'redistribution':
-            objs = models.xzh_article.objects.filter(id=o_id)
-            if objs[0].article_status != 2:
-                objs.update(article_status=1,note_content='')
-            response.code = 200
-            response.msg = '重新发布成功'
-
     else:
         if oper_type == 'thumbnail':   # 查询缩略图  妇科
             # ===========================================该代码 爬取缩略图使用=====================================
@@ -267,7 +258,8 @@ def article_oper(request, oper_type, o_id):
             objs = models.xzh_suoluetu.objects.filter(man__isnull=True)
             for obj in objs:
                 suoluetu = str('http://www.zjnbsznfk120.com' + obj.woman)
-                img_list.append(suoluetu)
+                if suoluetu not in img_list:
+                    img_list.append(suoluetu)
             response.code = 200
             response.msg = '查询成功'
             response.data = img_list
@@ -276,8 +268,9 @@ def article_oper(request, oper_type, o_id):
             objs = models.xzh_suoluetu.objects.filter(man__isnull=False)
             for obj in objs:
                 suoluetu = str('http://www.zjsznnk.com' + obj.man)
-                print('suoluetu-------> ',suoluetu)
-                img_list.append(suoluetu)
+                # print('suoluetu-------> ',suoluetu)
+                if suoluetu not in img_list:
+                    img_list.append(suoluetu)
             response.code = 200
             response.msg = '查询成功'
             response.data = img_list
