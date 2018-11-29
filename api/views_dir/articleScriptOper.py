@@ -29,26 +29,26 @@ def articleScriptOper(request, oper_type):
         print('objs========================> ',objs)
         if objs:
             obj = objs[0]
-            if int(obj.belongToUser.website_backstage) == 1:
-                if obj.title and obj.column_id and obj.summary and obj.content:
-                    # models.xzh_article.objects.filter(id=obj.id).update(
-                    #     articlePublishedDate=datetime.datetime.now()
-                    # )
-                    result_data = {
-                        'website_backstage_url': objs[0].belongToUser.website_backstage_url.strip(),
-                        'website_backstage_username': objs[0].belongToUser.website_backstage_username,
-                        'website_backstage_password': objs[0].belongToUser.website_backstage_password,
-                        'cookies':objs[0].belongToUser.cookies,
-                        'title': objs[0].title,
-                        'summary': objs[0].summary,
-                        'content': objs[0].content,
-                        'typeid': eval(objs[0].column_id).get('Id'),
-                        'o_id':objs[0].id
-                    }
-                    if obj.articlePicName:
-                        result_data['picname'] = obj.articlePicName
+            if obj.title and obj.column_id and obj.summary and obj.content:
+                # models.xzh_article.objects.filter(id=obj.id).update(
+                #     articlePublishedDate=datetime.datetime.now()
+                # )
+                result_data = {
+                    'website_backstage':objs[0].belongToUser.website_backstage,
+                    'website_backstage_url': objs[0].belongToUser.website_backstage_url.strip(),
+                    'website_backstage_username': objs[0].belongToUser.website_backstage_username,
+                    'website_backstage_password': objs[0].belongToUser.website_backstage_password,
+                    'cookies':objs[0].belongToUser.cookies,
+                    'title': objs[0].title,
+                    'summary': objs[0].summary,
+                    'content': objs[0].content,
+                    'typeid': eval(objs[0].column_id).get('Id'),
+                    'o_id':objs[0].id
+                }
+                if obj.articlePicName:
+                    result_data['picname'] = obj.articlePicName
 
-                    response.data = result_data
+                response.data = result_data
         response.code = 200
 
 
@@ -63,6 +63,7 @@ def articleScriptOper(request, oper_type):
             resultData = eval(resultData)
             code = int(resultData.get('code'))
             objs = models.xzh_article.objects.filter(id=o_id)
+            website_backstage = objs[0].belongToUser.website_backstage
             print('code==========> ',code)
             print("=============resultData.get('huilian')=======> ",resultData.get('huilian'))
             print("=============resultData.get('aid')=======> ",resultData.get('aid'))
@@ -72,6 +73,8 @@ def articleScriptOper(request, oper_type):
             aid = 0
             if code == 200:  # 发布成功
                 article_status = 2
+                if int(website_backstage) == 2:
+                    article_status = 4        # 如果是pcv9不需要审核
                 huilian = resultData.get('huilian')
                 aid = resultData.get('aid')
 
@@ -96,7 +99,7 @@ def articleScriptOper(request, oper_type):
 
     # 判断文章是否审核
     elif oper_type == 'refreshAudit':
-        objs = models.xzh_article.objects.filter(article_status=2, is_audit=0, aid__isnull=False)
+        objs = models.xzh_article.objects.filter(article_status=2, is_audit=0, aid__isnull=False, belongToUser__website_backstage=1)
         if objs:
             obj = objs[0]
             print('定时刷新文章是否审核----------------->', obj.id)

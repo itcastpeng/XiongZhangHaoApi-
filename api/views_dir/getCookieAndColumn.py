@@ -62,20 +62,20 @@ def userGetCookieOper(request, oper_type):
         objs = models.xzh_userprofile.objects.filter(is_debug=False, role_id=61).order_by('create_date')
         if objs:
             obj = objs[0]
-            if obj.website_backstage == 1:
-                website_backstage_url = obj.website_backstage_url.strip()
-                userid = obj.website_backstage_username
-                pwd = obj.website_backstage_password
-                cookie = ''
-                if obj.cookies:
-                    cookie = eval(obj.cookies)
-                response.data = {
-                    'website_backstage_url':website_backstage_url,
-                    'userid':userid,
-                    'pwd':pwd,
-                    'cookie':cookie,
-                    'o_id':obj.id
-                }
+            website_backstage_url = obj.website_backstage_url.strip()
+            userid = obj.website_backstage_username
+            pwd = obj.website_backstage_password
+            cookie = ''
+            if obj.cookies:
+                cookie = eval(obj.cookies)
+            response.data = {
+                'website_backstage':obj.website_backstage,
+                'website_backstage_url':website_backstage_url,
+                'userid':userid,
+                'pwd':pwd,
+                'cookie':cookie,
+                'o_id':obj.id
+            }
         response.msg = '查询成功'
         response.code = 200
 

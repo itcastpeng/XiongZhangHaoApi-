@@ -31,7 +31,7 @@ def theScheduler(request):
     if not resule_data['flag']:
         now_date = datetime.datetime.now()
         q = Q()
-        q.add(Q(send_time__lte=now_date) | Q(send_time__isnull=True), Q.AND)
+        q.add(Q(send_time__lte=now_date) | Q(send_time__isnull=True), Q.AND)  # 判断是否定时发送
         sendArticleObjs = articleObjs.select_related('belongToUser').filter(article_status=1,belongToUser__is_debug=1).filter(q)
         if sendArticleObjs:
             resule_data['flag'] = True
@@ -39,7 +39,7 @@ def theScheduler(request):
             print('发布文章')
 
     if not resule_data['flag']:
-        timedRefreshAuditObjs = articleObjs.filter(article_status=2, is_audit=0, aid__isnull=False)
+        timedRefreshAuditObjs = articleObjs.filter(article_status=2, is_audit=0, aid__isnull=False, belongToUser__website_backstage=1)
         if timedRefreshAuditObjs:
             resule_data['flag'] = True
             resule_data['task_id'] = 3
@@ -51,7 +51,7 @@ def theScheduler(request):
         deletionTime = datetime.datetime.strptime(deletionTime, '%Y-%m-%d %H:%M:%S')
         q = Q(Q(deletionTime__isnull=True) | Q(deletionTime__lte=deletionTime))
         q.add(Q(role_id=61) & Q(userType=1) & Q(website_backstage_url__isnull=False), Q.AND)
-
+        q.add(Q(website_backstage=1), Q.AND) # 暂时
         deleteQuery = models.xzh_userprofile.objects.select_related('role').filter(q)
         if deleteQuery:
             print('deleteQuery---------------> ',deleteQuery[0].id)
