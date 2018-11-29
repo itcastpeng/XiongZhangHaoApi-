@@ -111,11 +111,11 @@ class DeDe(object):
         return True
 
     # 发布文章
-    def sendArticle(self, data, title):
+    def sendArticle(self, data, title, picname=None):
         if self.article_test_title(data.get('title')):
             # print('增加文章')
             url = self.home_url + '/article_add.php'
-            print('发布url==================> ',url)
+            # print('发布url==================> ',url)
             # print('发布data------------------> ', data)
             ret = self.requests_obj.post(url, data=data, cookies=self.cookies)
             # print('========> ', ret.text.strip())
@@ -129,7 +129,7 @@ class DeDe(object):
                         huilian = self.domain + huilian_href
                     else:
                         huilian = huilian_href
-                    # print('huilian================> ',huilian)
+                    print('huilian================> ',huilian)
                     huilian = huilian.replace('//', '/')
                     if 'http:' in huilian:
                         huilian_right = huilian.split('http:')[1]
@@ -145,17 +145,17 @@ class DeDe(object):
                         else:
                             ret.encoding = 'utf-8'
 
-                        # print('title-------------> ',title)
-                        # print('ret.text==============> ',ret.text)
+                        print('title-------------> ',title)
+                        print('ret.text==============> ',ret.text)
                         if title.strip() in ret.text:
-                            # print('huilian=============> ', huilian)
+                            print('huilian=============> ', huilian)
                             # 更新文档url
                             # updateWordUrl = '{home_url}/task_do.php?typeid={cid}&aid={aid}&dopost=makeprenext&nextdo=makeindex,makeparenttype'.format(
                             #     home_url=self.home_url,
                             #     aid=aid,
                             #     cid=cid
                             # )
-                            # # 更新主页url
+                            # 更新主页url
                             # updateIndexUrl = '{home_url}/task_do.php?f=0&typeid={cid}&aid={aid}&dopost=makeindex&nextdo=makeparenttype'.format(
                             #     home_url=self.home_url,
                             #     aid=aid,
@@ -168,7 +168,7 @@ class DeDe(object):
                             #
                             #     ret2 = self.requests_obj.get(updateIndexUrl, cookies=objCookies)
                             #     print('ret2-=--> ',ret2, ret2.url)
-                            #
+
                             # else:
                             #     print('===============else=============else')
                             #     ret1 = self.requests_obj.get(updateWordUrl)
@@ -296,6 +296,22 @@ class DeDe(object):
             flag = 1
         return flag, yema, data_list
 
+    # def suoluetu(self):  # 抓取缩略图  写死==
+        # url = 'http://www.zjnbsznfk120.com/include/dialog/select_images.php?imgstick=smallundefined&v=picview&f=form1.picname&activepath=%2Fuploads%2Fxiongzhanghao&noeditor=yes'
+        # url = 'http://www.zjsznnk.com/include/dialog/select_images.php?imgstick=smallundefined&v=picview&f=form1.picname&activepath=%2Fuploads%2Fxiongzhanghao&noeditor=yes'
+        # ret = self.requests_obj.get(url, cookies=self.cookies)
+        # soup = BeautifulSoup(ret.text, 'lxml')
+        # table = soup.find('table')
+        # tr_list = table.find_all('td')
+        # data_list = []
+        # for tr in tr_list:
+        #     if tr.find('img'):
+        #         if tr.find('a').attrs.get('onclick'):
+        #             p = tr.find('a').attrs.get('onclick').split('/uploads')[-1][:-2].replace('\'', '')
+        #             print('p--> ',p)
+        #             data_list.append(p)
+        # print(len(data_list), data_list)
+        # return data_list
 
 # if __name__ == '__main__':
 #     domain = 'http://www.bjwletyy.com'

@@ -29,25 +29,26 @@ def articleScriptOper(request, oper_type):
         print('objs========================> ',objs)
         if objs:
             obj = objs[0]
-            if obj.title and obj.column_id and obj.summary and obj.content:
-                # models.xzh_article.objects.filter(id=obj.id).update(
-                #     articlePublishedDate=datetime.datetime.now()
-                # )
-                result_data = {
-                    'website_backstage_url': objs[0].belongToUser.website_backstage_url.strip(),
-                    'website_backstage_username': objs[0].belongToUser.website_backstage_username,
-                    'website_backstage_password': objs[0].belongToUser.website_backstage_password,
-                    'cookies':objs[0].belongToUser.cookies,
-                    'title': objs[0].title,
-                    'summary': objs[0].summary,
-                    'content': objs[0].content,
-                    'typeid': eval(objs[0].column_id).get('Id'),
-                    'o_id':objs[0].id
-                }
-                if obj.articlePicName:
-                    result_data['picname'] = obj.articlePicName
+            if int(obj.belongToUser.website_backstage) == 1:
+                if obj.title and obj.column_id and obj.summary and obj.content:
+                    # models.xzh_article.objects.filter(id=obj.id).update(
+                    #     articlePublishedDate=datetime.datetime.now()
+                    # )
+                    result_data = {
+                        'website_backstage_url': objs[0].belongToUser.website_backstage_url.strip(),
+                        'website_backstage_username': objs[0].belongToUser.website_backstage_username,
+                        'website_backstage_password': objs[0].belongToUser.website_backstage_password,
+                        'cookies':objs[0].belongToUser.cookies,
+                        'title': objs[0].title,
+                        'summary': objs[0].summary,
+                        'content': objs[0].content,
+                        'typeid': eval(objs[0].column_id).get('Id'),
+                        'o_id':objs[0].id
+                    }
+                    if obj.articlePicName:
+                        result_data['picname'] = obj.articlePicName
 
-                response.data = result_data
+                    response.data = result_data
         response.code = 200
 
 

@@ -27,7 +27,8 @@ urlpatterns = [
     url(r'theScheduler$', theScheduler.theScheduler),
 
     # 查关键词覆盖
-    url(r'select_keywords_cover$', select_keywords_cover.select_keywords_cover),
+    url(r'select_keywords_cover$', select_keywords_cover.select_keywords_cover), # redis获取任务 保证一致性
+    url(r'get_keyword_task', select_keywords_cover.get_keyword_task),  # 异步查询任务
 
     # 二级域名
     url(r'SearchSecondary/(?P<article>\w+).html$', generateThePage.SearchSecondaryDomainName),  # 查询二级域名
@@ -44,6 +45,7 @@ urlpatterns = [
 
     # 更新覆盖报表详情数据
     url(r'statisticalReports$', init_fugai_detail.statisticalReports),
+    url(r'queryAgain', init_fugai_detail.queryAgain),  # 点击重查  当天覆盖
 
     # 查询客户网站该文章是否删除 做出提示
     url(r'selectDeleteQuery/(?P<oper_type>\w+)$', selectDeleteQuery.selectDeleteQuery), # 文章操作 审核 提交熊掌号 发布文章

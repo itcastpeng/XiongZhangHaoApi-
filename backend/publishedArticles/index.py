@@ -15,7 +15,7 @@ def publishedArticles():
     if resultData:
         o_id =  resultData.get('o_id')
         website_backstage_url = resultData.get('website_backstage_url').strip()
-        print('====================================website_backstage_url', website_backstage_url)
+        # print('====================================website_backstage_url', website_backstage_url)
         if 'http' in website_backstage_url:
             url = urlparse(website_backstage_url)
             domain = 'http://' + url.hostname + '/'
@@ -34,9 +34,9 @@ def publishedArticles():
         picname = resultData.get('picname')
         summary = resultData.get('summary')
         content =  resultData.get('content')
-        print('00000000000000000000000000website_backstage_url00000000000000000000000>',website_backstage_url)
+        # print('00000000000000000000000000website_backstage_url00000000000000000000000>',website_backstage_url)
         if 'http://m.chyy120.com/netadmin' in website_backstage_url or 'http://wap.tysgmr.com/dede' in website_backstage_url or 'http://m.oy120.com/@qz120_@' in website_backstage_url:  # 判断utf8 还是 gbk
-            print('------==========----------------------GBK')
+            # print('------==========----------------------GBK')
             title =  resultData.get('title').encode('gbk')
             summary =  resultData.get('summary').encode('gbk')
             content =  resultData.get('content').encode('gbk')
@@ -77,17 +77,17 @@ def publishedArticles():
             article_data['redirecturl'] = ''
             article_data['tags'] = ''
             article_data['shorttitle'] = ''
-        print('domain, home_path, userid, pwd, cookie-----------------> ',domain, home_path, userid, pwd, cookie)
+        # print('domain, home_path, userid, pwd, cookie-----------------> ',domain, home_path, userid, pwd, cookie)
         DeDeObj = DeDe(domain, home_path, userid, pwd, cookie)
         cookie = DeDeObj.login()
-        print("===============-----9999999999999999999999999999999999900-----------> ",resultData.get('title'))
-        resultData = DeDeObj.sendArticle(article_data, resultData.get('title'))
+        # print("===============-----9999999999999999999999999999999999900-----------> ",resultData.get('title'))
+        resultData = DeDeObj.sendArticle(article_data, resultData.get('title'), picname) # picname缩略图本地上传
 
         result_data = {
             'resultData': json.dumps(resultData),
             'o_id': o_id
         }
-        print('result_data==============================> ',resultData)
+        # print('result_data==============================> ',resultData)
         # url = 'http://127.0.0.1:8003/api/articleScriptOper/sendArticleModels?user_id=17&timestamp=123&rand_str=4297f44b13955235245b2497399d7a93'
         url = 'http://xiongzhanghao.zhugeyingxiao.com:8003/api/articleScriptOper/sendArticleModels?user_id=44&timestamp=1542788198850&rand_str=86b24054d91240d9559e369296af06cd'
         # print('==============url.> ',url)

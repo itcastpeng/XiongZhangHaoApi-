@@ -13,9 +13,10 @@ Including another URLconf
     1. Import the include() function: from django.urls import include, path
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
+
 from django.conf.urls import url, include
 from baiduxiaochengxu.views_dir import login, user,  article, program
-from baiduxiaochengxu.xiaochengxu_view import *
+from baiduxiaochengxu.xiaochengxu_view import xzx_article, xzx_program, xzx_user
 urlpatterns = [
     # ==============================================后台=====================================================
     # 登录
@@ -36,8 +37,14 @@ urlpatterns = [
 
     # =============================================小程序========================================================
 
+    # 文章管理
+    url(r'xzx_article', xzx_article.article),
 
+    # 栏目管理
+    url(r'xzx_program', xzx_program.program),
 
+    # 用户管理
+    url(r'xzx_user', xzx_user.user),
 ]
 
 

@@ -89,3 +89,47 @@ def statisticalReports(request):
 
 
 
+# 重新查询该用户当天覆盖
+@csrf_exempt
+@account.is_token(models.xzh_userprofile)
+def queryAgain(request):
+    response = Response.ResponseObj()
+    user_id = request.GET.get('user_id')
+    o_id = request.GET.get('o_id')
+    userObjs = models.xzh_userprofile.objects
+    role_id = userObjs.filter(id=user_id)[0].role_id
+    start = datetime.datetime.now().strftime('%Y-%m-%d 00:00:00')
+    stop = datetime.datetime.now().strftime('%Y-%m-%d 23:59:59')
+    now =  datetime.datetime.now().strftime('%Y-%m-%d')
+    print('start, stop---> ',start, stop, now)
+    if int(role_id) in [64, 66]:
+        user_obj = userObjs.filter(id=o_id)
+        if user_obj:
+            models.xzh_keywords_detail.objects.filter(create_date=now).filter(xzh_keywords__user_id=o_id).delete()
+            obj = models.xzh_keywords.objects.filter(select_date__lte=stop, select_date__gte=start)
+            obj.update(select_date=None)
+            models.xzh_fugai_baobiao_detail.objects.filter(xzh_fugai_baobiao__user_id=o_id).filter(create_date=now).delete()
+        else:
+            response.code = 301
+            response.msg = '无此用户'
+    else:
+        response.code = 301
+        response.msg = '该角色不可操作'
+    return JsonResponse(response.__dict__)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

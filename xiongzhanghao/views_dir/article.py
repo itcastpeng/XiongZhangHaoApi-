@@ -7,7 +7,7 @@ from xiongzhanghao.publicFunc.condition_com import conditionCom
 from xiongzhanghao.forms.article import AddForm, UpdateForm, SelectForm
 import json, datetime, requests, os
 from django.db.models import Q
-
+from backend.articlePublish import DeDe
 # from xiongzhanghao.views_dir.user import objLogin
 
 
@@ -123,7 +123,14 @@ def article_oper(request, oper_type, o_id):
         user_id = request.GET.get('user_id')
         belongToUser_id = request.POST.get('belongToUser_id')
         articlePicName = request.POST.get('articlePicName')    # 文章缩略图
-
+        if 'http://www.zjnbsznfk120.com' in articlePicName:
+            articlePicName = articlePicName.split('http://www.zjnbsznfk120.com')[-1]
+        elif 'http://www.zjsznnk.com' in articlePicName:
+            articlePicName = articlePicName.split('http://www.zjsznnk.com')[-1]
+        else:
+            response.code = 301
+            response.msg = '缩略图异常'
+            return JsonResponse(response.__dict__)
         form_data = {
             'user_id': user_id,
             'title': request.POST.get('title'),
@@ -235,39 +242,45 @@ def article_oper(request, oper_type, o_id):
             response.msg = '重新发布成功'
 
     else:
-        if oper_type == 'thumbnail':   # 查询缩略图
+        if oper_type == 'thumbnail':   # 查询缩略图  妇科
+            # ===========================================该代码 爬取缩略图使用=====================================
+            # response.code = 200
+            # response.msg = '查询成功'
+            # cookie = {'DedeLoginTime': '1543226988', 'DedeUserID__ckMd5': 'eeead0cc3feb9247',
+            #           'PHPSESSID': 'aocgl1iqc56p18mm22epgglks4', 'DedeUserID': '1',
+            #           'DedeLoginTime__ckMd5': '36b39a5c7cf5c4d6'}
+            # pwd = 'tgb123qaz'
+            # userid = 'admin'
+            # domain = 'http://www.zjsznnk.com/'
+            # home_path = 's_z_n_yy'
+            #
+            # dede = DeDe(domain, home_path, userid, pwd, cookie)
+            # dede.login()
+            # data_list = dede.suoluetu()
+            # for i in data_list:
+            #     p = '/uploads' + i
+            #     models.xzh_suoluetu.objects.create(
+            #         man=p
+            #     )
+            # ============================================================================================
             img_list = []
-            for i in range(5):
-                i += 1
-                url = 'http://192.168.10.207:8003/statics/thumbnailPic/thumbnail0{}.png'.format(i)
-                img_list.append(url)
-            for i in range(2):
-                i += 1
-                url = 'http://192.168.10.207:8003/statics/thumbnailPic/thumbnail00{}.gif'.format(i)
-                img_list.append(url)
-            for i in range(63):
-                i += 1
-                url = 'http://192.168.10.207:8003/statics/thumbnailPic/thumbnail{}.jpg'.format(i)
-                img_list.append(url)
-
-            # for i in range(5):
-            #     i += 1
-            #     url = 'http://xiongzhanghao.zhugeyingxiao.com:8003/statics/thumbnailPic/thumbnail0{}.png'.format(i)
-            #     img_list.append(url)
-            # for i in range(2):
-            #     i += 1
-            #     url = 'http://xiongzhanghao.zhugeyingxiao.com:8003/statics/thumbnailPic/thumbnail00{}.gif'.format(i)
-            #     img_list.append(url)
-            # for i in range(63):
-            #     i += 1
-            #     url = 'http://xiongzhanghao.zhugeyingxiao.com:8003/statics/thumbnailPic/thumbnail{}.jpg'.format(i)
-            #     img_list.append(url)
-
-
+            objs = models.xzh_suoluetu.objects.filter(man__isnull=True)
+            for obj in objs:
+                suoluetu = str('http://www.zjnbsznfk120.com' + obj.woman)
+                img_list.append(suoluetu)
             response.code = 200
             response.msg = '查询成功'
             response.data = img_list
-
+        elif oper_type == 'thumbnailMan':  # 男科
+            img_list = []
+            objs = models.xzh_suoluetu.objects.filter(man__isnull=False)
+            for obj in objs:
+                suoluetu = str('http://www.zjsznnk.com' + obj.man)
+                print('suoluetu-------> ',suoluetu)
+                img_list.append(suoluetu)
+            response.code = 200
+            response.msg = '查询成功'
+            response.data = img_list
         else:
             response.code = 402
             response.msg = "请求异常"

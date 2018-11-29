@@ -153,6 +153,11 @@ class xzh_add_fans(models.Model):
         (4, "已完成")
     )
     status = models.SmallIntegerField(verbose_name='状态', choices=status_choices, default=1)
+    errorText = models.CharField(verbose_name='错误日志', max_length=128, null=True, blank=True)
+
+class xzh_suoluetu(models.Model):
+    man = models.CharField(verbose_name='男科缩略图', max_length=128, null=True, blank=True)
+    woman = models.CharField(verbose_name='妇科缩略图', max_length=128, null=True, blank=True)
 
 #===============================================================百度小程序===================================================================================
 
@@ -170,6 +175,7 @@ class xcx_userprofile(models.Model):
         (2, '不启用'),
     )
     status = models.SmallIntegerField(verbose_name="状态", choices=status_choices, default=2)
+    lunbotu = models.TextField(verbose_name='轮播图', null=True, blank=True)
 
 # 栏目管理
 class xcx_program_management(models.Model):
