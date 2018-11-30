@@ -8,9 +8,6 @@ from baiduxiaochengxu.forms.article import  SelectForm
 import json, datetime, requests, os
 from django.db.models import Q
 
-# from xiongzhanghao.views_dir.user import objLogin
-
-
 # cerf  token验证 用户展示模块
 @csrf_exempt
 @account.is_token(models.xcx_userprofile)
@@ -31,6 +28,7 @@ def article(request):
                 'content': '__contains',
                 'article_status': '',
                 'belongToUser_id': '',
+                'article_type': '',
             }
             q = conditionCom(request, field_dict)
 
@@ -58,12 +56,16 @@ def article(request):
                     'user_name':obj.user.username,
                     'belongToUser_id':obj.belongToUser_id,
                     'belongToUser_name': obj.belongToUser.username,
+                    'article_type_id': obj.article_type,
+                    'suoluetu': obj.suoluetu,
+                    'article_type': obj.get_article_type_display(),
                 })
             #  查询成功 返回200 状态码
             response.code = 200
             response.msg = '查询成功'
             response.data = {
-                'ret_data': ret_data
+                'ret_data': ret_data,
+                'count':count
             }
         else:
             response.code = 402

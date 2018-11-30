@@ -178,52 +178,35 @@ class PcV9(object):
                     }
 
 
-    # # 查询文章是否被删除
-    # def deleteQuery(self, url, maxtime):
-    #     # print('----查询文章是否被删除-----------》 ', url)
-    #     ret = self.requests_obj.get(url, cookies=self.cookies)
-    #     # print('查询文章是否被删除==url==url====url===>', url)
-    #     encode_ret = ret.apparent_encoding
-    #     # print('encode_ret===========', encode_ret)
-    #     if encode_ret == 'GB2312':
-    #         ret.encoding = 'gbk'
-    #     else:
-    #         ret.encoding = 'utf-8'
-    #
-    #     time.sleep(0.5)
-    #     soup = BeautifulSoup(ret.text, 'lxml')
-    #
-    #     flag = 0
-    #     yema = 0
-    #     page_num = soup.find('div', class_='pagelistbox')
-    #     maxtime = datetime.datetime.strptime(maxtime, '%Y-%m-%d %H:%M:%S')
-    #     maxtime = maxtime.strftime('%Y-%m-%d')
-    #     data_list = []
-    #     if page_num:
-    #         page = page_num.find('span').get_text()
-    #         # print('page==========> ',page)
-    #         if page:
-    #             yema = page.split('页')[0].split('共')[1]
-    #             center_divs_all = soup.find_all('tr', align='center')
-    #             for center_div in center_divs_all:
-    #                 releaseTime = center_div.find_all('td')[3].get_text()
-    #                 if releaseTime >= maxtime:
-    #                     if center_div.find('a'):
-    #                         aid = center_div.find_all('td')[0].get_text().strip()
-    #                         title = center_div.find('a').get_text().strip()
-    #                         if aid:
-    #                             data_list.append({
-    #                                 'aid':aid,
-    #                                 'title':title,
-    #                                 'releaseTime':releaseTime
-    #                             })
-    #                 else:
-    #                     flag = 1
-    #         else:
-    #             flag = 1
-    #     else:
-    #         flag = 1
-    #     return flag, yema, data_list
+    def deleteQuery(self, url, maxtime, data_list):
+        print('url--------------------> ', url)
+        ret = self.requests_obj.get(url, cookies=self.cookies)
+        soup = BeautifulSoup(ret.text, 'lxml')
+        tr_all = soup.find_all('tr')
+        for tr in tr_all:
+            if tr.find_all('td', align='center'):
+                aid = tr.find_all('td')[2].get_text().strip()
+                title = tr.find_all('td')[3].get_text().strip()
+                date_time = tr.find_all('td')[6].get_text()
+                if date_time < maxtime:
+                    continue
+                if aid and title:
+                    data_list.append({
+                        'aid':aid,
+                        'title':title,
+                        'date_time':date_time
+                    })
+                else:
+                    continue
+        next = soup.find('a', text='下一页')
+        if next:
+            next_page = soup.find('a', text='下一页')
+            next_url = next_page.attrs.get('href')
+            if next_url == url:
+                return data_list
+            print('next_url--> ',next_url)
+            self.deleteQuery(next_url, maxtime, data_list)
+        return data_list
 
 import datetime
 if __name__ == '__main__':
@@ -268,7 +251,35 @@ if __name__ == '__main__':
         'info[voteid]':'',
         'dosubmit':'保存后自动关闭',
     }
-    objs = PcV9(user_id, password, cookie)
-    cookie, pc_hash = objs.login()
+    # objs = PcV9(user_id, password, cookie)
+    # cookie, pc_hash = objs.login()
+    # print('pc_hash========> ',pc_hash)
     # objs.getClassInfo()
-    objs.sendArticle(data, title, pc_hash)
+    # objs.sendArticle(data, title, pc_hash)
+    # 判断是否删除
+    maxtime = '2018-11-20'
+
+    # url = 'http://m.evercarebj.com/index.php?m=content&c=content&a=init&menuid=822&catid={}&pc_hash={}'.format(
+    #     catid, pc_hash)
+    data_list = []
+    # data_list = objs.deleteQuery(url, maxtime, data_list)
+    # objs.getClassInfo(pc_hash)
+    print(data_list)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

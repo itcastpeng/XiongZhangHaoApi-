@@ -125,11 +125,12 @@ class DeDe(object):
                     aid_href = soup.find('a', text='更改文章').get('href')    # 文章id
                     aid = aid_href.split('?')[1].split('&')[0].split('aid=')[-1]
                     huilian_href = soup.find('a', text='查看文章').get('href')    # 文章id
-                    if 'http://www.zjnbsznfk120.com' not in self.home_url:
+                    # print('huilian_href-=---------------> ',huilian_href)
+                    if 'http://www.zjnbsznfk120.com' and 'http://www.zjsznnk.com' not in self.home_url:
                         huilian = self.domain + huilian_href
                     else:
                         huilian = huilian_href
-                    print('huilian================> ',huilian)
+                    # print('huilian================> ',huilian)
                     huilian = huilian.replace('//', '/')
                     if 'http:' in huilian:
                         huilian_right = huilian.split('http:')[1]
@@ -137,6 +138,8 @@ class DeDe(object):
                     # print('huilian=========> ',huilian)
                     time.sleep(0.5)
                     if 'http://m.glamzx.com' not in self.home_url:  # 张冰洁整形 发不完请求不到 审核完才可以
+                        if 'http://4g.scgcyy.com' in self.home_url:  # 四川肛肠  没有发布生成权限 需要拼接回链
+                            huilian = 'http://4g.scgcyy.com/all/xzh/{}.html'.format(aid)
                         ret = self.requests_obj.get(huilian, cookies=self.cookies)
                         encode_ret = ret.apparent_encoding
                         # print('encode_ret===========', encode_ret)
@@ -146,7 +149,7 @@ class DeDe(object):
                             ret.encoding = 'utf-8'
 
                         print('title-------------> ',title)
-                        print('ret.text==============> ',ret.text)
+                        # print('ret.text==============> ',ret.text)
                         if title.strip() in ret.text:
                             print('huilian=============> ', huilian)
                             # 更新文档url
@@ -176,8 +179,7 @@ class DeDe(object):
                             #     ret2 = self.requests_obj.get(updateIndexUrl)
                             #     print('ret2-=--> ', ret2, ret2.url)
                             print('’发布成功=========================发布成功===================发布成功')
-                            if 'http://4g.scgcyy.com' in self.home_url:  # 四川肛肠  没有发布生成权限 需要拼接回链
-                                huilian = 'http://4g.scgcyy.com/all/xzh/{}.html'.format(aid)
+
                             return {
                                 'huilian':huilian,
                                 'aid':aid,
@@ -476,3 +478,35 @@ class PcV9(object):
                 'huilian': '',
                 'code': 300
             }
+
+    # 判断是否删除
+    def deleteQuery(self, url, data_list, maxtime):
+        ret = self.requests_obj.get(url, cookies=self.cookies)
+        soup = BeautifulSoup(ret.text, 'lxml')
+        tr_all = soup.find_all('tr')
+        for tr in tr_all:
+            if tr.find_all('td', align='center'):
+                aid = tr.find_all('td')[2].get_text().strip()
+                title = tr.find_all('td')[3].get_text().strip()
+                date_time = tr.find_all('td')[6].get_text()
+                if date_time < maxtime:
+                    continue
+                if aid and title:
+                    data_list.append({
+                        'aid': aid,
+                        'title': title,
+                        'date_time': date_time
+                    })
+                else:
+                    continue
+        next = soup.find('a', text='下一页')
+        if next:
+            next_page = soup.find('a', text='下一页')
+            next_url = next_page.attrs.get('href')
+            if next_url == url:
+                return data_list
+            print('next_url--> ', next_url)
+            self.deleteQuery(next_url, maxtime, data_list)
+        return data_list
+
+

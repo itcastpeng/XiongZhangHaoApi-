@@ -2,7 +2,8 @@ import json,time,os
 from django.http import JsonResponse, HttpResponse
 from django.views.decorators.csrf import csrf_exempt, csrf_protect
 from xiongzhanghao.publicFunc import UEditorUploadConfig
-
+from xiongzhanghao.publicFunc import Response
+import base64, datetime, time
 
 # 图片上传
 @csrf_exempt
@@ -54,3 +55,32 @@ def image_upload(request):
 
     else:
         return HttpResponse('请求错误')
+
+
+
+# 上传图片
+@csrf_exempt
+def img_upload(request):
+    response = Response.ResponseObj()
+    print('request.POST---> ',request.POST)
+    img = request.POST.get('img')
+    name = request.POST.get('name')
+    img_name = int(time.time()) + name
+
+
+    print(img)
+    print(name)
+    print(img_name)
+    # timestamp = datetime.time()
+    # img_name = ''
+    # img_save_path = os.path.join('statics', 'img', img_name)
+    # print('img_save_path -->', img_save_path )
+
+    # with open(img_save_path, 'w') as f:
+    #     f.write(img_data)
+
+    response.code = 200
+    response.msg = "失败"
+
+    return JsonResponse(response.__dict__)
+

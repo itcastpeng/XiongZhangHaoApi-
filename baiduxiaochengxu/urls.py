@@ -16,7 +16,7 @@ Including another URLconf
 
 from django.conf.urls import url, include
 from baiduxiaochengxu.views_dir import login, user,  article, program
-from baiduxiaochengxu.xiaochengxu_view import xzx_article, xzx_program
+from baiduxiaochengxu.xiaochengxu_view import xzx_article, xzx_program, xcx_user
 urlpatterns = [
     # =============================================小程序========================================================
 
@@ -25,6 +25,9 @@ urlpatterns = [
 
     # 栏目管理
     url(r'xzx_program$', xzx_program.program),
+
+    # 查询token
+    url(r'xzx_user$', xcx_user.user),
 
     # ==============================================后台=====================================================
     # 登录

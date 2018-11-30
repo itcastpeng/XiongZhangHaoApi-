@@ -38,11 +38,13 @@ def selectDeleteQuery(request, oper_type):
             response.msg = '查询成功'
             response.data = {
                 'o_id': obj.id,
+                'website_backstage': obj.website_backstage,
                 'website_backstage_url': obj.website_backstage_url,
                 'cookie': obj.cookies,
                 'website_backstage_password': obj.website_backstage_password,
                 'website_backstage_username': obj.website_backstage_username,
-                'maxtime':timeObjs[0].create_date.strftime('%Y-%m-%d %H:%M:%S')
+                'maxtime':timeObjs[0].create_date.strftime('%Y-%m-%d %H:%M:%S'),
+                'column_all':obj.column_all,
             }
             obj.deletionTime = now
             obj.save()

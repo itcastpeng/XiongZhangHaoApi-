@@ -210,8 +210,14 @@ class xcx_article(models.Model):
         (2, '不显示'),
     )
     article_status = models.SmallIntegerField(verbose_name='文章状态',choices=article_status_choices, default=1)
+    article_type_choices = (
+        (1, '新闻中心'),
+        (2, '专家团队'),
+        (3, '特色医疗'),
+    )
+    article_type = models.SmallIntegerField(verbose_name='文章类型', default=1, choices=article_type_choices)
     article_program = models.ForeignKey('xcx_program_management', verbose_name='归属栏目')
-
+    suoluetu = models.CharField(verbose_name='缩略图', max_length=128, null=True, blank=True)
 
 
 
