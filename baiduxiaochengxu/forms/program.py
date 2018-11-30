@@ -34,6 +34,12 @@ class AddForm(forms.Form):
             'required': '单页内容类型错误'
         }
     )
+    suoluetu = forms.CharField(
+        required=True,
+        error_messages={
+            'required': '缩略图不能为空'
+        }
+    )
 
 
 # 更新
@@ -65,8 +71,12 @@ class UpdateForm(forms.Form):
             'required': '单页内容类型错误'
         }
     )
-
-
+    suoluetu = forms.CharField(
+        required=True,
+        error_messages={
+            'required': '缩略图不能为空'
+        }
+    )
 
 
 # 判断是否是数字

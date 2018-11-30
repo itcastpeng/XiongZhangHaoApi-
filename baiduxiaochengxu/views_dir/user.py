@@ -7,12 +7,12 @@ from django.views.decorators.csrf import csrf_exempt, csrf_protect
 from xiongzhanghao.publicFunc.condition_com import conditionCom
 from baiduxiaochengxu.forms.user import AddForm, UpdateForm, SelectForm
 from django.db.models import Q
-import json, requests, datetime
+import json, requests, datetime, re
 
 
 # cerf  token验证 用户展示模块
 @csrf_exempt
-@account.is_token(models.xcx_userprofile)
+# @account.is_token(models.xcx_userprofile)
 def user(request):
     response = Response.ResponseObj()
     forms_obj = SelectForm(request.GET)
@@ -30,10 +30,6 @@ def user(request):
             'is_debug': 'bool',
         }
         q = conditionCom(request, field_dict)
-        # role_id = request.GET.get('role_id')
-        # if role_id:
-        #     q.add(Q(role_id=role_id), Q.AND)
-
         print('q -->', q)
         objs = models.xcx_userprofile.objects.filter(q).order_by(order)
         count = objs.count()
@@ -47,18 +43,26 @@ def user(request):
         ret_data = []
 
         for obj in objs:
-
+            username = ''
+            oper_user_id = ''
+            if obj.oper_user_id:
+                oper_user_id = obj.oper_user_id
+                username = obj.oper_user.username
             #  将查询出来的数据 加入列表
             ret_data.append({
                 'id': obj.id,
                 'username': obj.username,
-                'oper_user_id': obj.oper_user_id,
-                'oper_user': obj.oper_user.username,
-                'create_date': obj.create_date.strftime('%Y-%m-%d %H:%M:%S'),
-                # 'role': obj.role_id,
-                # 'role_name':obj.role.name,
-
+                'oper_user_id': oper_user_id,
+                'oper_user': username,                # 操作人
+                # 'lunbotu': json.loads(obj.lunbotu),                 # 轮播图
+                'lunbotu': obj.lunbotu,                 # 轮播图
+                'hospital_logoImg': obj.hospital_logoImg,           # logo图片
+                'hospital_phone': obj.hospital_phone,               # 医院电话
+                'hospital_introduction': obj.hospital_introduction, # 医院简介
+                'hospital_address': obj.hospital_address,           # 医院地址
+                'hospital_menzhen': obj.hospital_menzhen,           # 门诊时间
             })
+
         #  查询成功 返回200 状态码
         response.code = 200
         response.msg = '查询成功'
@@ -74,7 +78,7 @@ def user(request):
 #  增删改
 #  csrf  token验证
 @csrf_exempt
-@account.is_token(models.xcx_userprofile)
+# @account.is_token(models.xcx_userprofile)
 def user_oper(request, oper_type, o_id):
     response = Response.ResponseObj()
     user_id = request.GET.get('user_id')
@@ -82,9 +86,14 @@ def user_oper(request, oper_type, o_id):
         form_data = {
             'o_id':o_id,
             'oper_user_id': request.GET.get('user_id'),
-            'username': request.POST.get('username'),
-            # 'role_id': request.POST.get('role_id'),
             'password': request.POST.get('password'),
+            'username': request.POST.get('username'),
+            'lunbotu': request.POST.get('lunbotu'),                             # 轮播图
+            'hospital_logoImg': request.POST.get('hospital_logoImg'),           # logo图片
+            'hospital_phone': request.POST.get('hospital_phone'),               # 医院电话
+            'hospital_introduction': request.POST.get('hospital_introduction'), # 医院简介
+            'hospital_address': request.POST.get('hospital_address'),       # 医院地址
+            'hospital_menzhen': request.POST.get('hospital_menzhen'),       # 门诊时间
         }
         if oper_type == "add":
             print('form_data----->',form_data)
@@ -92,6 +101,7 @@ def user_oper(request, oper_type, o_id):
             forms_obj = AddForm(form_data)
             if forms_obj.is_valid():
                 print("验证通过")
+                print('forms_obj.cleaned_data==> ',forms_obj.cleaned_data)
                 models.xcx_userprofile.objects.create(**forms_obj.cleaned_data)
                 response.code = 200
                 response.msg = "添加成功"
@@ -113,11 +123,7 @@ def user_oper(request, oper_type, o_id):
                     #  更新 数据
                     response.code = 200
                     response.msg = "修改成功"
-                    objs.update(
-                        username=formObjs.get('username'),
-                        # role_id=formObjs.get('role_id'),
-
-                    )
+                    objs.update(**formObjs)
                 else:
                     response.code = 301
                     response.msg = '无此ID'

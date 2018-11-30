@@ -13,7 +13,7 @@ from django.db.models import Q
 
 # cerf  token验证 用户展示模块
 @csrf_exempt
-@account.is_token(models.xcx_userprofile)
+# @account.is_token(models.xcx_userprofile)
 def article(request):
     response = Response.ResponseObj()
     if request.method == "GET":
@@ -75,56 +75,66 @@ def article(request):
 #  增删改
 #  csrf  token验证
 @csrf_exempt
-@account.is_token(models.xcx_userprofile)
+# @account.is_token(models.xcx_userprofile)
 def article_oper(request, oper_type, o_id):
     response = Response.ResponseObj()
     if request.method == "POST":
         form_data = {
-            'user_id': request.GET.get('user_id'),
+            'user_id': 4,
+            # 'user_id': request.GET.get('user_id'),
             'title': request.POST.get('title'),     # 标题
             'content': request.POST.get('content'), # 内容
             'belongToUser_id': request.POST.get('belongToUser_id'),# 归属用户
             'article_program_id':request.POST.get('article_program_id')
         }
-
         print('form_data===============> ',form_data)
         if oper_type == "add":
-            #  创建 form验证 实例（参数默认转成字典）
-            forms_obj = AddForm(form_data)
-            if forms_obj.is_valid():
-                models.xcx_article.objects.create(**forms_obj.cleaned_data)
-                response.code = 200
-                response.msg = "添加成功"
-            else:
-                print("验证不通过")
-                response.code = 301
-                response.msg = json.loads(forms_obj.errors.as_json())
-
-        elif oper_type == "update":
-            # 获取需要修改的信息
-            forms_obj = UpdateForm(form_data)
-            if forms_obj.is_valid():
-                print("验证通过")
-                #  查询数据库  用户id
-                objs = models.xcx_article.objects.filter(
-                    id=o_id
-                )
-                #  更新 数据
-                print(forms_obj.cleaned_data)
-                if objs:
-                    objs.update(**forms_obj.cleaned_data)
+            program_type = models.xcx_program_management.objects.filter(id=form_data.get('article_program_id'))[0].program_type
+            if program_type != 2:
+                #  创建 form验证 实例（参数默认转成字典）
+                forms_obj = AddForm(form_data)
+                if forms_obj.is_valid():
+                    models.xcx_article.objects.create(**forms_obj.cleaned_data)
                     response.code = 200
-                    response.msg = "修改成功"
+                    response.msg = "添加成功"
                 else:
-                    response.code = 303
+                    print("验证不通过")
+                    response.code = 301
                     response.msg = json.loads(forms_obj.errors.as_json())
             else:
-                print("验证不通过")
-                # print(forms_obj.errors)
                 response.code = 301
-                # print(forms_obj.errors.as_json())
-                #  字符串转换 json 字符串
-                response.msg = json.loads(forms_obj.errors.as_json())
+                response.msg = '该栏目为单页, 不可加入文章'
+        elif oper_type == "update":
+            program_type = models.xcx_program_management.objects.filter(id=form_data.get('article_program_id'))[
+                0].program_type
+            if program_type != 2:
+                # 获取需要修改的信息
+                forms_obj = UpdateForm(form_data)
+                if forms_obj.is_valid():
+                    print("验证通过")
+                    #  查询数据库  用户id
+                    objs = models.xcx_article.objects.filter(
+                        id=o_id
+                    )
+                    #  更新 数据
+                    print(forms_obj.cleaned_data)
+                    if objs:
+                        objs.update(**forms_obj.cleaned_data)
+                        response.code = 200
+                        response.msg = "修改成功"
+                    else:
+                        response.code = 303
+                        response.msg = json.loads(forms_obj.errors.as_json())
+                else:
+                    print("验证不通过")
+                    # print(forms_obj.errors)
+                    response.code = 301
+                    # print(forms_obj.errors.as_json())
+                    #  字符串转换 json 字符串
+                    response.msg = json.loads(forms_obj.errors.as_json())
+            else:
+                response.code = 301
+                response.msg = '该栏目为单页, 不可加入文章'
 
         elif oper_type == "delete":
             # 删除 ID
@@ -136,7 +146,6 @@ def article_oper(request, oper_type, o_id):
             else:
                 response.code = 302
                 response.msg = '删除ID不存在'
-
     else:
         response.code = 402
         response.msg = "请求异常"

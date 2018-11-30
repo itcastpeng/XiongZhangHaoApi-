@@ -11,7 +11,7 @@ from django.db.models import Q
 
 # cerf  token验证 用户展示模块
 @csrf_exempt
-@account.is_token(models.xcx_userprofile)
+# @account.is_token(models.xcx_userprofile)
 def program(request):
     response = Response.ResponseObj()
     if request.method == "GET":
@@ -53,6 +53,8 @@ def program(request):
                     'belongUser_id':obj.belongUser_id,
                     'belongUser':obj.belongUser.username,
                     'program_type_id':obj.program_type,
+                    # 'suoluetu':json.loads(obj.suoluetu),
+                    'suoluetu':obj.suoluetu,
                     'program_type':obj.get_program_type_display(),
                     'create_date':obj.create_date.strftime('%Y-%m-%d %H:%M:%S'),
                 })
@@ -76,15 +78,17 @@ def program(request):
 #  增删改
 #  csrf  token验证
 @csrf_exempt
-@account.is_token(models.xcx_userprofile)
+# @account.is_token(models.xcx_userprofile)
 def program_oper(request, oper_type, o_id):
     response = Response.ResponseObj()
     if request.method == "POST":
         form_data = {
-            'belongUser_id': request.GET.get('user_id'),
+            # 'belongUser_id': request.GET.get('user_id'),
+            'belongUser_id': 4,
             'program_name': request.POST.get('program_name'),     # 栏目名称
             'program_type': request.POST.get('program_type'),     # 栏目类型
-            'program_text': request.POST.get('program_text', '')     # 单页设置内容
+            'suoluetu': request.POST.get('suoluetu'),             # 缩略图
+            'program_text': request.POST.get('program_text', '')  # 单页设置内容
         }
         program_type = form_data.get('program_type')
         program_text = form_data.get('program_text')
@@ -121,8 +125,8 @@ def program_oper(request, oper_type, o_id):
                         response.code = 200
                         response.msg = "修改成功"
                     else:
-                        response.code = 303
-                        response.msg = json.loads(forms_obj.errors.as_json())
+                        response.code = 301
+                        response.msg = '无此栏目'
                 else:
                     print("验证不通过")
                     # print(forms_obj.errors)

@@ -18,7 +18,7 @@ import random
 @account.is_token(models.xzh_userprofile)
 def get_keyword_task(request):
     response = Response.ResponseObj()
-    redis_rc = redis.Redis(host='redis://redis_host', port=6379, db=4, decode_responses=True)
+    redis_rc = redis.Redis(host='redis_host', port=6379, db=4, decode_responses=True)
     # redis_rc = redis.Redis(host='127.0.0.1', port=6379, db=4, decode_responses=True)
 
     start_time = time.time()
@@ -59,21 +59,25 @@ def get_keyword_task(request):
 def select_keywords_cover(request):
     response = Response.ResponseObj()
     if request.method == "GET":     # 获取查覆盖的关键词
-        redis_rc = redis.Redis(host='redis://redis_host', port=6379, db=4, decode_responses=True)
+        redis_rc = redis.Redis(host='redis_host', port=6379, db=4, decode_responses=True)
         # redis_rc = redis.Redis(host='127.0.0.1', port=6379, db=4, decode_responses=True)
-        task_keyword = redis_rc.lpop('keyword')
-        if task_keyword:
-            task_keyword = eval(task_keyword)
-            keywords_id = task_keyword.get('keywords_id')
-            print('keywords_id=========> ',keywords_id)
-            objs = models.xzh_keywords.objects.filter(id=keywords_id)
-            obj = objs[0]
-            obj.get_date = datetime.datetime.now()
-            obj.save()
-            response.data = task_keyword
-            response.code = 200
-        else:
+        len_keyword = redis_rc.llen('keyword')
+        if len_keyword <= 200:
             get_keyword_task.delay()
+        else:
+            task_keyword = redis_rc.lpop('keyword')
+            if task_keyword:
+                task_keyword = eval(task_keyword)
+                keywords_id = task_keyword.get('keywords_id')
+                print('keywords_id=========> ',keywords_id)
+                objs = models.xzh_keywords.objects.filter(id=keywords_id)
+                obj = objs[0]
+                obj.get_date = datetime.datetime.now()
+                obj.save()
+                response.data = task_keyword
+                response.code = 200
+            else:
+                get_keyword_task.delay()
 
     else:   # 提交查询关键词覆盖的结果
         # {'url': 'http://author.baidu.com/home/1611292686377463', 'keywords': '四川肛肠医院', 'rank': 4, 'keywords_id': 834}

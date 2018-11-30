@@ -16,8 +16,16 @@ Including another URLconf
 
 from django.conf.urls import url, include
 from baiduxiaochengxu.views_dir import login, user,  article, program
-from baiduxiaochengxu.xiaochengxu_view import xzx_article, xzx_program, xzx_user
+from baiduxiaochengxu.xiaochengxu_view import xzx_article, xzx_program
 urlpatterns = [
+    # =============================================小程序========================================================
+
+    # 文章管理
+    url(r'xzx_article$', xzx_article.article),
+
+    # 栏目管理
+    url(r'xzx_program$', xzx_program.program),
+
     # ==============================================后台=====================================================
     # 登录
     url(r'login$', login.login),
@@ -35,16 +43,8 @@ urlpatterns = [
     url(r'program', program.program),
 
 
-    # =============================================小程序========================================================
 
-    # 文章管理
-    url(r'xzx_article', xzx_article.article),
 
-    # 栏目管理
-    url(r'xzx_program', xzx_program.program),
-
-    # 用户管理
-    url(r'xzx_user', xzx_user.user),
 ]
 
 

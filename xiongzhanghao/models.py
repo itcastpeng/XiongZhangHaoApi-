@@ -177,6 +177,12 @@ class xcx_userprofile(models.Model):
     )
     status = models.SmallIntegerField(verbose_name="状态", choices=status_choices, default=2)
     lunbotu = models.TextField(verbose_name='轮播图', null=True, blank=True)
+    hospital_logoImg = models.CharField(verbose_name='logo图片', max_length=128, null=True, blank=True)
+    hospital_phone = models.CharField(verbose_name='医院电话', max_length=32, null=True, blank=True)
+    hospital_introduction = models.TextField(verbose_name='医院简介', null=True, blank=True)
+    hospital_address = models.CharField(verbose_name='医院地址', max_length=128, null=True, blank=True)
+    hospital_menzhen = models.CharField(verbose_name='门诊时间', max_length=128, null=True, blank=True)
+
 
 # 栏目管理
 class xcx_program_management(models.Model):
@@ -187,8 +193,10 @@ class xcx_program_management(models.Model):
         (2, '单页')
     )
     program_type = models.SmallIntegerField(verbose_name='栏目类型', choices=program_type_choices, default=1)
-    program_text = models.TextField(verbose_name='单页设置内容', null=True, blank=True)
+    program_text = models.TextField(verbose_name='单页设置内容', null=True, blank=True)    # 详情页设置内容
     create_date = models.DateTimeField(verbose_name="创建时间", auto_now_add=True)
+    suoluetu = models.CharField(verbose_name='缩略图', max_length=128, null=True, blank=True) # 栏目缩略图
+
 
 # 文章表
 class xcx_article(models.Model):
