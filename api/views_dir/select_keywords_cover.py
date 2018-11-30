@@ -8,7 +8,7 @@ import time, redis
 import datetime, json
 
 from django.db.models import Q
-from XiongZhangHaoApi_celery.tasks import get_keyword_task
+from XiongZhangHaoApi_celery import tasks
 from api.forms.select_keywords_cover import AddForm
 
 
@@ -62,7 +62,7 @@ def select_keywords_cover(request):
         # redis_rc = redis.Redis(host='127.0.0.1', port=6379, db=4, decode_responses=True)
         len_keyword = redis_rc.llen('keyword')
         if len_keyword <= 200:
-            get_keyword_task.delay()
+            tasks.get_keyword_task.delay()
         else:
             task_keyword = redis_rc.lpop('keyword')
             if task_keyword:
@@ -75,8 +75,7 @@ def select_keywords_cover(request):
                 obj.save()
                 response.data = task_keyword
                 response.code = 200
-            else:
-                get_keyword_task.delay()
+
 
     else:   # 提交查询关键词覆盖的结果
         # {'url': 'http://author.baidu.com/home/1611292686377463', 'keywords': '四川肛肠医院', 'rank': 4, 'keywords_id': 834}

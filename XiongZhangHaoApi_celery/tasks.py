@@ -65,6 +65,7 @@ def queryFollowersNum():
     url = 'http://xiongzhanghao.zhugeyingxiao.com:8003/api/addFansGetTask/queryFollowersNum'
     requests.get(url, params=params)
 
+@app.task
 def get_keyword_task():
     print('======================异步获取关键词任务=====================')
     url = 'http://xiongzhanghao.zhugeyingxiao.com:8003/api/SearchSecondary/get_keyword_task'
