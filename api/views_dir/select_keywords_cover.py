@@ -10,7 +10,6 @@ import datetime, json
 from django.db.models import Q
 from XiongZhangHaoApi_celery.tasks import get_keyword_task
 from api.forms.select_keywords_cover import AddForm
-import random
 
 
 

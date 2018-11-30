@@ -74,7 +74,7 @@ def addFansGetTask(request, oper_type):
 
                         elif obj.status == 2:
                             print('加粉中=-------------------=================')
-                            if int(fans_num) >= obj.add_fans_num:
+                            if int(fans_num) >= obj.add_fans_num + obj.befor_add_fans:
                                 obj.status = 3
                         elif obj.status == 3:
                             print('粉后查询==========-----------------=========')
