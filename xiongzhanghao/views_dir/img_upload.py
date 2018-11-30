@@ -61,16 +61,20 @@ def image_upload(request):
 # 上传图片
 @csrf_exempt
 def img_upload(request):
+    print('---------------------------------------------------------------------------------')
     response = Response.ResponseObj()
-    print('request.POST---> ',request.POST)
     img = request.POST.get('img')
     name = request.POST.get('name')
-    img_name = int(time.time()) + name
+    # img_name = int(time.time()) + name
+    print('request.FILES============》 ', request.FILES.get('file'))
+    print('request.FILES============》 ', request.FILES)
+    print('request.GET-------------> ',request.GET)
+    print('request.POST------------> ',request.POST)
 
 
     print(img)
     print(name)
-    print(img_name)
+    # print(img_name)
     # timestamp = datetime.time()
     # img_name = ''
     # img_save_path = os.path.join('statics', 'img', img_name)

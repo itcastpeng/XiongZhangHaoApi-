@@ -68,7 +68,8 @@ def publishedArticles():
                 "pubdate": datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
                 "ishtml": 1,
                 "imageField.x": "30",
-                "imageField.y": "12"
+                "imageField.y": "12",
+
             }
             articlePicName = ''
             if picname:
@@ -77,9 +78,10 @@ def publishedArticles():
                 elif 'http://www.zjsznnk.com' in picname:
                     articlePicName = picname.split('http://www.zjsznnk.com')[-1]
             article_data['picname'] = articlePicName
-            if 'http://m.oy120.com/@qz120_@' in website_backstage_url:
+            if 'http://m.oy120.com' in website_backstage_url:
                 article_data['litpic'] = '(binary)'
                 article_data['color'] = ''
+                article_data['weight'] = '5693'
                 article_data['keywords'] = ''
                 article_data['filename'] = ''
                 article_data['redirecturl'] = ''
@@ -87,10 +89,15 @@ def publishedArticles():
                 article_data['redirecturl'] = ''
                 article_data['tags'] = ''
                 article_data['shorttitle'] = ''
+                article_data['source'] = ''
+                article_data['writer'] = ''
+                article_data['typeid2'] = ''
+                article_data['dede_addonfields'] = ''
+                article_data['templet'] = ''
             # print('domain, home_path, userid, pwd, cookie-----------------> ',domain, home_path, userid, pwd, cookie)
             DeDeObj = DeDe(domain, home_path, userid, pwd, cookie)
             cookie = DeDeObj.login()
-            # print("===============-----9999999999999999999999999999999999900-----------> ",resultData.get('title'))
+            # print("===============-----9999999999999999999999999999999999900-----------> ",article_data)
             resultData = DeDeObj.sendArticle(article_data, resultData.get('title'), picname) # picname缩略图本地上传
 
             result_data = {

@@ -113,12 +113,13 @@ class DeDe(object):
     # 发布文章
     def sendArticle(self, data, title, picname=None):
         if self.article_test_title(data.get('title')):
+            # print('data=======================> ',data)
             # print('增加文章')
             url = self.home_url + '/article_add.php'
-            # print('发布url==================> ',url)
+            print('发布url==================> ',url)
             # print('发布data------------------> ', data)
             ret = self.requests_obj.post(url, data=data, cookies=self.cookies)
-            # print('========> ', ret.text.strip())
+            print('========> ', ret.text.strip())
             if '无法解析文档' not in ret.text.strip():
                 if '成功发布文章' in ret.text:
                     soup = BeautifulSoup(ret.text, 'lxml')
@@ -135,11 +136,9 @@ class DeDe(object):
                     if 'http:' in huilian:
                         huilian_right = huilian.split('http:')[1]
                         huilian = 'http:/' + huilian_right
-                    # print('huilian=========> ',huilian)
+                    print('huilian=========> ',huilian)
                     time.sleep(0.5)
                     if 'http://m.glamzx.com' not in self.home_url:  # 张冰洁整形 发不完请求不到 审核完才可以
-                        if 'http://4g.scgcyy.com' in self.home_url:  # 四川肛肠  没有发布生成权限 需要拼接回链
-                            huilian = 'http://4g.scgcyy.com/all/xzh/{}.html'.format(aid)
                         ret = self.requests_obj.get(huilian, cookies=self.cookies)
                         encode_ret = ret.apparent_encoding
                         # print('encode_ret===========', encode_ret)
@@ -148,7 +147,7 @@ class DeDe(object):
                         else:
                             ret.encoding = 'utf-8'
 
-                        print('title-------------> ',title)
+                        # print('title-------------> ',title)
                         # print('ret.text==============> ',ret.text)
                         if title.strip() in ret.text:
                             print('huilian=============> ', huilian)
@@ -179,7 +178,8 @@ class DeDe(object):
                             #     ret2 = self.requests_obj.get(updateIndexUrl)
                             #     print('ret2-=--> ', ret2, ret2.url)
                             print('’发布成功=========================发布成功===================发布成功')
-
+                            if 'http://4g.scgcyy.com' in self.home_url:  # 四川肛肠  没有发布生成权限 需要拼接回链
+                                huilian = 'http://4g.scgcyy.com/all/xzh/{}.html'.format(aid)
                             return {
                                 'huilian':huilian,
                                 'aid':aid,
@@ -199,11 +199,38 @@ class DeDe(object):
                             # 'code':305
                         }
                 else:
-                    print('’发布失败=========================没有成功发布文章===================发布失败 500')
-                    return {
-                        'huilian':'',
-                         'code':500
-                        }
+                    if 'http://m.oy120.com/' in self.home_url:
+                        url = 'http://m.oy120.com/@qz120_@/content_list.php?channelid=1'
+                        ret = self.requests_obj.get(url, cookies=self.cookies)
+                        soup = BeautifulSoup(ret.text, 'lxml')
+                        tr_all = soup.find_all('tr', height='26')
+                        aid = 0
+                        for i in tr_all:
+                            if title.strip() in i.get_text():
+                                aid = i.find_all('td')[0].get_text()
+                                print('aid----------> ',aid)
+                                break
+                        if aid:
+                            print('=============================发布成功p--------------------------------')
+                            huilian = 'http://m.oy120.com/qianliexian/{}.html'.format(aid)
+                            return {
+                                'huilian': huilian,
+                                'aid': aid,
+                                'code': 200
+                                # 'code':305
+                            }
+                        else:
+                            print('’发布失败=========================没有成功发布文章===================发布失败 500')
+                            return {
+                                'huilian': '',
+                                'code': 500
+                            }
+                    else:
+                        print('’发布失败=========================没有成功发布文章===================发布失败 500')
+                        return {
+                            'huilian':'',
+                             'code':500
+                            }
             else:
                 print('’模板文件不存在, 请选择子级菜单=========================模板文件不存在, 请选择子级菜单===================模板文件不存在, 请选择子级菜单 305')
                 return {

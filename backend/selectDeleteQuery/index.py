@@ -1,8 +1,5 @@
-
-
-
 from xiongzhanghao.publicFunc import Response
-from django.http import JsonResponse
+from django.http import JsonResponse, HttpResponse
 from api.public.token import start
 from urllib.parse import urlparse
 from backend.articlePublish import DeDe, PcV9
@@ -30,7 +27,8 @@ def electDeleteQuery():
         if result.get('cookie'):
             cookie = eval(result.get('cookie'))
         o_id = result.get('o_id')
-        if website_backstage == 1:           # 织梦后台
+        print('website_backstage=============> ',website_backstage)
+        if int(website_backstage) == 1:           # 织梦后台
             website_backstage_url = result.get('website_backstage_url')
             if website_backstage_url:
                 url = urlparse(website_backstage_url)
@@ -41,7 +39,7 @@ def electDeleteQuery():
                     domain = 'http://' + website_backstage_url.split('/')[0] + '/'
                     home_path = website_backstage_url.split('/')[1]
                 print('===============================> ',o_id)
-                print('home_path--------------->? ', domain, home_path, userid, pwd, cookie)
+                # print('home_path--------------->? ', domain, home_path, userid, pwd, cookie)
                 DeDeObj = DeDe(domain, home_path, userid, pwd, cookie)
                 cookie = DeDeObj.login()
                 if website_backstage_url[-1] == '/':
@@ -76,8 +74,12 @@ def electDeleteQuery():
                     'result_data':str(result_data),
                     'o_id':o_id
                 }
+                print('data================================> ', data)
+                # url = 'http://127.0.0.1:8003/api/selectDeleteQuery/deleteQueryModel?user_id=17&timestamp=123&rand_str=4297f44b13955235245b2497399d7a93'
+                url = 'http://xiongzhanghao.zhugeyingxiao.com:8003/api/selectDeleteQuery/deleteQueryModel?user_id=44&timestamp=1542788198850&rand_str=86b24054d91240d9559e369296af06cd'
+                requests.post(url, data=data)
 
-        elif website_backstage == 2:    # PcV9后台
+        elif int(website_backstage) == 2:    # PcV9后台
             PcV9Obj = PcV9(userid, pwd, cookie)
             cookies, pc_hash = PcV9Obj.login()
             result_list = []
@@ -94,7 +96,11 @@ def electDeleteQuery():
                 'o_id': o_id
             }
 
-        # url = 'http://127.0.0.1:8003/api/selectDeleteQuery/deleteQueryModel?user_id=17&timestamp=123&rand_str=4297f44b13955235245b2497399d7a93'
-        url = 'http://xiongzhanghao.zhugeyingxiao.com:8003/api/selectDeleteQuery/deleteQueryModel?user_id=44&timestamp=1542788198850&rand_str=86b24054d91240d9559e369296af06cd'
-        requests.post(url, data=data)
-    return JsonResponse(response.__dict__)
+            # url = 'http://127.0.0.1:8003/api/selectDeleteQuery/deleteQueryModel?user_id=17&timestamp=123&rand_str=4297f44b13955235245b2497399d7a93'
+            url = 'http://xiongzhanghao.zhugeyingxiao.com:8003/api/selectDeleteQuery/deleteQueryModel?user_id=44&timestamp=1542788198850&rand_str=86b24054d91240d9559e369296af06cd'
+            requests.post(url, data=data)
+
+
+
+
+
