@@ -93,7 +93,8 @@ def article_oper(request, oper_type, o_id):
             'content': request.POST.get('content'), # 内容
             'belongToUser_id': request.POST.get('belongToUser_id'),# 归属用户
             'article_program_id':request.POST.get('article_program_id'),
-            'article_introduction':request.POST.get('article_introduction')
+            'article_introduction':request.POST.get('article_introduction'),
+            'suoluetu':request.POST.get('suoluetu'),
         }
         print('form_data===============> ',form_data)
         if oper_type == "add":

@@ -66,6 +66,7 @@ def addFansGetTask(request, oper_type):
                         # print('interaction--------> ',interaction)
                         fans = interaction.find('div', class_='fans')
                         fans_num = fans.find('span').get_text()
+                        obj.after_add_fans = int(fans_num)
                         print('当前粉丝数量------------------------------> ',fans_num)
                         if obj.status == 1:
                             print('粉前查询--------------=============')
@@ -79,7 +80,7 @@ def addFansGetTask(request, oper_type):
                         elif obj.status == 3:
                             print('粉后查询==========-----------------=========')
                             obj.status = 4
-                            obj.after_add_fans=int(fans_num)
+                            obj.after_add_fans = int(fans_num)
                         else:
                             obj.status = 5
                     else:

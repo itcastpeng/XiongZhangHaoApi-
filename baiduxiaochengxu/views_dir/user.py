@@ -49,6 +49,7 @@ def user(request):
                 oper_user_id = obj.oper_user_id
                 username = obj.oper_user.username
             #  将查询出来的数据 加入列表
+
             ret_data.append({
                 'id': obj.id,
                 'username': obj.username,
@@ -61,15 +62,17 @@ def user(request):
                 'hospital_introduction': obj.hospital_introduction, # 医院简介
                 'hospital_address': obj.hospital_address,           # 医院地址
                 'hospital_menzhen': obj.hospital_menzhen,           # 门诊时间
+                'x_shaft': obj.x_shaft,                             # X轴
+                'y_shaft': obj.y_shaft,                             # Y轴
                 'create_date': obj.create_date.strftime('%Y-%m-%d %H:%M:%S'),
             })
 
-        #  查询成功 返回200 状态码
-        response.code = 200
-        response.msg = '查询成功'
-        response.data = {
-            'ret_data': ret_data
-        }
+            #  查询成功 返回200 状态码
+            response.code = 200
+            response.msg = '查询成功'
+            response.data = {
+                'ret_data': ret_data
+            }
     else:
         response.code = 301
         response.data = json.loads(forms_obj.errors.as_json())

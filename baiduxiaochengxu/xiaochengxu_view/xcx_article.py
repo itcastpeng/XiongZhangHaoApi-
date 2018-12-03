@@ -59,6 +59,7 @@ def article(request):
                     'article_type_id': obj.article_type,
                     'suoluetu': obj.suoluetu,
                     'article_type': obj.get_article_type_display(),
+                    'article_introductionid': obj.article_introduction,
                 })
             #  查询成功 返回200 状态码
             response.code = 200

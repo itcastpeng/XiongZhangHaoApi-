@@ -46,7 +46,7 @@ def user_oper(request, oper_type, o_id):
                 'hospital_address':obj.hospital_address,
                 'hospital_menzhen':obj.hospital_menzhen,
                 'username':obj.username,
-                'id':obj.id
+                'id':obj.id,
             })
         print('v====>',data_list)
         response.code = 200

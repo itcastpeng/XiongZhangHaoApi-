@@ -63,6 +63,18 @@ class AddForm(forms.Form):
             'required': "医院门诊时间不能为空"
         }
     )
+    x_shaft = forms.CharField(
+        required=True,
+        error_messages={
+            'required': "地图X轴不能为空"
+        }
+    )
+    y_shaft = forms.CharField(
+        required=True,
+        error_messages={
+            'required': "地图Y轴不能为空"
+        }
+    )
 
     token = forms.IntegerField(
         required=False
@@ -95,6 +107,25 @@ class AddForm(forms.Form):
             return hospital_phone
         else:
             self.add_error('hospital_phone', '请输入正确手机号')
+    def clean_x_shaft(self):
+        x_shaft = self.data.get('x_shaft')
+        if '.' in x_shaft:
+            if len(x_shaft.split('.')[-1]) == 2:
+                return x_shaft
+            else:
+                self.add_error('x_shaft', 'X轴请保留小数点后两位')
+        else:
+            self.add_error('x_shaft', 'X轴请携带小数点')
+
+    def clean_y_shaft(self):
+        y_shaft = self.data.get('y_shaft')
+        if '.' in y_shaft:
+            if len(y_shaft.split('.')[-1]) == 2:
+                return y_shaft
+            else:
+                self.add_error('x_shaft', 'Y轴请保留小数点后两位')
+        else:
+            self.add_error('x_shaft', 'Y轴请携带小数点')
 
 
 
@@ -149,6 +180,38 @@ class UpdateForm(forms.Form):
             'required': "医院门诊时间不能为空"
         }
     )
+    x_shaft = forms.CharField(
+        required=True,
+        error_messages={
+            'required': "地图X轴不能为空"
+        }
+    )
+    y_shaft = forms.CharField(
+        required=True,
+        error_messages={
+            'required': "地图Y轴不能为空"
+        }
+    )
+
+    def clean_x_shaft(self):
+        x_shaft = self.data.get('x_shaft')
+        if '.' in x_shaft:
+            if len(x_shaft.split('.')[-1]) == 2:
+                return x_shaft
+            else:
+                self.add_error('x_shaft', 'X轴请保留小数点后两位')
+        else:
+            self.add_error('x_shaft', 'X轴请携带小数点')
+
+    def clean_y_shaft(self):
+        y_shaft = self.data.get('x_shaft')
+        if '.' in y_shaft:
+            if len(y_shaft.split('.')[-1]) == 2:
+                return y_shaft
+            else:
+                self.add_error('x_shaft', 'Y轴请保留小数点后两位')
+        else:
+            self.add_error('x_shaft', 'Y轴请携带小数点')
 
     # 判断名称是否存在
     # def clean_username(self):

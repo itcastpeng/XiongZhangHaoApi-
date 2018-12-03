@@ -52,6 +52,12 @@ class AddForm(forms.Form):
             'required': '文章简介不能为空'
         }
     )
+    suoluetu = forms.CharField(
+        required=True,
+        error_messages={
+            'required': '缩略图不能为空'
+        }
+    )
 
 
 
@@ -124,6 +130,12 @@ class UpdateForm(forms.Form):
         required=True,
         error_messages={
             'required': '文章简介不能为空'
+        }
+    )
+    suoluetu = forms.CharField(
+        required=True,
+        error_messages={
+            'required': '缩略图不能为空'
         }
     )
 
