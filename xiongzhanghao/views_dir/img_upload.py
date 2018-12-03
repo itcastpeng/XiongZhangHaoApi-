@@ -60,31 +60,26 @@ def image_upload(request):
 
 # 上传图片
 @csrf_exempt
-def img_upload(request):
-    print('---------------------------------------------------------------------------------')
+def img_upload(request, oper_type):
     response = Response.ResponseObj()
-    img = request.POST.get('img')
-    name = request.POST.get('name')
-    # img_name = int(time.time()) + name
-    print('request.FILES============》 ', request.FILES.get('file'))
-    print('request.FILES============》 ', request.FILES)
-    print('request.GET-------------> ',request.GET)
-    print('request.POST------------> ',request.POST)
+    if oper_type == 'upload':
+        file_obj = request.FILES.get('file')
+        file_name = str(int(time.time())) + file_obj.name
+        file_abs_name = os.path.join("statics", 'xiaochengxu', file_name)
+        with open(file_abs_name, "wb") as f:
+            for chunk in file_obj.chunks():
+                f.write(chunk)
 
 
-    print(img)
-    print(name)
-    # print(img_name)
-    # timestamp = datetime.time()
-    # img_name = ''
-    # img_save_path = os.path.join('statics', 'img', img_name)
-    # print('img_save_path -->', img_save_path )
+        # path_name = 'http://192.168.10.207:8003' + '/statics/xiaochengxu/' + file_name
+        path_name = 'http://xiongzhanghao.zhugeyingxiao.com:8003' + '/statics/xiaochengxu/' + file_name
+        print('path_name=========> ',path_name)
+        response.code = 200
+        response.msg = '上传成功'
+        response.data = path_name
 
-    # with open(img_save_path, 'w') as f:
-    #     f.write(img_data)
-
-    response.code = 200
-    response.msg = "失败"
-
+    else:
+        response.code = 402
+        response.msg = '请求异常'
     return JsonResponse(response.__dict__)
 

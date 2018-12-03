@@ -40,7 +40,8 @@ def init_fugai_baobiao(request):
                 xzh_keywords__user_id=user_id)
             data['today_cover'] = xzh_keywords_detail_objs.filter(create_date=now_date).count()  # 今日覆盖
             data['total_cover'] = xzh_keywords_detail_objs.count()  # 总覆盖
-
+        else:
+            data['status'] = 2
         data['publish_num'] = models.xzh_article.objects.filter(user_id=user_id).count()  # 总发布篇数
 
         xzh_fugai_baobiao_objs = models.xzh_fugai_baobiao.objects.filter(user_id=user_id)

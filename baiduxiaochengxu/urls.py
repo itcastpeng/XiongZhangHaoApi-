@@ -16,17 +16,18 @@ Including another URLconf
 
 from django.conf.urls import url, include
 from baiduxiaochengxu.views_dir import login, user,  article, program
-from baiduxiaochengxu.xiaochengxu_view import xzx_article, xzx_program, xcx_user
+from baiduxiaochengxu.xiaochengxu_view import xcx_article, xcx_program, xcx_user
 urlpatterns = [
     # =============================================小程序========================================================
 
     # 文章管理
-    url(r'xzx_article$', xzx_article.article),
+    url(r'xzx_article$', xcx_article.article),
 
     # 栏目管理
-    url(r'xzx_program$', xzx_program.program),
+    url(r'xzx_program$', xcx_program.program),
 
     # 查询token
+    url(r'xzx_user/(?P<oper_type>\w+)/(?P<o_id>\d+)$', xcx_user.user_oper),
     url(r'xzx_user$', xcx_user.user),
 
     # ==============================================后台=====================================================

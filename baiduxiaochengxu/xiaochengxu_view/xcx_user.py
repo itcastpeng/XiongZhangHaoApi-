@@ -25,8 +25,36 @@ def user(request):
     }
     return JsonResponse(response.__dict__)
 
-
-
+def user_oper(request, oper_type, o_id):
+    response = Response.ResponseObj()
+    if oper_type == 'select':
+        objs = models.xcx_userprofile.objects.filter(id=o_id)
+        count = objs.count()
+        data_list = []
+        for obj in objs:
+            lunbotu = ''
+            # if obj.lunbotu:
+            #     lunbotu = json.loads(obj.lunbotu)
+            data_list.append({
+                'lunbotu':obj.lunbotu,
+                'hospital_logoImg':obj.hospital_logoImg,
+                'hospital_phone':obj.hospital_phone,
+                'hospital_introduction':obj.hospital_introduction,
+                'hospital_address':obj.hospital_address,
+                'hospital_menzhen':obj.hospital_menzhen,
+                'username':obj.username,
+                'id':obj.id
+            })
+        response.code = 200
+        response.msg = '查询成功'
+        response.data = {
+            'data_list':data_list,
+            'count':count
+        }
+    else:
+        response.code = 402
+        response.msg = '请求异常'
+    return JsonResponse(response.__dict__)
 
 
 

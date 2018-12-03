@@ -151,11 +151,13 @@ class xzh_add_fans(models.Model):
         (1, "未查询"),
         (2, "加粉中.."),
         (3, "加粉完成"),
-        (4, "已完成")
+        (4, "已完成"),
+        (5, "异常")
     )
     status = models.SmallIntegerField(verbose_name='状态', choices=status_choices, default=1)
     errorText = models.CharField(verbose_name='错误日志', max_length=128, null=True, blank=True)
 
+# 缩略图  固定数据
 class xzh_suoluetu(models.Model):
     man = models.CharField(verbose_name='男科缩略图', max_length=128, null=True, blank=True)
     woman = models.CharField(verbose_name='妇科缩略图', max_length=128, null=True, blank=True)
@@ -218,6 +220,7 @@ class xcx_article(models.Model):
     article_type = models.SmallIntegerField(verbose_name='文章类型', default=1, choices=article_type_choices)
     article_program = models.ForeignKey('xcx_program_management', verbose_name='归属栏目')
     suoluetu = models.CharField(verbose_name='缩略图', max_length=128, null=True, blank=True)
+    article_introduction = models.CharField(verbose_name='文章简介', max_length=256, null=True, blank=True)
 
 
 

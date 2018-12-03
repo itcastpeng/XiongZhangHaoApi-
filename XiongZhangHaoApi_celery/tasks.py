@@ -70,3 +70,13 @@ def get_keyword_task():
     print('======================异步获取关键词任务=====================')
     url = 'http://xiongzhanghao.zhugeyingxiao.com:8003/api/SearchSecondary/get_keyword_task'
     requests.get(url, params=params)
+
+# @app.task
+# def export_excel(o_id, start, stop):
+#     url = 'http://xiongzhanghao.zhugeyingxiao.com:8003/article/celeryExportExcel/0'
+#     data = {
+#         'o_id':o_id,
+#         'start':start,
+#         'stop':stop
+#     }
+#     requests.post(url, data=data, params=params)

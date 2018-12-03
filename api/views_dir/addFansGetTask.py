@@ -81,13 +81,13 @@ def addFansGetTask(request, oper_type):
                             obj.status = 4
                             obj.after_add_fans=int(fans_num)
                         else:
-                            obj.status = 0
+                            obj.status = 5
                     else:
-                        obj.status = 0
+                        obj.status = 5
                         obj.errorText = '关键词与xiongzhanghaoID不匹配 或 连接超时, 请联系管理员'
                     obj.save()
             else:
-                obj.status = 0
+                obj.status = 5
                 obj.errorText = 'xiongzhanghaoID异常,请找管理员操作'
                 obj.save()
                 response.code = 301

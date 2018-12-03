@@ -61,6 +61,7 @@ def user(request):
                 'hospital_introduction': obj.hospital_introduction, # 医院简介
                 'hospital_address': obj.hospital_address,           # 医院地址
                 'hospital_menzhen': obj.hospital_menzhen,           # 门诊时间
+                'create_date': obj.create_date.strftime('%Y-%m-%d %H:%M:%S'),
             })
 
         #  查询成功 返回200 状态码

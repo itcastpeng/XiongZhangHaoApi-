@@ -56,7 +56,7 @@ urlpatterns = [
 
     # 上传文件
     url(r'^image_upload$', img_upload.image_upload),
-    url(r'^img_upload$', img_upload.img_upload),
+    url(r'img_upload/(?P<oper_type>\w+)$', img_upload.img_upload),
 
     # 加粉功能
     url(r'fans/(?P<oper_type>\w+)/(?P<o_id>\d+)$', add_fans.fans_oper),

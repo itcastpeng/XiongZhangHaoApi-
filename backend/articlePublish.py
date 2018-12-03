@@ -119,24 +119,24 @@ class DeDe(object):
             print('发布url==================> ',url)
             # print('发布data------------------> ', data)
             ret = self.requests_obj.post(url, data=data, cookies=self.cookies)
-            print('========> ', ret.text.strip())
+            # print('========> ', ret.text.strip())
             if '无法解析文档' not in ret.text.strip():
                 if '成功发布文章' in ret.text:
                     soup = BeautifulSoup(ret.text, 'lxml')
                     aid_href = soup.find('a', text='更改文章').get('href')    # 文章id
                     aid = aid_href.split('?')[1].split('&')[0].split('aid=')[-1]
                     huilian_href = soup.find('a', text='查看文章').get('href')    # 文章id
-                    # print('huilian_href-=---------------> ',huilian_href)
-                    if 'http://www.zjnbsznfk120.com' and 'http://www.zjsznnk.com' not in self.home_url:
+                    print('huilian_href-=---------------> ',huilian_href)
+                    if ('http://www.zjnbsznfk120.com' or 'http://www.zjsznnk.com') not in self.home_url:
                         huilian = self.domain + huilian_href
                     else:
                         huilian = huilian_href
-                    # print('huilian================> ',huilian)
+                    # if 'http://www.zjnbsznfk120.com' not in self.home_url:
                     huilian = huilian.replace('//', '/')
                     if 'http:' in huilian:
                         huilian_right = huilian.split('http:')[1]
                         huilian = 'http:/' + huilian_right
-                    print('huilian=========> ',huilian)
+                    # print('huilian================> ',huilian)
                     time.sleep(0.5)
                     if 'http://m.glamzx.com' not in self.home_url:  # 张冰洁整形 发不完请求不到 审核完才可以
                         ret = self.requests_obj.get(huilian, cookies=self.cookies)
@@ -206,21 +206,56 @@ class DeDe(object):
                         tr_all = soup.find_all('tr', height='26')
                         aid = 0
                         for i in tr_all:
+                            # print('title===========> ',i.get_text())
                             if title.strip() in i.get_text():
                                 aid = i.find_all('td')[0].get_text()
-                                print('aid----------> ',aid)
+                                # leimu = i.find_all('td')[4].get_text().strip()
+                                # # print('aid----------> ',aid)
                                 break
                         if aid:
                             print('=============================发布成功p--------------------------------')
-                            huilian = 'http://m.oy120.com/qianliexian/{}.html'.format(aid)
+                            aid = str(aid).strip().replace('\n', '').replace('\t', '')
+                            now = datetime.datetime.now().strftime('%m%d')
+                            # if '性功能障碍专科' in leimu:
+                            #     column = 'xinggongnenzhangai'
+                            # elif '前列腺专科' in leimu:
+                            #     column = 'qianliexian'
+                            # elif '睾丸附睾炎' in leimu:
+                            #     column = 'shengzhiganran/gaowanfugaoyan'
+                            # elif '阳痿' in leimu:
+                            #     column = 'xinggongnenzhangai/yangwei'
+                            # elif '男科案例' in leimu:
+                            #     column = 'yiyuanxinxi/nankeanli'
+                            # elif '其它生殖感染疾病' in leimu:
+                            #     column = 'shengzhiganran/qitashengzhiganranjibing'
+                            # elif '前列腺炎' in leimu:
+                            #     column = 'qianliexian/qianliexianyan'
+                            # elif '前列腺肥大' in leimu:
+                            #     column = 'qianliexian/qianliexianfeida'
+                            # elif '前列腺专科' in leimu:
+                            #     column = 'qianliexian'
+                            # elif '包皮龟头炎' in leimu:
+                            #     column = 'shengzhiganran/baopiguitouyan'
+                            # elif '男性不育专科' in leimu:
+                            #     column = 'nanxingbuyuzhuanke'
+                            # elif '精囊炎' in leimu:
+                            #     column = 'shengzhiganran/jingnanyan'
+                            # elif '生殖感染专科' in leimu:
+                            #     column = 'shengzhiganran'
+                            # elif '尿道炎' in leimu:
+                            #     column = 'shengzhiganran/niaodaoyan'
+                            # elif '阴囊潮湿' in leimu:
+                            #     column = 'shengzhiganran/yinnanchaoshi'
+                            # elif '前列腺增生' in leimu:
+                            #     column = 'qianliexian/qianliexianzengsheng'
+                            huilian = 'http://m.oy120.com/a/xiongzhanghao/2018/{}/{}.html'.format(now, aid)
                             return {
                                 'huilian': huilian,
                                 'aid': aid,
                                 'code': 200
-                                # 'code':305
                             }
                         else:
-                            print('’发布失败=========================没有成功发布文章===================发布失败 500')
+                            print('’发布失败=========================没有成功发布文章===================发布失')
                             return {
                                 'huilian': '',
                                 'code': 500

@@ -209,77 +209,116 @@ class PcV9(object):
         return data_list
 
 import datetime
-if __name__ == '__main__':
-    catid = 115
-    title = '测试标题'
-    user_id = 'Ymexiongzhanghao'
-    password = 'Yme@evercare20181126'
-    cookie = {'PHPSESSID': 'q5981m9bglfllmc3bib4lvuti6',
-              'Hhuvt_sys_lang': 'a5e0FMsBPHEjViLciHcdIze2UdMxPOkOwJq4edMDAAwEiw',
-              'Hhuvt_admin_username': 'e242V5S-mKfYXHGRRUODNuUI42_b-YJ_XHZcoxfaiEzJ03n62WyVb9vuZ-d9',
-              'Hhuvt_siteid': '9222HgxnLMBETl68Jcw2DQcV_cAY8T3ZF6KeueBl',
-              'Hhuvt_admin_email': '0e467jj9jrpv_NDlXj-m_73TUGIWn3ab4iKirTA4qN-ElYcCtAZcBwx-w_Y',
-              'Hhuvt_userid': '9b82AUqls4zcOtqf33LDiw-ZpeOSjZIx9gLE6NOFAA'}
-    now = datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')
-    data = {
-        'info[thumb]':'',
-        'info[relation]':'',
-        'info[inputtime]':now,
-        'info[islink]':0,
-        'info[template]':'',
-        'info[allow_comment]':1,
-        'info[readpoint]':'',
-        'info[paytype]':0,
-        'info[catid]':catid,
-        'info[title]':title,
-        'style_color':'',
-        'style_font_weight':'',
-        'info[keywords]':'',
-        'info[copyfrom]':'',
-        'copyfrom_data':0,
-        'info[description]':'测试摘要====',
-        'info[content]':'测试内容----内容',
-        'page_title_value':'',
-        'add_introduce':1,
-        'introcude_length':200,
-        'auto_thumb':1,
-        'auto_thumb_no':1,
-        'info[paginationtype]':0,
-        'info[maxcharperpage]':10000,
-        'info[posids][]':-1,
-        'info[groupids_view]':1,
-        'info[voteid]':'',
-        'dosubmit':'保存后自动关闭',
-    }
-    # objs = PcV9(user_id, password, cookie)
-    # cookie, pc_hash = objs.login()
-    # print('pc_hash========> ',pc_hash)
-    # objs.getClassInfo()
-    # objs.sendArticle(data, title, pc_hash)
-    # 判断是否删除
-    maxtime = '2018-11-20'
+# if __name__ == '__main__':
+#     catid = 115
+#     title = '测试标题'
+#     user_id = 'Ymexiongzhanghao'
+#     password = 'Yme@evercare20181126'
+#     cookie = {'PHPSESSID': 'q5981m9bglfllmc3bib4lvuti6',
+#               'Hhuvt_sys_lang': 'a5e0FMsBPHEjViLciHcdIze2UdMxPOkOwJq4edMDAAwEiw',
+#               'Hhuvt_admin_username': 'e242V5S-mKfYXHGRRUODNuUI42_b-YJ_XHZcoxfaiEzJ03n62WyVb9vuZ-d9',
+#               'Hhuvt_siteid': '9222HgxnLMBETl68Jcw2DQcV_cAY8T3ZF6KeueBl',
+#               'Hhuvt_admin_email': '0e467jj9jrpv_NDlXj-m_73TUGIWn3ab4iKirTA4qN-ElYcCtAZcBwx-w_Y',
+#               'Hhuvt_userid': '9b82AUqls4zcOtqf33LDiw-ZpeOSjZIx9gLE6NOFAA'}
+#     now = datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')
+#     data = {
+#         'info[thumb]':'',
+#         'info[relation]':'',
+#         'info[inputtime]':now,
+#         'info[islink]':0,
+#         'info[template]':'',
+#         'info[allow_comment]':1,
+#         'info[readpoint]':'',
+#         'info[paytype]':0,
+#         'info[catid]':catid,
+#         'info[title]':title,
+#         'style_color':'',
+#         'style_font_weight':'',
+#         'info[keywords]':'',
+#         'info[copyfrom]':'',
+#         'copyfrom_data':0,
+#         'info[description]':'测试摘要====',
+#         'info[content]':'测试内容----内容',
+#         'page_title_value':'',
+#         'add_introduce':1,
+#         'introcude_length':200,
+#         'auto_thumb':1,
+#         'auto_thumb_no':1,
+#         'info[paginationtype]':0,
+#         'info[maxcharperpage]':10000,
+#         'info[posids][]':-1,
+#         'info[groupids_view]':1,
+#         'info[voteid]':'',
+#         'dosubmit':'保存后自动关闭',
+#     }
+#     # objs = PcV9(user_id, password, cookie)
+#     # cookie, pc_hash = objs.login()
+#     # print('pc_hash========> ',pc_hash)
+#     # objs.getClassInfo()
+#     # objs.sendArticle(data, title, pc_hash)
+#     # 判断是否删除
+#     maxtime = '2018-11-20'
+#
+#     # url = 'http://m.evercarebj.com/index.php?m=content&c=content&a=init&menuid=822&catid={}&pc_hash={}'.format(
+#     #     catid, pc_hash)
+#     data_list = []
+#     # data_list = objs.deleteQuery(url, maxtime, data_list)
+#     # objs.getClassInfo(pc_hash)
+#     print(data_list)
+# import time
+#
+# from xiongzhanghao.publicFunc.account import str_encrypt
+#
+# token = 'a66b1a82b4ba3ca9d444322c8524e844'
+# timestamp = str(int(time.time() * 1000))
+# params = {
+#     'user_id': 44,
+#     'rand_str': str_encrypt(timestamp + token),
+#     'timestamp': timestamp,
+# }
+# print(params)
 
-    # url = 'http://m.evercarebj.com/index.php?m=content&c=content&a=init&menuid=822&catid={}&pc_hash={}'.format(
-    #     catid, pc_hash)
-    data_list = []
-    # data_list = objs.deleteQuery(url, maxtime, data_list)
-    # objs.getClassInfo(pc_hash)
-    print(data_list)
 
 
+from openpyxl.styles import Font, Alignment
+from openpyxl import Workbook
 
 
+wb = Workbook()
+ws = wb.active
+ws.title = '关键词覆盖查询'
+ws.cell(row=1, column=1, value="用户:")
+ws.cell(row=3, column=1, value="创建时间")
+ws.cell(row=3, column=2, value="文章标题")
+ws.cell(row=3, column=3, value="所选栏目")
+ws.cell(row=3, column=4, value="回链地址")
+# ft1 = Font(name='宋体', size=22)
+# a1 = ws['A1']
+# a1.font = ft1
+
+# # 合并单元格        开始行      结束行       用哪列          占用哪列
+ws.merge_cells(start_row=1, end_row=1, start_column=1, end_column=2)
+
+# ws.merge_cells(start_row=2, end_row=5, start_column=5, end_column=5)
+
+# print('设置列宽')
+ws.column_dimensions['A'].width = 30
+ws.column_dimensions['B'].width = 30
+ws.column_dimensions['C'].width = 30
+ws.column_dimensions['D'].width = 30
+ws.column_dimensions['E'].width = 30
+ws.column_dimensions['F'].width = 30
+ws.column_dimensions['G'].width = 30
 
 
+# # print('设置行高')
+# ws.row_dimensions[1].height = 28
+
+# # print('文本居中')
+# ws['A1'].alignment = Alignment(horizontal='center', vertical='center')
 
 
-
-
-
-
-
-
-
+wb.save('./1.xlsx')
 
 
 

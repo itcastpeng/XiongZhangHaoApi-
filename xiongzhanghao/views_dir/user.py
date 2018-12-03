@@ -274,13 +274,12 @@ def user_oper(request, oper_type, o_id):
             objs = userObj.filter(id=user_id)
             if objs and int(objs[0].role_id) in [64, 66]:
                 obj = userObj.filter(id=o_id)
-                obj = obj[0]
-                if int(obj.status) == 1:
+                print('obj.status==============> ',obj[0].status)
+                if int(obj[0].status) == 1:
                     status = 2
                 else:
                     status = 1
-                obj.status = status
-                obj.save()
+                obj.update(status=status)
                 response.code = 200
                 response.msg = '修改成功'
             else:

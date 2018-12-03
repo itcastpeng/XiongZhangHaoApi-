@@ -148,8 +148,24 @@ def fans_oper(request, oper_type, o_id):
             response.data = {}
 
     else:
-        response.code = 402
-        response.msg = "请求异常"
+        if oper_type == 'update_status':
+            print('====')
+            objs = models.xzh_add_fans.objects.filter(id=o_id)
+            if objs:
+                obj = objs[0]
+                if obj.befor_add_fans:
+                    status = 2
+                else:
+                    status = 1
+                objs.update(status=status)
+                response.code = 200
+                response.msg = '修改成功'
+            else:
+                response.code = 301
+                response.msg = '无修改ID'
+        else:
+            response.code = 402
+            response.msg = "请求异常"
 
     return JsonResponse(response.__dict__)
 
