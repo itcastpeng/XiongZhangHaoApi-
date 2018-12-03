@@ -40,6 +40,18 @@ class AddForm(forms.Form):
             'required': '栏目不能为空'
         }
     )
+    article_type =  forms.IntegerField(
+        required=True,
+        error_messages={
+            'required': '栏目不能为空'
+        }
+    )
+    article_introduction = forms.CharField(
+        required=True,
+        error_messages={
+            'required': '文章简介不能为空'
+        }
+    )
 
 
 
@@ -102,8 +114,18 @@ class UpdateForm(forms.Form):
             'required': '栏目不能为空'
         }
     )
-
-
+    article_type = forms.IntegerField(
+        required=True,
+        error_messages={
+            'required': '类型不能为空'
+        }
+    )
+    article_introduction = forms.CharField(
+        required=True,
+        error_messages={
+            'required': '文章简介不能为空'
+        }
+    )
 
 
 # 判断是否是数字

@@ -95,6 +95,8 @@ def user_oper(request, oper_type, o_id):
             'hospital_introduction': request.POST.get('hospital_introduction'), # 医院简介
             'hospital_address': request.POST.get('hospital_address'),       # 医院地址
             'hospital_menzhen': request.POST.get('hospital_menzhen'),       # 门诊时间
+            'x_shaft': request.POST.get('x_shaft'),                         # X轴
+            'y_shaft': request.POST.get('y_shaft'),                         # Y轴
         }
         if oper_type == "add":
             print('form_data----->',form_data)

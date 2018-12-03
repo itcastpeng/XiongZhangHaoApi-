@@ -184,7 +184,8 @@ class xcx_userprofile(models.Model):
     hospital_introduction = models.TextField(verbose_name='医院简介', null=True, blank=True)
     hospital_address = models.CharField(verbose_name='医院地址', max_length=128, null=True, blank=True)
     hospital_menzhen = models.CharField(verbose_name='门诊时间', max_length=128, null=True, blank=True)
-
+    x_shaft = models.CharField(verbose_name= 'X轴', max_length=64, null=True, blank=True)
+    y_shaft = models.CharField(verbose_name='Y轴', max_length=64, null=True, blank=True)
 
 # 栏目管理
 class xcx_program_management(models.Model):

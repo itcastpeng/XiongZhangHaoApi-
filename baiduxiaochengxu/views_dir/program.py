@@ -27,7 +27,7 @@ def program(request):
                 'program_name': '__contains',
                 'program_type': '',
                 'program_text': '',
-                'belongToUser_id': '',
+                'belongUser_id': '',
             }
             q = conditionCom(request, field_dict)
 

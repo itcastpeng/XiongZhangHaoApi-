@@ -33,11 +33,14 @@ def user_oper(request, oper_type, o_id):
         data_list = []
         for obj in objs:
             lunbotu = ''
-            # if obj.lunbotu:
-            #     lunbotu = json.loads(obj.lunbotu)
+            if obj.lunbotu:
+                lunbotu = json.loads(obj.lunbotu)
+            hospital_logoImg = ''
+            if obj.hospital_logoImg:
+                hospital_logoImg = eval(obj.hospital_logoImg)[0].get('url')
             data_list.append({
-                'lunbotu':obj.lunbotu,
-                'hospital_logoImg':obj.hospital_logoImg,
+                'lunbotu':lunbotu,
+                'hospital_logoImg':hospital_logoImg,
                 'hospital_phone':obj.hospital_phone,
                 'hospital_introduction':obj.hospital_introduction,
                 'hospital_address':obj.hospital_address,
@@ -45,6 +48,7 @@ def user_oper(request, oper_type, o_id):
                 'username':obj.username,
                 'id':obj.id
             })
+        print('v====>',data_list)
         response.code = 200
         response.msg = '查询成功'
         response.data = {

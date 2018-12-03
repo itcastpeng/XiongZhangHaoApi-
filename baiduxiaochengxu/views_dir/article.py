@@ -58,12 +58,18 @@ def article(request):
                     'user_name':obj.user.username,
                     'belongToUser_id':obj.belongToUser_id,
                     'belongToUser_name': obj.belongToUser.username,
+                    'article_type': obj.get_article_type_display(),
+                    'article_type_id': obj.article_type,
+                    'article_program_id': obj.article_program.id,
+                    'article_program': obj.article_program.program_name,
+                    'article_introduction': obj.article_introduction,
                 })
             #  查询成功 返回200 状态码
             response.code = 200
             response.msg = '查询成功'
             response.data = {
-                'ret_data': ret_data
+                'ret_data': ret_data,
+                'article_type':models.xcx_article.article_type_choices
             }
         else:
             response.code = 402
@@ -83,9 +89,11 @@ def article_oper(request, oper_type, o_id):
             'user_id': 4,
             # 'user_id': request.GET.get('user_id'),
             'title': request.POST.get('title'),     # 标题
+            'article_type': request.POST.get('article_type_id'),     # 栏目
             'content': request.POST.get('content'), # 内容
             'belongToUser_id': request.POST.get('belongToUser_id'),# 归属用户
-            'article_program_id':request.POST.get('article_program_id')
+            'article_program_id':request.POST.get('article_program_id'),
+            'article_introduction':request.POST.get('article_introduction')
         }
         print('form_data===============> ',form_data)
         if oper_type == "add":
@@ -105,8 +113,7 @@ def article_oper(request, oper_type, o_id):
                 response.code = 301
                 response.msg = '该栏目为单页, 不可加入文章'
         elif oper_type == "update":
-            program_type = models.xcx_program_management.objects.filter(id=form_data.get('article_program_id'))[
-                0].program_type
+            program_type = models.xcx_program_management.objects.filter(id=form_data.get('article_program_id'))[0].program_type
             if program_type != 2:
                 # 获取需要修改的信息
                 forms_obj = UpdateForm(form_data)
