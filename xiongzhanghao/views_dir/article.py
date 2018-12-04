@@ -10,7 +10,7 @@ from django.db.models import Q
 from backend.articlePublish import DeDe
 from openpyxl import Workbook
 from openpyxl.styles import Font, Alignment
-
+import re
 
 # from xiongzhanghao.views_dir.user import objLogin
 
@@ -157,7 +157,13 @@ def article_oper(request, oper_type, o_id):
                         response.msg = '回链不能为空'
                         response.code = 301
                         return JsonResponse(response.__dict__)
-
+                    pattern = re.compile(
+                        r'http[s]?://(?:[a-zA-Z]|[0-9]|[$-_@.&+]|[!*\(\),]|(?:%[0-9a-fA-F][0-9a-fA-F]))+')  # 匹配模式
+                    url = re.findall(pattern, back_url)
+                    if not url:
+                        response.code = 301
+                        response.msg = '请输入正确链接'
+                        return JsonResponse(response.__dict__)
                     articleObjs = models.xzh_article.objects.filter(id=obj.id)
                     article_status = 4
                     if int(articleObjs[0].belongToUser.userType) == 2:  # 特殊用户

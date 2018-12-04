@@ -163,6 +163,17 @@ class xzh_suoluetu(models.Model):
     man = models.CharField(verbose_name='男科缩略图', max_length=128, null=True, blank=True)
     woman = models.CharField(verbose_name='妇科缩略图', max_length=128, null=True, blank=True)
 
+# 用户数据统计表
+class user_statistics(models.Model):
+    create_date = models.DateTimeField(verbose_name="创建时间", auto_now_add=True)
+    belong_user = models.ForeignKey('xzh_userprofile', verbose_name='归属用户')
+    shoulu = models.IntegerField(verbose_name='收录')
+    zhishu = models.IntegerField(verbose_name='指数')
+    index_show = models.IntegerField(verbose_name='主页展示多少条')
+    zhanxianliang = models.IntegerField(verbose_name='展现量')
+    dianjiliang = models.IntegerField(verbose_name='点击量')
+    fans_num = models.IntegerField(verbose_name='粉丝数量')
+
 #===============================================================百度小程序===================================================================================
 
 # 用户表

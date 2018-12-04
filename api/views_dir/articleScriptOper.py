@@ -42,7 +42,7 @@ def articleScriptOper(request, oper_type):
                     'title': objs[0].title,
                     'summary': objs[0].summary,
                     'content': objs[0].content,
-                    'typeid': eval(objs[0].column_id).get('Id'),
+                    'typeid': eval(objs[0].column_id).get('Id'), # 此处I 为大写请勿更改
                     'o_id':objs[0].id
                 }
                 if obj.articlePicName:

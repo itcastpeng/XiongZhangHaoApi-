@@ -319,7 +319,49 @@ ws.column_dimensions['G'].width = 30
 
 
 # wb.save('./1.xlsx')
-articlePicName = 'http://www.zjsznnk.com/uploads/xiongzhanghao/timg (93).jpg'
-if 'http://www.zjnbsznfk120.com' not in articlePicName or 'http://www.zjsznnk.com' not in articlePicName:
-    print('=======================')
+
+
+
+xiongzhanghao_url = 'https://xiongzhang.baidu.com/site/login'
+
+ret = requests.get(xiongzhanghao_url)
+encode_ret = ret.apparent_encoding
+# print('encode_ret===========', encode_ret)
+if encode_ret == 'GB2312':
+    ret.encoding = 'gbk'
+else:
+    ret.encoding = 'utf-8'
+
+print(ret.text)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
