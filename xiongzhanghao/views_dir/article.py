@@ -124,7 +124,7 @@ def article_oper(request, oper_type, o_id):
         articlePicName = request.POST.get('articlePicName')    # 文章缩略图
         print('articlePicName=====================> ',articlePicName)
         if articlePicName:
-            if ('http://www.zjnbsznfk120.com' or 'http://www.zjsznnk.com') in articlePicName:
+            if 'http://www.zjnbsznfk120.com' in articlePicName or 'http://www.zjsznnk.com' in articlePicName:
                 pass
             else:
                 response.code = 301
