@@ -319,9 +319,7 @@ ws.column_dimensions['G'].width = 30
 
 
 # wb.save('./1.xlsx')
-
-p = ' ​　　有很多的男性朋友，在性生活中力不从心，也就是我们常说的早泄症状，早泄会直接影响到男性朋友的方方面面，所以我们应该重视早泄的防治。'
-
-
-print(p.encode('gbk'))
+articlePicName = 'http://www.zjsznnk.com/uploads/xiongzhanghao/timg (93).jpg'
+if 'http://www.zjnbsznfk120.com' not in articlePicName or 'http://www.zjsznnk.com' not in articlePicName:
+    print('=======================')
 
