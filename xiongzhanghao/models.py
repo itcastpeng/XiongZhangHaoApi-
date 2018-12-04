@@ -165,14 +165,15 @@ class xzh_suoluetu(models.Model):
 
 # 用户数据统计表
 class user_statistics(models.Model):
-    create_date = models.DateTimeField(verbose_name="创建时间", auto_now_add=True)
+    create_date = models.DateField(verbose_name="创建时间", auto_now_add=True)
     belong_user = models.ForeignKey('xzh_userprofile', verbose_name='归属用户')
-    shoulu = models.IntegerField(verbose_name='收录')
-    zhishu = models.IntegerField(verbose_name='指数')
-    index_show = models.IntegerField(verbose_name='主页展示多少条')
-    zhanxianliang = models.IntegerField(verbose_name='展现量')
-    dianjiliang = models.IntegerField(verbose_name='点击量')
-    fans_num = models.IntegerField(verbose_name='粉丝数量')
+    public_num = models.IntegerField(verbose_name='发布数量', null=True, blank=True)
+    shoulu = models.IntegerField(verbose_name='收录', null=True, blank=True)
+    zhishu = models.IntegerField(verbose_name='指数', null=True, blank=True)
+    index_show = models.IntegerField(verbose_name='主页展示多少条', null=True, blank=True)
+    zhanxianliang = models.IntegerField(verbose_name='展现量', null=True, blank=True)
+    dianjiliang = models.IntegerField(verbose_name='点击量', null=True, blank=True)
+    fans_num = models.IntegerField(verbose_name='粉丝数量', null=True, blank=True)
 
 #===============================================================百度小程序===================================================================================
 

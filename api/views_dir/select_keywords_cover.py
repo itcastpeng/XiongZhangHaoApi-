@@ -62,9 +62,9 @@ def select_keywords_cover(request):
         # redis_rc = redis.Redis(host='127.0.0.1', port=6379, db=4, decode_responses=True)
         len_keyword = redis_rc.llen('keyword')
         if len_keyword <= 200:
-            print('======================')
-            url = 'http://192.168.10.207:8003/api/SearchSecondary/get_keyword_task?user_id=17&timestamp=123&rand_str=4297f44b13955235245b2497399d7a93'
-            requests.get(url)
+            # print('======================')
+            # url = 'http://192.168.10.207:8003/api/SearchSecondary/get_keyword_task?user_id=17&timestamp=123&rand_str=4297f44b13955235245b2497399d7a93'
+            # requests.get(url)
             tasks.get_keyword_task.delay()
         else:
             task_keyword = redis_rc.lpop('keyword')

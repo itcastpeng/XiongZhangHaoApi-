@@ -15,7 +15,7 @@ Including another URLconf
 """
 from django.conf.urls import url, include
 from api.views_dir import select_keywords_cover, generateThePage, getCookieAndColumn, articleScriptOper, \
-    theScheduler, init_fugai_baobiao, init_fugai_detail, selectDeleteQuery, addFansGetTask
+    theScheduler, init_fugai_baobiao, init_fugai_detail, selectDeleteQuery, addFansGetTask, user_statistical
 
 urlpatterns = [
 
@@ -55,7 +55,8 @@ urlpatterns = [
     # 加粉任务
     url(r'addFansGetTask/(?P<oper_type>\w+)$', addFansGetTask.addFansGetTask),
 
-
+    # 用户统计数据
+    url(r'user_statistical/(?P<oper_type>\w+)$', user_statistical.user_statistical),
 ]
 
 
