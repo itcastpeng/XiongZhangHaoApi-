@@ -25,7 +25,9 @@ def statisticalReports(request):
         ws.cell(row=1, column=2, value="关键词")
         ws.cell(row=1, column=3, value="链接")
         ws.cell(row=1, column=4, value="排名")
-        ws.cell(row=1, column=5, value="创建时间")
+        ws.cell(row=1, column=5, value="文章链接")
+        ws.cell(row=1, column=6, value="文章排名")
+        ws.cell(row=1, column=7, value="创建时间")
 
         # # 合并单元格        开始行      结束行       用哪列          占用哪列
         ws.merge_cells(start_row=1, end_row=1, start_column=1, end_column=1)
@@ -35,7 +37,9 @@ def statisticalReports(request):
         ws.column_dimensions['B'].width = 20
         ws.column_dimensions['C'].width = 45
         ws.column_dimensions['D'].width = 20
-        ws.column_dimensions['E'].width = 20
+        ws.column_dimensions['E'].width = 45
+        ws.column_dimensions['F'].width = 20
+        ws.column_dimensions['G'].width = 20
         row = 2
         keywordObjs = models.xzh_keywords.objects.filter(user_id=obj.user_id)
         keywords_num = keywordObjs.count()  # 关键词数
@@ -58,12 +62,15 @@ def statisticalReports(request):
                     ws.cell(row=row, column=2, value="{}".format(i.xzh_keywords.keywords))
                     ws.cell(row=row, column=3, value="{}".format(i.url))
                     ws.cell(row=row, column=4, value="{}".format(i.rank))
-                    ws.cell(row=row, column=5, value="{}".format(i.create_date))
+                    ws.cell(row=row, column=5, value="{}".format(i.article_url))
+                    ws.cell(row=row, column=6, value="{}".format(i.article_rank))
+                    ws.cell(row=row, column=7, value="{}".format(i.create_date))
                     row += 1
 
                 urlNum = len(url_list)
                 timestamp = str(time.time()) + str(obj.id) + str(time.time()).split('.')[1][2:-1]
                 xlsx_url = 'statics/fugai_baobiao_xlsx/{}.xlsx'.format(timestamp)
+                print('xlsx_url==============================> ',xlsx_url)
                 wb.save(xlsx_url)
                 # baobiao_url = '127.0.0.1:8003' + '/' + xlsx_url
                 baobiao_url = 'http://xiongzhanghao.zhugeyingxiao.com:8003' + '/' + xlsx_url

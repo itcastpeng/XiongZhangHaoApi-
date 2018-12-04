@@ -5,7 +5,7 @@ from xiongzhanghao.publicFunc import account
 from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt, csrf_protect
 import time, redis
-import datetime, json
+import datetime, json, requests
 
 from django.db.models import Q
 from XiongZhangHaoApi_celery import tasks
@@ -37,7 +37,8 @@ def get_keyword_task(request):
         ret_data = {
             'keywords_id': obj.id,
             'keywords': obj.keywords,
-            'xiongZhangHaoIndex': obj.user.xiongZhangHaoIndex
+            'xiongZhangHaoIndex': obj.user.xiongZhangHaoIndex,
+            'user_id':obj.user_id
         }
         obj.get_date = datetime.datetime.now()
         obj.save()
@@ -51,17 +52,19 @@ def get_keyword_task(request):
     return JsonResponse(response.__dict__)
 
 
-
-
+ # 获取查覆盖的关键词
 @csrf_exempt
 @account.is_token(models.xzh_userprofile)
 def select_keywords_cover(request):
     response = Response.ResponseObj()
-    if request.method == "GET":     # 获取查覆盖的关键词
+    if request.method == "GET":
         redis_rc = redis.Redis(host='redis_host', port=6379, db=4, decode_responses=True)
         # redis_rc = redis.Redis(host='127.0.0.1', port=6379, db=4, decode_responses=True)
         len_keyword = redis_rc.llen('keyword')
         if len_keyword <= 200:
+            print('======================')
+            url = 'http://192.168.10.207:8003/api/SearchSecondary/get_keyword_task?user_id=17&timestamp=123&rand_str=4297f44b13955235245b2497399d7a93'
+            requests.get(url)
             tasks.get_keyword_task.delay()
         else:
             task_keyword = redis_rc.lpop('keyword')
@@ -73,7 +76,13 @@ def select_keywords_cover(request):
                 obj = objs[0]
                 obj.get_date = datetime.datetime.now()
                 obj.save()
-                response.data = task_keyword
+                ret_data = {
+                    'keywords_id': 57,
+                    'keywords': '痔疮怎么治',
+                    'xiongZhangHaoIndex': 'http://author.baidu.com/home/1611292686377463',
+                    'user_id': 39
+                }
+                response.data = ret_data
                 response.code = 200
 
 
@@ -94,6 +103,47 @@ def select_keywords_cover(request):
                 )
         else:
             print('form_obj.errors.as_json() -->', form_obj.errors.as_json())
+    return JsonResponse(response.__dict__)
+
+
+# 根据关键词 匹配发布过的文章 回链
+@csrf_exempt
+@account.is_token(models.xzh_userprofile)
+def keyword_article_back_url(request, oper_type):
+    response = Response.ResponseObj()
+    if request.method == 'POST':
+        keywords = request.POST.get('keywords')
+        keywords_id = request.POST.get('keywords_id')
+        rank = request.POST.get('rank')
+        url = request.POST.get('url')
+        user_id = request.POST.get('user_id')
+        print('user_id, rank, keywords_id, keywords, url=========> ',user_id, rank, keywords_id, keywords, url)
+        if oper_type == 'judgeLink':
+            flag = False
+            if user_id and rank and keywords_id and keywords and url:
+                articleObjs = models.xzh_article.objects.filter(belongToUser_id=user_id)
+                for i in articleObjs:
+                    back_url = i.back_url
+                    if url in back_url or url == back_url or back_url in url:
+                        flag = True
+                        break
+            response.code = 200
+            response.msg = '查询成功'
+            response.data = flag
+
+        elif oper_type == 'saveModels':
+            if user_id and rank and keywords_id and keywords and url:
+                print('=-=----------------保存结果')
+                keywordObjs = models.xzh_keywords_detail.objects.filter(xzh_keywords_id=keywords_id)
+                if keywordObjs:
+                    keywordObjs.update(
+                        article_url=url,
+                        article_rank=rank
+                    )
+            response.code = 200
+    else:
+        response.code = 402
+        response.msg = '请求异常'
     return JsonResponse(response.__dict__)
 
 

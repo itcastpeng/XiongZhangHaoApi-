@@ -29,6 +29,8 @@ urlpatterns = [
     # 查关键词覆盖
     url(r'select_keywords_cover$', select_keywords_cover.select_keywords_cover), # redis获取任务 保证一致性
     url(r'get_keyword_task', select_keywords_cover.get_keyword_task),  # 异步查询任务
+    url(r'keyword_article_back_url/(?P<oper_type>\w+)$', select_keywords_cover.keyword_article_back_url), # 覆盖报表查询 发布过的文章回链
+
 
     # 二级域名
     url(r'SearchSecondary/(?P<article>\w+).html$', generateThePage.SearchSecondaryDomainName),  # 查询二级域名
@@ -52,6 +54,7 @@ urlpatterns = [
 
     # 加粉任务
     url(r'addFansGetTask/(?P<oper_type>\w+)$', addFansGetTask.addFansGetTask),
+
 
 ]
 

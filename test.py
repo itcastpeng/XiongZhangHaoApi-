@@ -318,7 +318,10 @@ ws.column_dimensions['G'].width = 30
 # ws['A1'].alignment = Alignment(horizontal='center', vertical='center')
 
 
-wb.save('./1.xlsx')
+# wb.save('./1.xlsx')
+
+p = ' ​　　有很多的男性朋友，在性生活中力不从心，也就是我们常说的早泄症状，早泄会直接影响到男性朋友的方方面面，所以我们应该重视早泄的防治。'
 
 
+print(p.encode('gbk'))
 
