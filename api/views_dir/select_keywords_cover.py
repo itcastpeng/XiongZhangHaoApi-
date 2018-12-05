@@ -76,13 +76,7 @@ def select_keywords_cover(request):
                 obj = objs[0]
                 obj.get_date = datetime.datetime.now()
                 obj.save()
-                ret_data = {
-                    'keywords_id': 57,
-                    'keywords': '痔疮怎么治',
-                    'xiongZhangHaoIndex': 'http://author.baidu.com/home/1611292686377463',
-                    'user_id': 39
-                }
-                response.data = ret_data
+                response.data = task_keyword
                 response.code = 200
 
 
