@@ -332,7 +332,13 @@ xiongzhanghao_url = 'https://xiongzhang.baidu.com/site/login'
 #     ret.encoding = 'utf-8'
 #
 # print(ret.text)
-
+url = 'http://127.0.0.1:8003/api/user_statistical/getTask?user_id=17&timestamp=123&rand_str=4297f44b13955235245b2497399d7a93'
+ret = requests.get(url, timeout=5)
+result_data = ret.json()
+print('result_data -->', result_data)
+if result_data['code'] == 200:
+    if result_data['data']['flag']:
+        print('=================')
 
 
 

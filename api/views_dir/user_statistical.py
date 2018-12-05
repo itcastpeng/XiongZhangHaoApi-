@@ -163,15 +163,16 @@ def user_statistical(request, oper_type):
                 print('user_id, create_date-------->',user_id, create_date)
                 objs = models.user_statistics.objects.filter(belong_user_id=user_id, create_date=create_date)
                 obj = objs[0]
-                baidu_shoulu = obj.baidu_shoulu + 1
-                obj.baidu_shoulu = baidu_shoulu
                 baidu_shoulu_url = eval(obj.baidu_shoulu_url)
-                baidu_shoulu_url.append(url)
-                obj.baidu_shoulu_url = baidu_shoulu_url
-                obj.save()
+                if url not in baidu_shoulu_url:   # 避免数据重复入库
+                    baidu_shoulu = obj.baidu_shoulu + 1
+                    obj.baidu_shoulu = baidu_shoulu
+                    baidu_shoulu_url.append(url)
+                    obj.baidu_shoulu_url = baidu_shoulu_url
+                    obj.save()
+
             response.code = 200
             response.msg = '保存成功'
-
 
         else:
             response.code = 402
@@ -210,13 +211,21 @@ def user_statistical(request, oper_type):
         elif oper_type == 'getTask':
             len_baidu_shoulu_wenzhang = redis_rc.llen('baidu_shoulu_wenzhang')
             # print('len_baidu_shoulu_wenzhang==>', len_baidu_shoulu_wenzhang)
+            points = request.GET.get('points')
+            response.code = 200
+            flag = False
+            task_keyword = ''
             if len_baidu_shoulu_wenzhang > 0:
-                task_keyword = redis_rc.lpop('baidu_shoulu_wenzhang')
-                response.code = 200
-                response.data = task_keyword
+                flag = True
+                if points:
+                    task_keyword = redis_rc.lpop('baidu_shoulu_wenzhang')
             else:
                 response.code = 500
                 response.msg = '无任务'
+            response.data = {
+                'task_keyword': task_keyword,
+                'flag': flag,
+            }
 
         else:
             response.code = 402

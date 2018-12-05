@@ -127,14 +127,13 @@ def fugai_baobiao_oper(request, oper_type, o_id):
         # 停查
         elif oper_type == 'stopCheck':
             objs = models.xzh_fugai_baobiao.objects.filter(id=o_id)
-            flag = request.GET.get('flag')
-            if flag:
-                objs.update(stop_check=flag)
-                response.code = 200
-                response.msg = '修改成功'
-            else:
-                response.code = 301
-                response.msg = '请求错误'
+            flag = True
+            if objs[0].stop_check:
+                flag = False
+            objs.update(stop_check=flag)
+            response.code = 200
+            response.msg = '修改成功'
+
         else:
             response.code = 402
             response.msg = "请求异常"
