@@ -126,7 +126,7 @@ class xzh_fugai_baobiao(models.Model):
     total_cover = models.IntegerField(verbose_name="总覆盖")
     publish_num = models.IntegerField(verbose_name="总发布篇数")
     create_date = models.DateTimeField(verbose_name="创建时间", auto_now_add=True)
-
+    stop_check = models.BooleanField(verbose_name='是否停查', default=False)
 
 # 覆盖报表展开详情
 class xzh_fugai_baobiao_detail(models.Model):

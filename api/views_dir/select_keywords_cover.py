@@ -28,7 +28,12 @@ def get_keyword_task(request, oper_type):
         q = Q(select_date__lt=now_date) | Q(select_date__isnull=True) & Q(get_date__lt=dtime) | Q(get_date__isnull=True)
 
         print('q -->', q)
-        objs = models.xzh_keywords.objects.select_related('user').filter(q)[:1000]
+        stop_check_objs = models.xzh_fugai_baobiao.objects.filter(stop_check=True)  # 查询 那些用户 停查 排除停查客户
+        user_list = []
+        for i in stop_check_objs:
+            user_list.append(i.user_id)
+
+        objs = models.xzh_keywords.objects.select_related('user').exclude(user_id__in=user_list).filter(q)[:1000]
         # print(objs.query)
         retData = []
         for obj in objs:

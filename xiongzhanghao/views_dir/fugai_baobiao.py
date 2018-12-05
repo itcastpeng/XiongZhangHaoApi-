@@ -72,7 +72,8 @@ def fugai_baobiao(request):
                     'publish_num': obj.publish_num,
                     'status': obj.get_status_display(),
                     'create_date': obj.create_date.strftime('%Y-%m-%d %H:%M:%S'),
-                    'keywordIndex': index
+                    'keywordIndex': index,
+                    'stop_check': obj.stop_check
                 })
             #  查询成功 返回200 状态码
             response.code = 200
@@ -123,6 +124,17 @@ def fugai_baobiao_oper(request, oper_type, o_id):
                 'ret_data': ret_data,
             }
 
+        # 停查
+        elif oper_type == 'stopCheck':
+            objs = models.xzh_fugai_baobiao.objects.filter(id=o_id)
+            flag = request.GET.get('flag')
+            if flag:
+                objs.update(stop_check=flag)
+                response.code = 200
+                response.msg = '修改成功'
+            else:
+                response.code = 301
+                response.msg = '请求错误'
         else:
             response.code = 402
             response.msg = "请求异常"

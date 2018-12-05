@@ -322,8 +322,7 @@ ws.column_dimensions['G'].width = 30
 
 
 
-# xiongzhanghao_url = 'https://xiongzhang.baidu.com/site/login'
-#
+xiongzhanghao_url = 'https://xiongzhang.baidu.com/site/login'
 # ret = requests.get(xiongzhanghao_url)
 # encode_ret = ret.apparent_encoding
 # # print('encode_ret===========', encode_ret)
@@ -334,17 +333,6 @@ ws.column_dimensions['G'].width = 30
 #
 # print(ret.text)
 
-
-url = 'http://127.0.0.1:8003/api/user_statistical/getTask?user_id=17&timestamp=123&rand_str=4297f44b13955235245b2497399d7a93'
-ret = requests.get(url, timeout=5)
-result_data = ret.json()
-print(result_data)
-print(result_data['code'])
-if result_data['code'] == 200:
-    if result_data['data']:
-        print('==')
-    else:
-        print('==---')
 
 
 
