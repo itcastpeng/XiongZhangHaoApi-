@@ -53,8 +53,25 @@ app.conf.beat_schedule = {
     # 定时刷新 粉丝量 60s
     'queryFollowersNum':{
         'task': 'XiongZhangHaoApi_celery.tasks.queryFollowersNum',
-        # 'schedule': crontab("*/60", '*', '*', '*', '*'),  # 此处跟 linux 中 crontab 的格式一样
         'schedule':60
+    },
+
+    # 刷新redis覆盖任务 判断小于二百条更新  5s
+    'againInsertTask':{
+        'task': 'XiongZhangHaoApi_celery.tasks.againInsertTask',
+        'schedule':5
+    },
+
+    # 定时刷新 百度收录查询保存redis所有用户近七天的文章   10分钟执行一次
+    'baidu_shoulu_situation':{
+        'task': 'XiongZhangHaoApi_celery.tasks.baidu_shoulu_situation',
+        'schedule': crontab("*/10", '*', '*', '*', '*'),  # 此处跟 linux 中 crontab 的格式一样
+    },
+
+    # 定时刷新 所有用户近七天数据  两小时执行一次
+    'user_statistical':{
+        'task': 'XiongZhangHaoApi_celery.tasks.baidu_shoulu_situation',
+        'schedule': crontab("*", '*/2', '*', '*', '*'),  # 此处跟 linux 中 crontab 的格式一样
     },
 
 }

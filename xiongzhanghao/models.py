@@ -60,6 +60,7 @@ class xzh_userprofile(models.Model):
 
     deletionTime = models.DateTimeField(verbose_name='判断删除时间', null=True, blank=True) # 查询间隔时间
     user_article_result = models.TextField(verbose_name='单个用户爬取的数据', null=True, blank=True)  # 判断用户是否删除 aid title 发布时间
+    xiongzhanghaoID = models.CharField(verbose_name='熊掌号官微id', max_length=128, null=True, blank=True)
 
 # 文章表
 class xzh_article(models.Model):
@@ -90,7 +91,7 @@ class xzh_article(models.Model):
 
     is_delete = models.BooleanField(verbose_name='客户页面是否删除', default=False)
     manualRelease = models.BooleanField(verbose_name='没有兼容客户，手动发布', default=False)   # 判断是否手动发布
-
+    select_tongji_shoulu_time = models.DateField(verbose_name='统计收录查询时间', null=True, blank=True)
 
 # 关键词表
 class xzh_keywords(models.Model):
@@ -107,8 +108,8 @@ class xzh_keywords_detail(models.Model):
     url = models.CharField(verbose_name="匹配到的链接", max_length=256)
     rank = models.SmallIntegerField(verbose_name="排名")
     create_date = models.DateField(verbose_name="创建时间", auto_now_add=True)
-    article_url = models.CharField(verbose_name="匹配到的链接", max_length=256, null=True, blank=True)  # 我们发布的文章匹配到 关键词链接
-    article_rank = models.SmallIntegerField(verbose_name='匹配的链接url', null=True, blank=True)
+    # article_url = models.CharField(verbose_name="匹配到的链接", max_length=256, null=True, blank=True)  # 我们发布的文章匹配到 关键词链接
+    # article_rank = models.SmallIntegerField(verbose_name='匹配的链接url', null=True, blank=True)
 
 # 覆盖报表
 class xzh_fugai_baobiao(models.Model):
@@ -165,15 +166,21 @@ class xzh_suoluetu(models.Model):
 
 # 用户数据统计表
 class user_statistics(models.Model):
-    create_date = models.DateField(verbose_name="创建时间", auto_now_add=True)
+    create_date = models.DateField(verbose_name="创建时间", null=True, blank=True)
     belong_user = models.ForeignKey('xzh_userprofile', verbose_name='归属用户')
-    public_num = models.IntegerField(verbose_name='发布数量', null=True, blank=True)
-    shoulu = models.IntegerField(verbose_name='收录', null=True, blank=True)
-    zhishu = models.IntegerField(verbose_name='指数', null=True, blank=True)
-    index_show = models.IntegerField(verbose_name='主页展示多少条', null=True, blank=True)
-    zhanxianliang = models.IntegerField(verbose_name='展现量', null=True, blank=True)
-    dianjiliang = models.IntegerField(verbose_name='点击量', null=True, blank=True)
-    fans_num = models.IntegerField(verbose_name='粉丝数量', null=True, blank=True)
+    public_num = models.IntegerField(verbose_name='发布数量', default=0)
+
+    zhishu = models.IntegerField(verbose_name='指数', default=0)
+    zhanxianliang = models.IntegerField(verbose_name='展现量', default=0)
+    dianjiliang = models.IntegerField(verbose_name='点击量', default=0)
+
+    fans_num = models.IntegerField(verbose_name='粉丝数量', default=0)
+    baidu_shoulu = models.IntegerField(verbose_name='百度收录', default=0)                        # 百度收录条数
+    baidu_shoulu_url = models.TextField(verbose_name='百度收录url', default='[]')                 # 百度收录 详情
+    index_show = models.IntegerField(verbose_name='主页展示条数', default=0)                       # 熊掌号主页 条数 想当于收录条数
+    index_show_url = models.TextField(verbose_name='主页展示的url', null=True, blank=True)        # 熊掌号主页 详情
+    admin_shoulu = models.IntegerField(verbose_name='熊掌号后后台收录', default=0)                 # 熊掌号后台 收录条数
+    admin_shoulu_url = models.TextField(verbose_name='熊掌号后台收录详情', null=True, blank=True)  # 熊掌号后台 收录详情
 
 #===============================================================百度小程序===================================================================================
 

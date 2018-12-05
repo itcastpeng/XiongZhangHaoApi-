@@ -131,7 +131,6 @@ class DeDe(object):
                         huilian = huilian_href
                     else:
                         huilian = self.domain + huilian_href
-                    # print('huilian======================================> ',huilian)
                     huilian = huilian.replace('//', '/')
                     if 'http:' in huilian:
                         huilian_right = huilian.split('http:')[1]
@@ -142,10 +141,12 @@ class DeDe(object):
                         ret = self.requests_obj.get(huilian, cookies=self.cookies)
                         encode_ret = ret.apparent_encoding
                         # print('encode_ret===========', encode_ret)
-                        if encode_ret == 'GB2312':
+                        if encode_ret == 'GB2312' or encode_ret == 'ISO-8859-9':
                             ret.encoding = 'gbk'
+                            print('返回-=---------------------------------GBK')
                         else:
                             ret.encoding = 'utf-8'
+                            print('返回-=---------------------------------UTF8')
 
                         # print('title-------------> ',title)
                         # print('ret.text==============> ',ret.text)

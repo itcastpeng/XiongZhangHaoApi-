@@ -28,7 +28,7 @@ urlpatterns = [
 
     # 查关键词覆盖
     url(r'select_keywords_cover$', select_keywords_cover.select_keywords_cover), # redis获取任务 保证一致性
-    url(r'get_keyword_task', select_keywords_cover.get_keyword_task),  # 异步查询任务
+    url(r'get_keyword_task/(?P<oper_type>\w+)$', select_keywords_cover.get_keyword_task),  # 异步查询任务
     url(r'keyword_article_back_url/(?P<oper_type>\w+)$', select_keywords_cover.keyword_article_back_url), # 覆盖报表查询 发布过的文章回链
 
 

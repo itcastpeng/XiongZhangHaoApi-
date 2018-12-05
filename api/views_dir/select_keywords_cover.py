@@ -15,40 +15,50 @@ from api.forms.select_keywords_cover import AddForm
 
 @csrf_exempt
 @account.is_token(models.xzh_userprofile)
-def get_keyword_task(request):
+def get_keyword_task(request, oper_type):
     response = Response.ResponseObj()
     redis_rc = redis.Redis(host='redis_host', port=6379, db=4, decode_responses=True)
-    # redis_rc = redis.Redis(host='127.0.0.1', port=6379, db=4, decode_responses=True)
+    if oper_type == 'insertTask':
+        # redis_rc = redis.Redis(host='127.0.0.1', port=6379, db=4, decode_responses=True)
+        start_time = time.time()
+        print('start_time --->', start_time)
+        dtime = datetime.datetime.now() - datetime.timedelta(minutes=10)
+        now_date = datetime.datetime.now().strftime("%Y-%m-%d")
 
-    start_time = time.time()
-    print('start_time --->', start_time)
-    dtime = datetime.datetime.now() - datetime.timedelta(minutes=10)
-    now_date = datetime.datetime.now().strftime("%Y-%m-%d")
+        q = Q(select_date__lt=now_date) | Q(select_date__isnull=True) & Q(get_date__lt=dtime) | Q(get_date__isnull=True)
 
-    q = Q(select_date__lt=now_date) | Q(select_date__isnull=True) & Q(get_date__lt=dtime) | Q(get_date__isnull=True)
+        print('q -->', q)
+        objs = models.xzh_keywords.objects.select_related('user').filter(q)[:1000]
+        # print(objs.query)
+        retData = []
+        for obj in objs:
 
-    print('q -->', q)
-    objs = models.xzh_keywords.objects.select_related('user').filter(q)[:1000]
-    # print(objs.query)
-    retData = []
-    for obj in objs:
+            # obj = objs[random.randint(0, objs.count())]
+            ret_data = {
+                'keywords_id': obj.id,
+                'keywords': obj.keywords,
+                'xiongZhangHaoIndex': obj.user.xiongZhangHaoIndex,
+                'user_id':obj.user_id
+            }
+            obj.get_date = datetime.datetime.now()
+            obj.save()
+            # retData.append(ret_data)
+            redis_rc.lpush('keyword', ret_data)
+        stop_time = time.time()
+        print('stop_time --->', stop_time, stop_time - start_time)
+        # print('retData=============> ',retData)
+        response.code = 200
+        response.msg = '查询成功'
 
-        # obj = objs[random.randint(0, objs.count())]
-        ret_data = {
-            'keywords_id': obj.id,
-            'keywords': obj.keywords,
-            'xiongZhangHaoIndex': obj.user.xiongZhangHaoIndex,
-            'user_id':obj.user_id
-        }
-        obj.get_date = datetime.datetime.now()
-        obj.save()
-        # retData.append(ret_data)
-        redis_rc.lpush('keyword', ret_data)
-    stop_time = time.time()
-    print('stop_time --->', stop_time, stop_time - start_time)
-    # print('retData=============> ',retData)
-    response.code = 200
-    response.msg = '查询成功'
+    elif oper_type == 'againInsertTask':
+        len_keyword = redis_rc.llen('keyword')
+        if len_keyword <= 200:
+            response.code = 200
+            response.msg = 'redis小于二百条更新'
+            tasks.get_keyword_task.delay()
+        else:
+            response.code = 200
+            response.msg = 'redis大于二百条不更新'
     return JsonResponse(response.__dict__)
 
 
@@ -60,24 +70,17 @@ def select_keywords_cover(request):
     if request.method == "GET":
         redis_rc = redis.Redis(host='redis_host', port=6379, db=4, decode_responses=True)
         # redis_rc = redis.Redis(host='127.0.0.1', port=6379, db=4, decode_responses=True)
-        len_keyword = redis_rc.llen('keyword')
-        if len_keyword <= 200:
-            # print('======================')
-            # url = 'http://192.168.10.207:8003/api/SearchSecondary/get_keyword_task?user_id=17&timestamp=123&rand_str=4297f44b13955235245b2497399d7a93'
-            # requests.get(url)
-            tasks.get_keyword_task.delay()
-        else:
-            task_keyword = redis_rc.lpop('keyword')
-            if task_keyword:
-                task_keyword = eval(task_keyword)
-                keywords_id = task_keyword.get('keywords_id')
-                print('keywords_id=========> ',keywords_id)
-                objs = models.xzh_keywords.objects.filter(id=keywords_id)
-                obj = objs[0]
-                obj.get_date = datetime.datetime.now()
-                obj.save()
-                response.data = task_keyword
-                response.code = 200
+        task_keyword = redis_rc.lpop('keyword')
+        if task_keyword:
+            task_keyword = eval(task_keyword)
+            keywords_id = task_keyword.get('keywords_id')
+            print('keywords_id=========> ',keywords_id)
+            objs = models.xzh_keywords.objects.filter(id=keywords_id)
+            obj = objs[0]
+            obj.get_date = datetime.datetime.now()
+            obj.save()
+            response.data = task_keyword
+            response.code = 200
 
 
     else:   # 提交查询关键词覆盖的结果
@@ -130,9 +133,10 @@ def keyword_article_back_url(request, oper_type):
                 print('=-=----------------保存结果')
                 keywordObjs = models.xzh_keywords_detail.objects.filter(xzh_keywords_id=keywords_id)
                 if keywordObjs:
-                    keywordObjs.update(
-                        article_url=url,
-                        article_rank=rank
+                    keywordObjs.create(
+                        xzh_keywords_id=keywords_id,
+                        url=url,
+                        rank=rank,
                     )
             response.code = 200
     else:
