@@ -71,8 +71,8 @@ def img_upload(request, oper_type):
                 f.write(chunk)
 
 
-        path_name = 'http://192.168.10.207:8003' + '/statics/xiaochengxu/' + file_name
-        # path_name = 'http://xiongzhanghao.zhugeyingxiao.com:8003' + '/statics/xiaochengxu/' + file_name
+        # path_name = 'http://192.168.10.207:8003' + '/statics/xiaochengxu/' + file_name
+        path_name = 'http://xiongzhanghao.zhugeyingxiao.com:8003' + '/statics/xiaochengxu/' + file_name
         print('path_name=========> ',path_name)
         response.code = 200
         response.msg = '上传成功'

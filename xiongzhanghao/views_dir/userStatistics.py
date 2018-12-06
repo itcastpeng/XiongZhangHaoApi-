@@ -13,7 +13,7 @@ from openpyxl.styles.alignment import Alignment
 # cerf  token验证 用户展示模块
 @csrf_exempt
 @account.is_token(models.xzh_userprofile)
-def fans(request):
+def userStatistics(request):
     response = Response.ResponseObj()
     forms_obj = SelectForm(request.GET)
     if forms_obj.is_valid():
@@ -33,7 +33,7 @@ def fans(request):
 
 
         print('q -->', q)
-        objs = models.xzh_add_fans.objects.select_related('belong_user').filter(q).order_by(order)
+        objs = models.user_statistics.objects.select_related('belong_user').filter(q).order_by(order)
         count = objs.count()
 
         if length != 0:
@@ -51,27 +51,35 @@ def fans(request):
                 'id': obj.id,
                 'belong_user_id':obj.belong_user_id,    # 归属人ID
                 'belong_user':obj.belong_user.username, # 归属人名字
-                'befor_add_fans':obj.befor_add_fans,    # 加粉前 粉丝数量
-                'after_add_fans':obj.after_add_fans,    # 加分后 粉丝数量
-                'add_fans_num':obj.add_fans_num,        # 添加的粉丝数量
-                'xiongzhanghaoID':obj.xiongzhanghaoID,  # 熊掌号ID
-                'search_keyword':obj.search_keyword,    # 熊掌号搜索关键词
-                'status':obj.get_status_display(),
-                'status_id':obj.status,
-                'create_date':obj.create_date.strftime('%Y-%m-%d'),
-                'errorText':obj.errorText ,              # 错误日志
+
+                'public_num':obj.public_num,            # 发布数量
+                'fans_num':obj.fans_num,                # 粉丝数量
+                'zhishu':obj.zhishu,                    # 指数
+                'zhanxianliang':obj.zhanxianliang,      # 展现量
+                'dianjiliang':obj.dianjiliang,          # 点击量
+
+                'baidu_shoulu':obj.baidu_shoulu,        # 百度收录数量
+                # 'baidu_shoulu_url':obj.baidu_shoulu_url,  # 百度收录链接
+                'index_show':obj.index_show,            # 熊掌号主页展示条数 （主页收录）
+                # 'index_show_url':obj.index_show_url,  # 熊掌号主页展示url
+                'admin_shoulu':obj.admin_shoulu,        # 熊掌号后台收录条数
+                # 'admin_shoulu_url':obj.admin_shoulu_url,  # 熊掌号后台收录url
+                'create_date':obj.create_date.strftime('%Y-%m-%d'), # 创建时间
 
             })
+
         #  查询成功 返回200 状态码
         response.code = 200
         response.msg = '查询成功'
         response.data = {
             'ret_data': ret_data,
-            'status':models.xzh_add_fans.status_choices
+            'count':count,
         }
+
     else:
         response.code = 301
         response.data = json.loads(forms_obj.errors.as_json())
+
     return JsonResponse(response.__dict__)
 
 
@@ -79,7 +87,7 @@ def fans(request):
 #  csrf  token验证
 @csrf_exempt
 @account.is_token(models.xzh_userprofile)
-def fans_oper(request, oper_type, o_id):
+def userStatistics_oper(request, oper_type, o_id):
     response = Response.ResponseObj()
     user_id = request.GET.get('user_id')
     if request.method == "POST":

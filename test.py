@@ -321,7 +321,27 @@ ws.column_dimensions['G'].width = 30
 # wb.save('./1.xlsx')
 
 
+# token = 'a66b1a82b4ba3ca9d444322c8524e844'
+# timestamp = str(int(time.time() * 1000))
+# params = {
+#     'user_id': 44,
+#     'rand_str': str_encrypt(timestamp + token),
+#     'timestamp': timestamp,
+# }
+#
+# api_url = "http://xiongzhanghao.zhugeyingxiao.com:8003/api/select_keywords_cover"
+# print(api_url)
+# ret = requests.get(api_url, params=params, timeout=30)
+# print(ret.text)
+# result_data = json.loads(ret.text)
+#
+# if result_data["code"] == 200 and len(result_data["data"]) > 0:
+#     print('=====================')
 
+
+
+from xiongzhanghao.publicFunc.account import str_encrypt
+import time
 xiongzhanghao_url = 'https://xiongzhang.baidu.com/site/login'
 # ret = requests.get(xiongzhanghao_url)
 # encode_ret = ret.apparent_encoding
@@ -330,27 +350,7 @@ xiongzhanghao_url = 'https://xiongzhang.baidu.com/site/login'
 #     ret.encoding = 'gbk'
 # else:
 #     ret.encoding = 'utf-8'
-#
 # print(ret.text)
-url = 'http://127.0.0.1:8003/api/user_statistical/getTask?user_id=17&timestamp=123&rand_str=4297f44b13955235245b2497399d7a93'
-ret = requests.get(url, timeout=5)
-result_data = ret.json()
-print('result_data -->', result_data)
-if result_data['code'] == 200:
-    if result_data['data']['flag']:
-        print('=================')
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 

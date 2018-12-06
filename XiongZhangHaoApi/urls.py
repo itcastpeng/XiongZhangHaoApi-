@@ -14,7 +14,7 @@ Including another URLconf
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
 from django.conf.urls import url, include
-from xiongzhanghao.views_dir import login, permissions, role, user, article, img_upload, fugai_baobiao, keywords, add_fans
+from xiongzhanghao.views_dir import login, permissions, role, user, article, img_upload, fugai_baobiao, keywords, add_fans, userStatistics
 
 
 urlpatterns = [
@@ -62,7 +62,9 @@ urlpatterns = [
     url(r'fans/(?P<oper_type>\w+)/(?P<o_id>\d+)$', add_fans.fans_oper),
     url(r'fans', add_fans.fans),
 
-
+    # 用户数据统计
+    # url(r'userStatistics/(?P<oper_type>\w+)/(?P<o_id>\d+)$', userStatistics.userStatistics_oper),
+    url(r'userStatistics', userStatistics.userStatistics),
 ]
 
 

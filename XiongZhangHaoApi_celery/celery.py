@@ -70,7 +70,7 @@ app.conf.beat_schedule = {
 
     # 定时刷新 所有用户近七天数据  两小时执行一次
     'user_statistical':{
-        'task': 'XiongZhangHaoApi_celery.tasks.baidu_shoulu_situation',
+        'task': 'XiongZhangHaoApi_celery.tasks.user_statistical',
         'schedule': crontab("*", '0-23/2', '*', '*', '*'),  # 此处跟 linux 中 crontab 的格式一样
     },
 
