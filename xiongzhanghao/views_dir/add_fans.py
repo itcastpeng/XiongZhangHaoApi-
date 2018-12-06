@@ -30,45 +30,56 @@ def fans(request):
             'is_debug': 'bool',
         }
         q = conditionCom(request, field_dict)
-
+        points = request.GET.get('points')
 
         print('q -->', q)
         objs = models.xzh_add_fans.objects.select_related('belong_user').filter(q).order_by(order)
         count = objs.count()
+        if points:    # 查询 用户搜索条件 避免出现重复
+            objs = models.xzh_add_fans.objects.select_related('belong_user').values('belong_user_id', 'belong_user__username').distinct()
+            ret_data = []
+            for obj in objs:
+                print('obj----------> ',obj)
+                ret_data.append({
+                    'belong_user_id': obj.get('belong_user_id'),  # 归属人ID
+                    'belong_user': obj.get('belong_user__username'),  # 归属人名字
+                })
+            response.code = 200
+            response.data = {'ret_data':ret_data}
+        else:
+            if length != 0:
+                start_line = (current_page - 1) * length
+                stop_line = start_line + length
+                objs = objs[start_line: stop_line]
 
-        if length != 0:
-            start_line = (current_page - 1) * length
-            stop_line = start_line + length
-            objs = objs[start_line: stop_line]
+            # 返回的数据
+            ret_data = []
+            for obj in objs:
 
-        # 返回的数据
-        ret_data = []
+                #  将查询出来的数据 加入列表
+                ret_data.append({
+                    'id': obj.id,
+                    'belong_user_id':obj.belong_user_id,    # 归属人ID
+                    'belong_user':obj.belong_user.username, # 归属人名字
+                    'befor_add_fans':obj.befor_add_fans,    # 加粉前 粉丝数量
+                    'after_add_fans':obj.after_add_fans,    # 加分后 粉丝数量
+                    'add_fans_num':obj.add_fans_num,        # 添加的粉丝数量
+                    'xiongzhanghaoID':obj.xiongzhanghaoID,  # 熊掌号ID
+                    'search_keyword':obj.search_keyword,    # 熊掌号搜索关键词
+                    'status':obj.get_status_display(),
+                    'status_id':obj.status,
+                    'create_date':obj.create_date.strftime('%Y-%m-%d'),
+                    'errorText':obj.errorText ,              # 错误日志
 
-        for obj in objs:
-
-            #  将查询出来的数据 加入列表
-            ret_data.append({
-                'id': obj.id,
-                'belong_user_id':obj.belong_user_id,    # 归属人ID
-                'belong_user':obj.belong_user.username, # 归属人名字
-                'befor_add_fans':obj.befor_add_fans,    # 加粉前 粉丝数量
-                'after_add_fans':obj.after_add_fans,    # 加分后 粉丝数量
-                'add_fans_num':obj.add_fans_num,        # 添加的粉丝数量
-                'xiongzhanghaoID':obj.xiongzhanghaoID,  # 熊掌号ID
-                'search_keyword':obj.search_keyword,    # 熊掌号搜索关键词
-                'status':obj.get_status_display(),
-                'status_id':obj.status,
-                'create_date':obj.create_date.strftime('%Y-%m-%d'),
-                'errorText':obj.errorText ,              # 错误日志
-
-            })
-        #  查询成功 返回200 状态码
-        response.code = 200
-        response.msg = '查询成功'
-        response.data = {
-            'ret_data': ret_data,
-            'status':models.xzh_add_fans.status_choices
-        }
+                })
+            #  查询成功 返回200 状态码
+            response.code = 200
+            response.msg = '查询成功'
+            response.data = {
+                'ret_data': ret_data,
+                'status':models.xzh_add_fans.status_choices,
+                'count':count
+            }
     else:
         response.code = 301
         response.data = json.loads(forms_obj.errors.as_json())

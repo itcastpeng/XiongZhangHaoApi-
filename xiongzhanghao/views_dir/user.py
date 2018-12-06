@@ -130,7 +130,7 @@ def user_oper(request, oper_type, o_id):
                 'website_backstage_appid': request.POST.get('website_backstage_appid'),
                 'xiongZhangHaoIndex': request.POST.get('xiongZhangHaoIndex'),
                 'secondaryDomainName': request.POST.get('secondaryDomainName'),
-                'xiongzhanghaoID': request.POST.get('xiongzhanghaoID'),
+                # 'xiongzhanghaoID': request.POST.get('xiongzhanghaoID'),
             }
             print('form_data----->',form_data)
             #  创建 form验证 实例（参数默认转成字典）
@@ -171,7 +171,7 @@ def user_oper(request, oper_type, o_id):
                 'website_backstage_token': request.POST.get('website_backstage_token'),
                 'website_backstage_appid': request.POST.get('website_backstage_appid'),
                 'xiongZhangHaoIndex': request.POST.get('xiongZhangHaoIndex'),
-                'xiongzhanghaoID': request.POST.get('xiongzhanghaoID'),
+                # 'xiongzhanghaoID': request.POST.get('xiongzhanghaoID'),
             }
             flag = False
             if int(form_data.get('role_id')) == 64 or int(form_data.get('role_id')) ==  66:

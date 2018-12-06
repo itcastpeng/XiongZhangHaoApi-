@@ -116,6 +116,7 @@ def article(request):
 @account.is_token(models.xzh_userprofile)
 def article_oper(request, oper_type, o_id):
     response = Response.ResponseObj()
+    user_id = request.GET.get('user_id')
     if request.method == "POST":
         back_url = request.POST.get('back_url')  # 如果手动发布 回链必填
         manualRelease = request.POST.get('manualRelease')
@@ -435,6 +436,7 @@ def article_oper(request, oper_type, o_id):
             response.code = 200
             response.msg = '查询成功'
             response.data = img_list
+
         elif oper_type == 'thumbnailMan':  # 男科
             img_list = []
             objs = models.xzh_suoluetu.objects.filter(man__isnull=False)
@@ -446,6 +448,24 @@ def article_oper(request, oper_type, o_id):
             response.code = 200
             response.msg = '查询成功'
             response.data = img_list
+
+        elif oper_type == 'stopRelease':  # 停止发布
+            objs = models.xzh_article.objects.filter(id=o_id)
+            userObjs = models.xzh_userprofile.objects.filter(id=user_id)
+            userObj = userObjs[0]
+            article_status = objs[0].article_status
+            print('article_status--------------> ',article_status)
+            if int(article_status) not in [0, 5]:
+                error_text = '该文章被:{}暂停发布, 前状态为{}'.format(userObj.username, article_status)
+                objs.update(
+                    article_status=0,
+                    note_content=error_text
+                )
+                response.code = 200
+                response.msg = '停止发布成功'
+            else:
+                response.code = 301
+                response.msg = '该文章已经提交熊掌号'
         else:
             response.code = 402
             response.msg = "请求异常"

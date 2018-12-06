@@ -1,15 +1,18 @@
-from django.shortcuts import render, HttpResponse
 from xiongzhanghao import models
 from xiongzhanghao.publicFunc import Response
 from xiongzhanghao.publicFunc import account
 from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt, csrf_protect
 from xiongzhanghao.publicFunc.condition_com import conditionCom
-from xiongzhanghao.forms.add_fans import AddForm, UpdateForm, SelectForm
-from django.db.models import Q
+from xiongzhanghao.forms.add_fans import SelectForm
 import json, requests, datetime, time
 from openpyxl import Workbook
 from openpyxl.styles.alignment import Alignment
+
+
+
+
+
 # cerf  token验证 用户展示模块
 @csrf_exempt
 @account.is_token(models.xzh_userprofile)
@@ -17,17 +20,16 @@ def userStatistics(request):
     response = Response.ResponseObj()
     forms_obj = SelectForm(request.GET)
     if forms_obj.is_valid():
+        now = datetime.datetime.now().strftime('%Y-%m-%d')
         current_page = forms_obj.cleaned_data['current_page']
         length = forms_obj.cleaned_data['length']
         print('forms_obj.cleaned_data -->', forms_obj.cleaned_data)
         order = request.GET.get('order', '-create_date')
         field_dict = {
             'id': '',
-            'status': '',
             'username': '__contains',
-            'create_date': '',
+            'create_date': '__contains',
             'belong_user_id': '',
-            'is_debug': 'bool',
         }
         q = conditionCom(request, field_dict)
 
@@ -45,7 +47,6 @@ def userStatistics(request):
         ret_data = []
 
         for obj in objs:
-
             #  将查询出来的数据 加入列表
             ret_data.append({
                 'id': obj.id,
@@ -83,6 +84,7 @@ def userStatistics(request):
     return JsonResponse(response.__dict__)
 
 
+
 #  增删改
 #  csrf  token验证
 @csrf_exempt
@@ -90,89 +92,8 @@ def userStatistics(request):
 def userStatistics_oper(request, oper_type, o_id):
     response = Response.ResponseObj()
     user_id = request.GET.get('user_id')
-    if request.method == "POST":
-        form_data = {
-            'o_id':o_id,
-            'oper_user_id': request.GET.get('user_id'),
-            'belong_user_id': request.POST.get('belong_user_id'),
-            'add_fans_num': request.POST.get('add_fans_num'),
-            'xiongzhanghaoID': request.POST.get('xiongzhanghaoID'),
-            'search_keyword': request.POST.get('search_keyword'),
-        }
-        if oper_type == "add":
-            print('form_data----->',form_data)
-            #  创建 form验证 实例（参数默认转成字典）
-
-            forms_obj = AddForm(form_data)
-            if forms_obj.is_valid():
-                models.xzh_add_fans.objects.create(**forms_obj.cleaned_data)
-                response.code = 200
-                response.msg = "添加成功"
-            else:
-                print("验证不通过")
-                # print(forms_obj.errors)
-                response.code = 301
-                # print(forms_obj.errors.as_json())
-                response.msg = json.loads(forms_obj.errors.as_json())
-
-        elif oper_type == "update":
-            # 获取需要修改的信息
-            forms_obj = UpdateForm(form_data)
-            if forms_obj.is_valid():
-                print("验证通过")
-                formObjs = forms_obj.cleaned_data
-                models.xzh_add_fans.objects.filter(id=o_id).update(
-                    belong_user_id=formObjs.get('belong_user_id'),
-                    add_fans_num=formObjs.get('add_fans_num'),
-                    xiongzhanghaoID=formObjs.get('xiongzhanghaoID'),
-                    search_keyword=formObjs.get('search_keyword'),
-                )
-                response.code = 200
-                response.msg = "修改成功"
-            else:
-                print("验证不通过")
-                # print(forms_obj.errors)
-                response.code = 301
-                # print(forms_obj.errors.as_json())
-                #  字符串转换 json 字符串
-                response.msg = json.loads(forms_obj.errors.as_json())
-
-        elif oper_type == "delete":
-            # 删除 ID
-            if o_id == user_id:
-                response.code = 301
-                response.msg = '不能删除自己'
-            else:
-                objs = models.xzh_add_fans.objects.filter(id=o_id)
-                if objs:
-                    obj = objs[0]
-                    obj.delete()
-                    response.code = 200
-                    response.msg = "删除成功"
-                else:
-                    response.code = 302
-                    response.msg = '删除ID不存在'
-            response.data = {}
-
-    else:
-        if oper_type == 'update_status':
-            print('====')
-            objs = models.xzh_add_fans.objects.filter(id=o_id)
-            if objs:
-                obj = objs[0]
-                if obj.befor_add_fans:
-                    status = 2
-                else:
-                    status = 1
-                objs.update(status=status)
-                response.code = 200
-                response.msg = '修改成功'
-            else:
-                response.code = 301
-                response.msg = '无修改ID'
-
-        elif oper_type == 'exportExcle':
-            print('=======================================================')
+    if request.method == 'POST':
+        if oper_type == 'userStatisticsExcle':
             wb = Workbook()
             ws = wb.active
             ws.cell(row=1, column=1, value="客户名称:")
@@ -232,10 +153,15 @@ def userStatistics_oper(request, oper_type, o_id):
                 # # 合并单元格        开始行      结束行       用哪列          占用哪列
                 ws.merge_cells(start_row=1, end_row=2, start_column=1, end_column=1)
                 ws.merge_cells(start_row=1, end_row=2, start_column=2, end_column=4)
+
+
+
+
+
                 timestamp = str(int(time.time())) + str(time.time()).split('.')[1][2:-1]
                 xlsx_url = 'statics/fansExcle/{}.xlsx'.format(timestamp)
-                wb.save(xlsx_url)
-                # wb.save('./5.xlsx')
+                # wb.save(xlsx_url)
+                wb.save('./5.xlsx')
                 return_xlsx_path = 'http://xiongzhanghao.zhugeyingxiao.com:8003/' + xlsx_url
                 response.code = 200
                 response.msg = '生成完成'
@@ -243,10 +169,10 @@ def userStatistics_oper(request, oper_type, o_id):
             else:
                 response.code = 301
                 response.msg = '该用户无加粉数据'
-        else:
-            response.code = 402
-            response.msg = "请求异常"
 
+    else:
+        response.code = 402
+        response.msg = '请求错误'
     return JsonResponse(response.__dict__)
 
 

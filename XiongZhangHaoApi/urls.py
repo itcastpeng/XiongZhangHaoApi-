@@ -63,7 +63,7 @@ urlpatterns = [
     url(r'fans', add_fans.fans),
 
     # 用户数据统计
-    # url(r'userStatistics/(?P<oper_type>\w+)/(?P<o_id>\d+)$', userStatistics.userStatistics_oper),
+    url(r'userStatistics/(?P<oper_type>\w+)/(?P<o_id>\d+)$', userStatistics.userStatistics_oper),
     url(r'userStatistics', userStatistics.userStatistics),
 ]
 

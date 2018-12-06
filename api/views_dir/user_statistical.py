@@ -56,7 +56,7 @@ def xiongzhanghao_index_num(now, appid, url_list):
                 url = item.get('url')
                 title = item.get('title')
                 for i in url_list:
-                    if title == i['title']:
+                    if title == i['title'] or title in i['title']:
                         # print('title===>',title)
                         index_num += 1
                         url_data.append(url)
@@ -90,7 +90,7 @@ def user_statistical(request, oper_type):
                 userObjs = user_objs.filter(userType=1, role_id=61, xiongzhanghaoID__isnull=False)  # 查询所有用户
                 for userObj in userObjs:  # 遍历所有用户
                     userObj_id = userObj.id
-                    appid = userObj.xiongzhanghaoID
+                    appid = userObj.website_backstage_appid
                     data = {                    # 构造数据
                         'public_num': '',           # 发布数量
                         'belong_user_id': '',       # 归属人
@@ -187,25 +187,29 @@ def user_statistical(request, oper_type):
             nowDateTime = now.strftime('%Y-%m-%d %H:%M:%S')                             # 当前时间为结束时间
             time_Y_M_D = (now + datetime.timedelta(days=1)).strftime('%Y-%m-%d')
             sevenTime = (now - datetime.timedelta(days=6)).strftime('%Y-%m-%d 00:00:00')  # 当前时间减去六天 为开始时间
-
+            print('time_Y_M_D================> ',time_Y_M_D, sevenTime, nowDateTime)
             q = Q()
             q.add(Q(create_date__gte=sevenTime) & Q(create_date__lte=nowDateTime), Q.AND)
             q.add(Q(select_tongji_shoulu_time__lt=time_Y_M_D) | Q(select_tongji_shoulu_time__isnull=True), Q.AND)
             q.add(Q(belongToUser__userType=1) & Q(belongToUser__role_id=61) & Q(belongToUser__xiongzhanghaoID__isnull=False), Q.AND)
             print('q===> ',q)
             articleObjs = models.xzh_article.objects.filter(q)
-            for articleObj in articleObjs:
-                articleObj.select_tongji_shoulu_time = time_Y_M_D
-                articleObj.save()
-                data_list = {
-                    'url':articleObj.back_url,
-                    'user_id':articleObj.belongToUser_id,
-                    'create_date':articleObj.create_date.strftime('%Y-%m-%d'),
-                }
-                redis_rc.lpush('baidu_shoulu_wenzhang', data_list)
-            print('articleObjs.count()======================> ',articleObjs.count())
-            response.code = 200
-            response.msg = '获取数据完成'
+            if articleObjs:
+                for articleObj in articleObjs:
+                    articleObj.select_tongji_shoulu_time = time_Y_M_D
+                    articleObj.save()
+                    data_list = {
+                        'url':articleObj.back_url,
+                        'user_id':articleObj.belongToUser_id,
+                        'create_date':articleObj.create_date.strftime('%Y-%m-%d'),
+                    }
+                    redis_rc.lpush('baidu_shoulu_wenzhang', data_list)
+                print('articleObjs.count()======================> ',articleObjs.count())
+                response.code = 200
+                response.msg = '获取数据完成'
+            else:
+                response.code = 301
+                response.msg = '无匹配数据'
 
         # 百度收录获取任务
         elif oper_type == 'getTask':
@@ -215,8 +219,10 @@ def user_statistical(request, oper_type):
             response.code = 200
             flag = False
             task_keyword = ''
+            count = 0
             if len_baidu_shoulu_wenzhang > 0:
                 flag = True
+                count = len_baidu_shoulu_wenzhang
                 if points:
                     task_keyword = redis_rc.lpop('baidu_shoulu_wenzhang')
             else:
@@ -225,6 +231,7 @@ def user_statistical(request, oper_type):
             response.data = {
                 'task_keyword': task_keyword,
                 'flag': flag,
+                'count':count
             }
 
         else:
