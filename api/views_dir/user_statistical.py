@@ -87,37 +87,31 @@ def user_statistical(request, oper_type):
                 stop_now = deletionTime.strftime('%Y-%m-%d 23:59:59')     # 当前时间(年月日 时分秒)
 
                 print('now---> ',now, start_now, stop_now)
-                userObjs = user_objs.filter(userType=1, role_id=61, xiongzhanghaoID__isnull=False)  # 查询所有用户
+                userObjs = user_objs.filter(userType=1, role_id=61, website_backstage_appid__isnull=False)  # 查询所有用户
                 for userObj in userObjs:  # 遍历所有用户
                     userObj_id = userObj.id
                     appid = userObj.website_backstage_appid
                     data = {                    # 构造数据
                         'public_num': '',           # 发布数量
                         'belong_user_id': '',       # 归属人
-                        'zhishu':0,                 # 指数×
                         'index_show':0,             # 主页显示
-                        'zhanxianliang':0,          # 展现量×
-                        'dianjiliang':0,            # 点击量×
                         'fans_num':0,               # 粉丝数量
                         'index_show_url':'',        # 主页展示文章链接
                         'create_date':now,          # 创建时间
                     }
 
                     articleObjs = article_objs.filter(       # 查询今天发布的文章 总数
-                        # belongToUser_id=userObj.id
                         belongToUser_id=userObj_id
                     ).filter(
                         create_date__gte=start_now,
                         create_date__lte=stop_now
                     )
                     data['belong_user_id'] = userObj_id      # 归属用户
-                    # data['belong_user_id'] = userObj.id      # 归属用户
                     data['public_num'] = articleObjs.count() # 该用户今日发布总数
 
                     url_list = []
 
                     for articleObj in articleObjs:
-                        # print('查询收录=======', articleObj.back_url)
                         url_list.append({
                             'back_url':articleObj.back_url,
                             'title':articleObj.title
@@ -129,7 +123,6 @@ def user_statistical(request, oper_type):
                     data['index_show'] = data_list['index_num']
                     data['index_show_url'] = data_list['url_data']       # 熊掌号主页 url
 
-                    # statisticsObjs = models.user_statistics.objects.filter(belong_user_id=userObj.id, create_date=now)   # 判断今天 该用户是否有数据 有则更新 无则创建
                     statisticsObjs = models.user_statistics.objects.filter(belong_user_id=userObj_id, create_date=now)   # 判断今天 该用户是否有数据 有则更新 无则创建
                     print('data====================> ',data)
                     if statisticsObjs:
@@ -137,10 +130,7 @@ def user_statistical(request, oper_type):
                             data = {
                                 'public_num': articleObjs.count(),
                                 'belong_user_id': userObj_id,
-                                'zhishu': 0,
                                 'index_show': data_list['index_num'],
-                                'zhanxianliang': 0,
-                                'dianjiliang': 0,
                                 'index_show_url': data_list['url_data'],
                                 'create_date': now,
                             }
@@ -174,6 +164,34 @@ def user_statistical(request, oper_type):
             response.code = 200
             response.msg = '保存成功'
 
+        # selenium返回后台数据
+        elif oper_type == 'returnTask':
+            now = datetime.datetime.now()
+            now_date = now.strftime('%Y-%m-%d')
+            zhishu = request.POST.get('zhishu')
+            shoulu_list = request.POST.get('shoulu_list')
+            click_show_list = request.POST.get('click_show_list')
+            user_id = request.POST.get('user_id')
+            if zhishu and user_id and shoulu_list and click_show_list:
+                shoulu_list = json.loads(shoulu_list)
+                click_show_list = json.loads(click_show_list)
+                statisticsObj = models.user_statistics.objects.filter(belong_user_id=user_id, create_date=now_date)
+                if statisticsObj:
+                    if zhishu == 0 and statisticsObj[0].zhishu:
+                        pass
+                    else:
+                        statisticsObj.update(zhishu=zhishu)
+                for i in click_show_list:
+                    click_show_obj = models.user_statistics.objects.filter(belong_user_id=user_id, create_date=i.get('date_time'))
+                    if click_show_list:
+                        click_show_obj.update(zhanxianliang=i.get('show_num').replace(',', ''), dianjiliang=i.get('click_num').replace(',', ''))
+                for i in shoulu_list:
+                    show_lu_obj = models.user_statistics.objects.filter(belong_user_id=user_id, create_date=i.get('shoulu_date'))
+                    if show_lu_obj:
+                        show_lu_obj.update(admin_shoulu=i.get('shoulu_count').replace('条', '').strip())
+            response.code = 200
+            response.msg = '更新完成'
+
         else:
             response.code = 402
             response.msg = '请求异常'
@@ -181,7 +199,7 @@ def user_statistical(request, oper_type):
     else:
         redis_rc = redis.Redis(host='redis_host', port=6379, db=4, decode_responses=True)
 
-        # 查询所有用户七天发布文章 保存redis
+        # 查询所有用户七天发布文章 保存redis 百度收录
         if oper_type == 'baidu_shoulu_situation':
             now = datetime.datetime.now()
             nowDateTime = now.strftime('%Y-%m-%d %H:%M:%S')                             # 当前时间为结束时间
@@ -191,7 +209,7 @@ def user_statistical(request, oper_type):
             q = Q()
             q.add(Q(create_date__gte=sevenTime) & Q(create_date__lte=nowDateTime), Q.AND)
             q.add(Q(select_tongji_shoulu_time__lt=time_Y_M_D) | Q(select_tongji_shoulu_time__isnull=True), Q.AND)
-            q.add(Q(belongToUser__userType=1) & Q(belongToUser__role_id=61) & Q(belongToUser__xiongzhanghaoID__isnull=False), Q.AND)
+            q.add(Q(belongToUser__userType=1) & Q(belongToUser__role_id=61) & Q(belongToUser__website_backstage_appid__isnull=False), Q.AND)
             print('q===> ',q)
             articleObjs = models.xzh_article.objects.filter(q)
             if articleObjs:
@@ -234,6 +252,131 @@ def user_statistical(request, oper_type):
                 'count':count
             }
 
+        # 熊掌号后台数据 cookie  ×
+        elif oper_type == 'xiongzhanghaoTask':
+            q = Q()
+            q.add(Q(role_id=61) & Q(userType=1) & Q(website_backstage_appid__isnull=False) & Q(xiong_cookie__isnull=False) & Q(xiong_token__isnull=False), Q.AND)
+            objs = models.xzh_userprofile.objects.filter(q)
+            for obj in objs:
+                appid = obj.website_backstage_appid
+                xiong_cookie = obj.xiong_cookie
+                xiong_token = obj.xiong_token
+                if appid and xiong_cookie and xiong_token:
+                    now_date = datetime.datetime.now()
+                    nowDate = now_date.strftime('%Y-%m-%d')
+                    user_id = obj.id
+
+                    data = {}
+                    for i in xiong_cookie.strip().split(';'):
+                        key = i.split('=')[0]
+                        value = i.strip(key + '=')
+                        data[key] = value
+                    cookies = data
+
+                    print('=============================================测试cookie是否过期======================================================')
+                    now_zhishu_url = 'https://xiongzhang.baidu.com/account/exp/current?ajax=1&officeId={appid}&bdstoken={xiong_token}'.format(
+                        xiong_token=xiong_token,
+                        appid=appid
+                    )
+                    now_zhishu_ret = requests.get(now_zhishu_url, cookies=cookies)
+                    print(now_zhishu_ret.json())
+                    if '暂无权限' in now_zhishu_ret.json().get('msg'):
+                        print('=============cookie过期', user_id)
+
+                    else:
+                        print('=============================================熊掌号指数=================================================================')
+                        zhishu_url = 'https://xiongzhang.baidu.com/account/exp/trend?ajax=1&officeId={appid}&bdstoken={xiong_token}&day=30'.format(
+                            xiong_token=xiong_token,
+                            appid=appid
+                        )
+                        zhishu_ret = requests.get(zhishu_url, cookies=cookies)
+                        if zhishu_ret.json():
+                            zhishu_data = zhishu_ret.json().get('data').get('list')
+                            now_Y = now_date.strftime('%Y')       # 年
+                            for i in zhishu_data:
+                                zhishu_date = now_Y + '-' + i.get('date')
+                                zhishu_num = i.get('exp')
+                                zhishuObj = models.user_statistics.objects.filter(belong_user_id=user_id, create_date=zhishu_date)
+                                if zhishuObj:
+                                    zhishuObj.update(zhishu=zhishu_num)
+
+                        print('=============================================当前指数====================================================================')
+                        now_zhishu_ret = requests.get(now_zhishu_url, cookies=cookies)
+                        now_zhishu_data = now_zhishu_ret.json().get('data').get('exp')
+                        now_zhishu_obj = models.user_statistics.objects.filter(belong_user_id=user_id, create_date=nowDate)
+                        if now_zhishu_obj and now_zhishu_data:
+                            now_zhishu_obj.update(zhishu=now_zhishu_data)
+
+                        print('=============================================熊掌号点展量=====================================================================')
+                        dianzhan_url = 'https://ziyuan.baidu.com/xzh/analysis/stat?appid={appid}&type=dispClickAll&start=&end=&period=week'.format(appid=appid)
+                        dianzhan_ret = requests.get(dianzhan_url, cookies=cookies)
+                        if dianzhan_ret.json():
+                            data = dianzhan_ret.json()
+                            totalClickAll = data.get('totalClickAll')
+                            totalDisplayAll = data.get('totalDisplayAll')
+                            sticsObjs = models.user_statistics.objects.filter(belong_user_id=user_id,create_date=nowDate)
+                            sticsObjs.update(
+                                zhanxianliang=totalDisplayAll,
+                                dianjiliang=totalClickAll
+                            )
+                            ret_list = data.get('list')
+                            for i in ret_list:
+                                # click_show_proportion= i.get('pecent')           # 点展比
+                                click_num = i.get('fullDayClick')   # 点击量
+                                show_num = i.get('fullDayDisplay')   # 展现量
+                                date_time = i.get('date')             # 时间
+                                sticsObj = models.user_statistics.objects.filter(belong_user_id=user_id, create_date=date_time)
+                                if sticsObj:
+                                    sticsObj.update(zhanxianliang=show_num, dianjiliang=click_num)
+
+                        print('=============================================熊掌号后台收录=======================================================================')
+                        admin_shoulu_url = 'https://ziyuan.baidu.com/xzh/analysis/stat?appid={appid}&type=commitInfo&start=&end=&period=week'.format(appid=appid)
+                        admin_shoulu_ret = requests.get(admin_shoulu_url, cookies=cookies)
+                        if admin_shoulu_ret.json():
+                            data_list = admin_shoulu_ret.json().get('list')
+                            for i in data_list:
+                                admin_shoulu_date = i.get('date')
+                                shoulu_num = i.get('qualitySuccessSum')
+                                admin_shoulu_obj = models.user_statistics.objects.filter(belong_user_id=user_id, create_date=admin_shoulu_date)
+                                if admin_shoulu_obj:
+                                    admin_shoulu_obj.update(admin_shoulu=shoulu_num)
+
+            response.code = 200
+            response.msg = '查询成功'
+
+        # selenium 获取任务
+        elif oper_type == 'seleniumGetTask':
+            q = Q()
+            now = datetime.datetime.now()
+            time_Y_M_D = (now - datetime.timedelta(hours=1)).strftime('%Y-%m-%d %H:%M:%S')
+            q.add(Q(role_id=61) & Q(userType=1) & Q(website_backstage_appid__isnull=False) & Q(
+                xiong_zhang_hao_pwd__isnull=False) & Q(xiong_zhang_hao_user__isnull=False), Q.AND)
+            q.add(Q(xiong_zhang_hao_admin_select_time__isnull=True) | Q(xiong_zhang_hao_admin_select_time__lte=time_Y_M_D), Q.AND)
+            objs = models.xzh_userprofile.objects.filter(q)
+            objCount = objs.count()
+            if objs:
+                obj = objs[0]
+                obj.xiong_zhang_hao_admin_select_time = now.strftime('%Y-%m-%d %H:%M:%S')
+                # obj.save()
+
+                xiong_zhang_hao_pwd = obj.xiong_zhang_hao_pwd
+                xiong_zhang_hao_user = obj.xiong_zhang_hao_user
+                user_id = obj.id
+                data_dict = {
+                    'xiong_zhang_hao_user':xiong_zhang_hao_user,
+                    'xiong_zhang_hao_pwd':xiong_zhang_hao_pwd,
+                    'user_id':user_id,
+                }
+
+                response.code = 200
+                response.msg = '查询成功'
+                response.data = {
+                    'objCount':objCount,
+                    'retData':data_dict
+                }
+            else:
+                response.code = 301
+                response.msg = '无任务'
         else:
             response.code = 402
             response.msg = '请求异常'

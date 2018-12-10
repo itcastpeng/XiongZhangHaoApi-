@@ -353,6 +353,62 @@ xiongzhanghao_url = 'https://xiongzhang.baidu.com/site/login'
 # print(ret.text)
 
 
+# xiongzhanghao = 'https://xiongzhang.baidu.com/site/exponent?officeId=1610219546234420'
+
+
+# ret = requests.get(xiongzhanghao_url)
+# ret.encoding = 'utf8'
+# print(ret.text)
+
+
+# url = 'http://xiongzhanghao.zhugeyingxiao.com:8003/api/user_statistical/getTask?user_id=44&timestamp=1542788198850&rand_str=86b24054d91240d9559e369296af06cd'
+# ret = requests.get(url, timeout=5)
+# result_data = ret.json()
+# print('result_data -->', result_data)
+# if result_data['code'] == 200:
+#     if result_data['data']['flag']:
+#         print('=========================')
+
+
+
+
+cookies = {
+    'PSTM':'1531962644',
+    'BIDUPSID':'34856101788F122E450B377F9896FF34',
+    'BAIDUID':'C6A5A95F520664BCB3C91843B00D7D83:SL=0:NR=10:FG=1',
+    'delPer':'0',
+    'PHPSESSID':'1653161623663383339363464693435643934323367346368363668366137316',
+    'BDUSS':'FMUENsZmUtSU9PejF5Qk1ZQUtTdUNxY350c0ZhZnQ3eVpQeDg2LWNOc1VaREZjQVFBQUFBJCQAAAAAAAAAAAEAAAAgH-aeAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAABTXCVwU1wlcRF',
+    's_id_ext1':'4064d5bca141bd59f77c5e59cbd574f3',
+    'FEED_SIDS':'961300_1207_10',
+    'BDORZ':'AE84CDB3A529C0F8A2B9DCDD1D18B695',
+    'SE_LAUNCH':'5%3A25735821_0%3A25735821',
+    'BDPASSGATE':'IlPT2AEptyoA_yiU4VOu3kIN8efRWv3A1hHJSFptQVStfCaWmhH3U0VlQDPHTnOZHpD6xpWro_-yoUbCQjpfjKMThgMAfztJbEfg-M725aTvL16dfLco_2z5V6g4trnG8ahgxwoT_eVEVFoKewPfogYIehS3ywxHafmI7X0fh2Ll_TCG17r6r7iDZ9sJLCPAPNu594rSjEdgXJmfA4H6TS0dmUsPKCIYzNzbdsExOevWrnW',
+    'H_WISE_SIDS':'126893_125821_127696_127288_127237_127418_126427_123252_127486_126255_120172_123019_127529_118881_118861_118845_118823_118787_127181_107317_126995_126864_126145_127569_126797_117332_126794_117428_126837_126783_126442_127415_127029_126380_127597_127323_126684_126282_126942_126959_126773_126720_126091_125853_127536_124800_126437_110085_126973_123290_127699_127032_127225_100457',
+    'PSINO':'2',
+    'BDSVRBFE':'Go',
+    '__bsi':'5989811770223376154_h2_2_R_R_30_0303_cca8_Y',
+}
+
+
+# # url = 'https://xiongzhang.baidu.com/account/exp/current?ajax=1&officeId=1610219546234420&bdstoken=89f3efad01ed08bc08cb74f3436a4764' # 熊掌号指数
+# url = 'https://xiongzhang.baidu.com/account/exp/current?ajax=1&officeId=1610219546234420&bdstoken=721ac7674f9edbb80493fa9780bd8830' # 熊掌号指数
+# ret = requests.get(url, cookies=cookies)
+# print(ret.text)
+# zhishu = ret.json().get('data').get('exp')
+#
+#
+# url = 'https://ziyuan.baidu.com/xzh/analysis/stat?appid=1610219546234420&type=dispClickAll&start=&end=&period=week'
+# ret = requests.get(url, cookies=cookies)
+# ret.encoding = 'utf8'
+# ret_list = ret.json().get('list')
+# # for i in ret_list:
+# #     print(i.get('fullDayClick'))   # 点击量
+# #     print(i.get('fullDayDisplay'))   # 展现量
+# #     print(i.get('date'))             # 时间
+# #     print(i.get('pecent'))           # 点展比
+# print(ret_list)
+
 
 
 

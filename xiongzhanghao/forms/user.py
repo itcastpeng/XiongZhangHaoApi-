@@ -88,12 +88,18 @@ class AddForm(forms.Form):
         }
     )
 
-    # xiongzhanghaoID = forms.CharField(
-    #     required=True,
-    #     error_messages={
-    #         'required': "熊掌号ID不能为空"
-    #     }
-    # )
+    xiong_zhang_hao_user = forms.CharField(
+        required=True,
+        error_messages={
+            'required': "熊掌号后台账号不能为空"
+        }
+    )
+    xiong_zhang_hao_pwd = forms.CharField(
+        required=True,
+        error_messages={
+            'required': "熊掌号后台密码不能为空"
+        }
+    )
 
     # 查询名称是否存在
     def clean_username(self):
@@ -231,12 +237,20 @@ class UpdateForm(forms.Form):
             'required': "熊掌号主页不能为空"
         }
     )
-    # xiongzhanghaoID = forms.CharField(
-    #     required=True,
-    #     error_messages={
-    #         'required': "熊掌号ID不能为空"
-    #     }
-    # )
+    xiong_zhang_hao_user = forms.CharField(
+        required=True,
+        error_messages={
+            'required': "熊掌号后台账号不能为空"
+        }
+    )
+    xiong_zhang_hao_pwd = forms.CharField(
+        required=True,
+        error_messages={
+            'required': "熊掌号后台密码不能为空"
+        }
+    )
+
+
     # 判断名称是否存在
     def clean_username(self):
         o_id = self.data['o_id']

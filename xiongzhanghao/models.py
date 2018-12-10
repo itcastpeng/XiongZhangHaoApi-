@@ -60,7 +60,12 @@ class xzh_userprofile(models.Model):
 
     deletionTime = models.DateTimeField(verbose_name='判断删除时间', null=True, blank=True) # 查询间隔时间
     user_article_result = models.TextField(verbose_name='单个用户爬取的数据', null=True, blank=True)  # 判断用户是否删除 aid title 发布时间
-    xiongzhanghaoID = models.CharField(verbose_name='熊掌号官微id', max_length=128, null=True, blank=True)
+    # xiongzhanghaoID = models.CharField(verbose_name='熊掌号官微id', max_length=128, null=True, blank=True)
+    # xiong_cookie = models.TextField(verbose_name='熊掌号cookie', null=True, blank=True) # 获取用户统计等数据
+    # xiong_token = models.CharField(verbose_name='熊掌号token', max_length=32, null=True, blank=True)
+    xiong_zhang_hao_user = models.CharField(verbose_name='熊掌号用户名', max_length=32, null=True, blank=True)
+    xiong_zhang_hao_pwd = models.CharField(verbose_name='熊掌号密码', max_length=32, null=True, blank=True)
+    xiong_zhang_hao_admin_select_time = models.DateTimeField(verbose_name='熊掌号后台查询时间', null=True, blank=True)   # 间隔时间
 
 # 文章表
 class xzh_article(models.Model):

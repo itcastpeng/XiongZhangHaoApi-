@@ -88,7 +88,9 @@ def baidu_shoulu_situation():
 def user_statistical():
     print('======================定时刷新 所有用户近七天数据=====================')
     url = 'http://xiongzhanghao.zhugeyingxiao.com:8003/api/user_statistical/user_statistical'
+    # xiongzhanghao_url = 'http://xiongzhanghao.zhugeyingxiao.com:8003/api/user_statistical/xiongzhanghaoTask'
     requests.get(url, params=params)
+    # requests.get(xiongzhanghao_url, params=params)
 # @app.task
 # def export_excel(o_id, start, stop):
 #     url = 'http://xiongzhanghao.zhugeyingxiao.com:8003/article/celeryExportExcel/0'

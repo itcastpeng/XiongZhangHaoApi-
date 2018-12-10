@@ -91,7 +91,7 @@ def user(request):
                 'website_backstage_appid': obj.website_backstage_appid,
                 'xiongZhangHaoIndex': obj.xiongZhangHaoIndex,
                 'secondaryDomainName': obj.secondaryDomainName,
-                'xiongzhanghaoID': obj.xiongzhanghaoID
+                # 'xiongzhanghaoID': obj.xiongzhanghaoID
             })
         #  查询成功 返回200 状态码
         response.code = 200
@@ -130,6 +130,8 @@ def user_oper(request, oper_type, o_id):
                 'website_backstage_appid': request.POST.get('website_backstage_appid'),
                 'xiongZhangHaoIndex': request.POST.get('xiongZhangHaoIndex'),
                 'secondaryDomainName': request.POST.get('secondaryDomainName'),
+                'xiong_zhang_hao_user': request.POST.get('xiong_zhang_hao_user'),
+                'xiong_zhang_hao_pwd': request.POST.get('xiong_zhang_hao_pwd'),
                 # 'xiongzhanghaoID': request.POST.get('xiongzhanghaoID'),
             }
             print('form_data----->',form_data)
@@ -199,7 +201,7 @@ def user_oper(request, oper_type, o_id):
                         website_backstage_token = forms_obj.cleaned_data['website_backstage_token']
                         website_backstage_appid = forms_obj.cleaned_data['website_backstage_appid']
                         xiongZhangHaoIndex = forms_obj.cleaned_data['xiongZhangHaoIndex']
-                        xiongzhanghaoID = forms_obj.cleaned_data['xiongzhanghaoID']
+                        # xiongzhanghaoID = forms_obj.cleaned_data['xiongzhanghaoID']
                         print('website_backstage_token, website_backstage_appid---------------> ',website_backstage_token, website_backstage_appid)
                         #  查询数据库  用户id
                         objs.update(
@@ -212,7 +214,7 @@ def user_oper(request, oper_type, o_id):
                             website_backstage_appid=website_backstage_appid,
                             website_backstage_token=website_backstage_token,
                             xiongZhangHaoIndex=xiongZhangHaoIndex,
-                            xiongzhanghaoID=xiongzhanghaoID,
+                            # xiongzhanghaoID=xiongzhanghaoID,
                         )
                     else:
                         objs.update(
