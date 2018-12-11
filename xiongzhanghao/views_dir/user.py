@@ -206,6 +206,8 @@ def user_oper(request, oper_type, o_id):
                         website_backstage_token = forms_obj.cleaned_data['website_backstage_token']
                         website_backstage_appid = forms_obj.cleaned_data['website_backstage_appid']
                         xiongZhangHaoIndex = forms_obj.cleaned_data['xiongZhangHaoIndex']
+                        xiong_zhang_hao_pwd = forms_obj.cleaned_data['xiong_zhang_hao_pwd']
+                        xiong_zhang_hao_user = forms_obj.cleaned_data['xiong_zhang_hao_user']
                         # xiongzhanghaoID = forms_obj.cleaned_data['xiongzhanghaoID']
                         print('website_backstage_token, website_backstage_appid---------------> ',website_backstage_token, website_backstage_appid)
                         #  查询数据库  用户id
@@ -219,7 +221,8 @@ def user_oper(request, oper_type, o_id):
                             website_backstage_appid=website_backstage_appid,
                             website_backstage_token=website_backstage_token,
                             xiongZhangHaoIndex=xiongZhangHaoIndex,
-                            # xiongzhanghaoID=xiongzhanghaoID,
+                            xiong_zhang_hao_user=xiong_zhang_hao_user,
+                            xiong_zhang_hao_pwd=xiong_zhang_hao_pwd,
                         )
                     else:
                         objs.update(

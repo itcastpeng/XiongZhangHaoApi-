@@ -80,7 +80,7 @@ def user_billing_oper(request, oper_type, o_id):
             'belong_user_id': request.POST.get('belong_user_id'),
             'start_time': request.POST.get('start_time'),
             'stop_time': request.POST.get('stop_time'),
-            'billing_cycle': request.POST.get('billing_cycle'),
+            'billing_cycle': request.POST.get('billing_cycle_id'),
             'note_text': request.POST.get('note_text')
         }
         if form_data.get('start_time') and form_data.get('billing_cycle'):

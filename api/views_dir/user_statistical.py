@@ -357,7 +357,7 @@ def user_statistical(request, oper_type):
             if objs:
                 obj = objs[0]
                 obj.xiong_zhang_hao_admin_select_time = now.strftime('%Y-%m-%d %H:%M:%S')
-                # obj.save()
+                obj.save()
 
                 xiong_zhang_hao_pwd = obj.xiong_zhang_hao_pwd
                 xiong_zhang_hao_user = obj.xiong_zhang_hao_user

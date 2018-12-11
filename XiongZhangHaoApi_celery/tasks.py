@@ -13,11 +13,11 @@ params = {
     'rand_str': str_encrypt(timestamp + token),
     'timestamp': timestamp,
 }
-print('params----------------> ',params)
+# print('params----------------> ',params)
 # 生成二级域名
 @app.task
 def specialUserGenerateThePage():
-    print('==========================生成二级域名===========================')
+    print('==========================生成二级域名----===========================')
     timestamp = str(int(time.time() * 1000))
     params = {
         'user_id': user_id,
@@ -32,7 +32,7 @@ def specialUserGenerateThePage():
 # 提交到熊掌号
 @app.task
 def celerySubmitXiongZhangHao():
-    print('===========================提交到熊掌号===================')
+    print('===========================提交到熊掌号---===================')
     url = 'http://xiongzhanghao.zhugeyingxiao.com:8003/api/articleScriptOper/submitXiongZhangHao'
     requests.get(url, params=params)
 
@@ -86,17 +86,7 @@ def baidu_shoulu_situation():
 
 @app.task
 def user_statistical():
-    print('======================定时刷新 所有用户近七天数据=====================')
+    print('======================定时刷新 所有用户近七天数据-------=====================')
     url = 'http://xiongzhanghao.zhugeyingxiao.com:8003/api/user_statistical/user_statistical'
-    # xiongzhanghao_url = 'http://xiongzhanghao.zhugeyingxiao.com:8003/api/user_statistical/xiongzhanghaoTask'
-    requests.get(url, params=params)
-    # requests.get(xiongzhanghao_url, params=params)
-# @app.task
-# def export_excel(o_id, start, stop):
-#     url = 'http://xiongzhanghao.zhugeyingxiao.com:8003/article/celeryExportExcel/0'
-#     data = {
-#         'o_id':o_id,
-#         'start':start,
-#         'stop':stop
-#     }
-#     requests.post(url, data=data, params=params)
+    print('ur====> ',url, params)
+    requests.post(url, params=params)

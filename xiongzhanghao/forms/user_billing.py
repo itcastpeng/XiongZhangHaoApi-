@@ -35,7 +35,7 @@ class AddForm(forms.Form):
     )
 
     note_text = forms.CharField(
-        required=True,
+        required=False,
         error_messages={
             'required': "备注类型错误"
         }
@@ -89,13 +89,17 @@ class AddForm(forms.Form):
             start_time = start_time.strftime('%Y-%m-%d')
             stop_time = stop_time.strftime('%Y-%m-%d')
             days = days.days
+            print('days===========> ',days)
             if days >= 29:
                 month = int(days / 30)
                 if month >= 7:
                     month = 7
             else:
-                month = 1
-            print('days========> ',month)
+                if days < 30:
+                    self.add_error('start_time', '天数不能小于三十天')
+                    return
+                else:
+                    month = 1
 
             return start_time, stop_time, month
 
