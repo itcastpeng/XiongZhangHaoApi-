@@ -106,7 +106,6 @@ class xzh_keywords(models.Model):
     get_date = models.DateTimeField(verbose_name="获取时间", null=True, blank=True)     # 该时间控制每个词在5分钟之内只被查询一次
     select_date = models.DateTimeField(verbose_name="查询时间", null=True, blank=True)
 
-
 # 关键词覆盖表
 class xzh_keywords_detail(models.Model):
     xzh_keywords = models.ForeignKey('xzh_keywords', verbose_name="关键词")
@@ -186,6 +185,26 @@ class user_statistics(models.Model):
     index_show_url = models.TextField(verbose_name='主页展示的url', null=True, blank=True)        # 熊掌号主页 详情
     admin_shoulu = models.IntegerField(verbose_name='熊掌号后后台收录', default=0)                 # 熊掌号后台 收录条数
     admin_shoulu_url = models.TextField(verbose_name='熊掌号后台收录详情', null=True, blank=True)  # 熊掌号后台 收录详情
+
+# 用户 计费
+class user_billing(models.Model):
+    create_date = models.DateField(verbose_name="创建时间", auto_now_add=True)
+    belong_user = models.ForeignKey('xzh_userprofile', verbose_name='归属用户', related_name='user_biling_belong_user')
+    create_user = models.ForeignKey('xzh_userprofile', verbose_name='创建人', null=True, blank=True)
+    start_time = models.DateField(verbose_name='开始计费日期', null=True, blank=True)
+    stop_time = models.DateField(verbose_name='结束计费日期', null=True, blank=True)
+    billing_cycle_choices = (
+        (1, '一个月'),
+        (2, '二个月'),
+        (3, '三个月'),
+        (4, '四个月'),
+        (5, '五个月'),
+        (6, '六个月'),
+        (7, '十二个月'),
+    )
+    billing_cycle = models.SmallIntegerField(verbose_name='计费周期', choices=billing_cycle_choices, default=1)
+    note_text = models.TextField(verbose_name='备注', default='无')
+
 
 #===============================================================百度小程序===================================================================================
 

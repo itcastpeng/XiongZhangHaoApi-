@@ -55,7 +55,7 @@ def user(request):
 
         # 返回的数据
         ret_data = []
-
+        index = 0
         for obj in objs:
             #  如果有oper_user字段 等于本身名字
             if obj.oper_user:
@@ -92,7 +92,10 @@ def user(request):
                 'xiongZhangHaoIndex': obj.xiongZhangHaoIndex,
                 'secondaryDomainName': obj.secondaryDomainName,
                 # 'xiongzhanghaoID': obj.xiongzhanghaoID
+                'index':index,
             })
+            index += 1
+
         #  查询成功 返回200 状态码
         response.code = 200
         response.msg = '查询成功'
@@ -100,6 +103,7 @@ def user(request):
             'ret_data': ret_data,
             'data_count': count,
             'website_backstage_choices': models.xzh_userprofile.website_backstage_choices,
+            'billing_cycle_choices': models.user_billing.billing_cycle_choices,
         }
     else:
         response.code = 301
@@ -173,7 +177,8 @@ def user_oper(request, oper_type, o_id):
                 'website_backstage_token': request.POST.get('website_backstage_token'),
                 'website_backstage_appid': request.POST.get('website_backstage_appid'),
                 'xiongZhangHaoIndex': request.POST.get('xiongZhangHaoIndex'),
-                # 'xiongzhanghaoID': request.POST.get('xiongzhanghaoID'),
+                'xiong_zhang_hao_user': request.POST.get('xiong_zhang_hao_user'),
+                'xiong_zhang_hao_pwd': request.POST.get('xiong_zhang_hao_pwd'),
             }
             flag = False
             if int(form_data.get('role_id')) == 64 or int(form_data.get('role_id')) ==  66:

@@ -71,7 +71,7 @@ class UpdateForm(forms.Form):
     )
 
     belong_user_id = forms.IntegerField(
-        required=True,
+        required=False,
         error_messages={
             'required': "用户名不能为空"
         }

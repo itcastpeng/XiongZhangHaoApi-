@@ -110,7 +110,7 @@ def userStatistics_oper(request, oper_type, o_id):
 
         # 生成报表
         if oper_type == 'userStatisticsExcle':
-            days = request.GET.get('days', 7)
+            days = request.POST.get('days', 7)
             now = datetime.datetime.now()
             nowDate = now.strftime('%Y-%m-%d')
             stop = nowDate
@@ -121,8 +121,9 @@ def userStatistics_oper(request, oper_type, o_id):
             start = time_Y_M_D
 
             q = Q()
-            if o_id:
-                q.add(Q(belong_user_id=o_id), Q.AND)
+            id = request.POST.get('id')
+            if id:
+                q.add(Q(belong_user_id=id), Q.AND)
 
             q.add(Q(create_date__lte=stop) & Q(create_date__gte=start), Q.AND)
             wb = Workbook()
