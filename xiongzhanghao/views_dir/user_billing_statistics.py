@@ -140,7 +140,7 @@ def user_billing_oper(request, oper_type, o_id):
                     response.msg = '请选择一项周期'
             else:
                 response.code = 301
-                response.data = json.loads(forms_obj.errors.as_json())
+                response.msg = json.loads(forms_obj.errors.as_json())
 
         # 删除
         elif oper_type == 'delete':

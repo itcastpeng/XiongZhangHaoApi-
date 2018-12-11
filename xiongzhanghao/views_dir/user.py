@@ -91,7 +91,8 @@ def user(request):
                 'website_backstage_appid': obj.website_backstage_appid,
                 'xiongZhangHaoIndex': obj.xiongZhangHaoIndex,
                 'secondaryDomainName': obj.secondaryDomainName,
-                # 'xiongzhanghaoID': obj.xiongzhanghaoID
+                'xiong_zhang_hao_user': obj.xiong_zhang_hao_user,
+                'xiong_zhang_hao_pwd': obj.xiong_zhang_hao_pwd,
                 'index':index,
             })
             index += 1
@@ -107,7 +108,7 @@ def user(request):
         }
     else:
         response.code = 301
-        response.data = json.loads(forms_obj.errors.as_json())
+        response.msg = json.loads(forms_obj.errors.as_json())
     return JsonResponse(response.__dict__)
 
 

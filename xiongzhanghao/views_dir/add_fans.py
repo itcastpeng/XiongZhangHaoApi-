@@ -93,6 +93,7 @@ def fans(request):
 def fans_oper(request, oper_type, o_id):
     response = Response.ResponseObj()
     user_id = request.GET.get('user_id')
+    user_objs = models.xzh_userprofile.objects.filter(id=user_id)
     if request.method == "POST":
         form_data = {
             'o_id':o_id,
@@ -246,6 +247,33 @@ def fans_oper(request, oper_type, o_id):
             else:
                 response.code = 301
                 response.msg = '该用户无加粉数据'
+
+        # 暂停加粉
+        elif oper_type == 'pausePowder':
+            print('===============================')
+            oper_user = user_objs[0].username
+            fans_objs = models.xzh_add_fans.objects.filter(id=o_id)
+            if fans_objs:
+                if int(fans_objs[0].status) == 2:
+                    fans_objs.update(
+                        status=5,
+                        errorText='该任务被：{}暂停'.format(oper_user)
+                    )
+                    response.code = 200
+                    response.msg = '暂停成功'
+                elif int(fans_objs[0].status) == 5:
+                    fans_objs.update(
+                        status=2,
+                        errorText=''
+                    )
+                    response.code = 200
+                    response.msg = '开始成功'
+                else:
+                    response.code = 301
+                    response.msg = '该状态不能暂停'
+            else:
+                response.code = 301
+                response.msg = '无该任务'
         else:
             response.code = 402
             response.msg = "请求异常"

@@ -87,7 +87,13 @@ def user_statistical(request, oper_type):
                 stop_now = deletionTime.strftime('%Y-%m-%d 23:59:59')     # 当前时间(年月日 时分秒)
 
                 print('now---> ',now, start_now, stop_now)
-                userObjs = user_objs.filter(userType=1, role_id=61, website_backstage_appid__isnull=False)  # 查询所有用户
+                userObjs = user_objs.filter(
+                    # userType=1,
+                    role_id=61,
+                    website_backstage_appid__isnull=False,
+                    xiong_zhang_hao_user__isnull=False,
+                    xiong_zhang_hao_pwd__isnull=False
+                )  # 查询所有用户
                 for userObj in userObjs:  # 遍历所有用户
                     userObj_id = userObj.id
                     appid = userObj.website_backstage_appid
@@ -192,6 +198,15 @@ def user_statistical(request, oper_type):
             response.code = 200
             response.msg = '更新完成'
 
+        # selenium 返回后台报错数据
+        elif oper_type == 'errorTask':
+            print('request.POST====> ', request.POST)
+            user_id = request.POST.get('user_id')
+            if user_id:
+                print('========================返回报错数据-===============================', user_id)
+                userObj = models.xzh_userprofile.objects.filter(id=user_id)
+                if userObj:
+                    userObj.update(xiong_zhang_hao_admin_select_time=None)
         else:
             response.code = 402
             response.msg = '请求异常'
@@ -209,7 +224,7 @@ def user_statistical(request, oper_type):
             q = Q()
             q.add(Q(create_date__gte=sevenTime) & Q(create_date__lte=nowDateTime), Q.AND)
             q.add(Q(select_tongji_shoulu_time__lt=time_Y_M_D) | Q(select_tongji_shoulu_time__isnull=True), Q.AND)
-            q.add(Q(belongToUser__userType=1) & Q(belongToUser__role_id=61) & Q(belongToUser__website_backstage_appid__isnull=False), Q.AND)
+            q.add(Q(belongToUser__role_id=61) & Q(belongToUser__website_backstage_appid__isnull=False), Q.AND)
             print('q===> ',q)
             articleObjs = models.xzh_article.objects.filter(q)
             if articleObjs:
@@ -255,7 +270,7 @@ def user_statistical(request, oper_type):
         # 熊掌号后台数据 cookie  ×
         elif oper_type == 'xiongzhanghaoTask':
             q = Q()
-            q.add(Q(role_id=61) & Q(userType=1) & Q(website_backstage_appid__isnull=False) & Q(xiong_cookie__isnull=False) & Q(xiong_token__isnull=False), Q.AND)
+            q.add(Q(role_id=61) & Q(website_backstage_appid__isnull=False) & Q(xiong_cookie__isnull=False) & Q(xiong_token__isnull=False), Q.AND)
             objs = models.xzh_userprofile.objects.filter(q)
             for obj in objs:
                 appid = obj.website_backstage_appid
@@ -348,8 +363,8 @@ def user_statistical(request, oper_type):
         elif oper_type == 'seleniumGetTask':
             q = Q()
             now = datetime.datetime.now()
-            time_Y_M_D = (now - datetime.timedelta(hours=1)).strftime('%Y-%m-%d %H:%M:%S')
-            q.add(Q(role_id=61) & Q(userType=1) & Q(website_backstage_appid__isnull=False) & Q(
+            time_Y_M_D = (now - datetime.timedelta(hours=5)).strftime('%Y-%m-%d %H:%M:%S')
+            q.add(Q(role_id=61) & Q(website_backstage_appid__isnull=False) & Q(
                 xiong_zhang_hao_pwd__isnull=False) & Q(xiong_zhang_hao_user__isnull=False), Q.AND)
             q.add(Q(xiong_zhang_hao_admin_select_time__isnull=True) | Q(xiong_zhang_hao_admin_select_time__lte=time_Y_M_D), Q.AND)
             objs = models.xzh_userprofile.objects.filter(q)
