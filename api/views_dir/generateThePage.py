@@ -140,11 +140,11 @@ def FTPuploadHtml(request):
         summary = request.POST.get('summary')
         content = request.POST.get('content')
         o_id = request.POST.get('o_id')
-
+        print('o_id===> ', o_id, title )
         innerHtml = """                       
                    <dl class="jj">
                    <h3 style="text-align: center">{title}</h3>
-                          <div><p>{summary}</p></div> 
+                          <div style="padding:30px 30px 0px 30px"><p>{summary}</p></div> 
                           <div class="jj2"><p>{content}</p></div>
                   </dl>
                   """.format(title=title, summary=summary, content=content)
@@ -268,19 +268,22 @@ def FTPuploadHtml(request):
         username = 'kmxzh'
         password = 'kmdyzXZH123'
 
-        fileName = str(o_id) + str(int(time.time())) + '.html'
-        path = 'statics/xiongzhanghao/{}'.format(fileName)
-
-        with open(path, 'w', encoding="utf-8") as f:
-            f.write(HTML)
-
         F = FTP()  # 实例化FTP对象
         F.connect(host, port)
         F.login(username, password)  # 登录
 
-        print('path======================> ',F.nlst())  # 获取当前路径下文件 返回列表
+        fileName = str(o_id) + str(int(time.time())) + '.html'
+        path = 'statics/xiongzhanghao/{}'.format(fileName)
+
+        print('path-----------> ',path)
+        with open(path, 'w', encoding="utf-8") as f:
+            f.write(HTML)
+
+
+        # print('path======================> ',F.nlst())  # 获取当前路径下文件 返回列表
 
         bufsize = 1024  # 设置缓冲器大小
+        F.cwd('xiongzhanghao')   # 进入熊掌号目录
 
         # 读取本地文件
         ft = open(path, 'rb')
@@ -288,6 +291,7 @@ def FTPuploadHtml(request):
         ft.close()
 
         return_path = 'http://m.dracne.net/xiongzhanghao/{}'.format(fileName)
+        print('return_path============> ',return_path)
         response.code = 200
         response.msg = '上传成功'
         response.data = {

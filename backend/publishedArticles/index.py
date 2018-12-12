@@ -12,16 +12,16 @@ def publishedArticles():
     # ret = requests.get(url)
     url = 'http://xiongzhanghao.zhugeyingxiao.com:8003/api/articleScriptOper/sendArticle'
     ret = requests.get(url, params=params)
-    # print('=ret.text=========> ',ret.text)
+    print('=ret.text=========> ',ret.text)
     resultData = json.loads(ret.text).get('data')
+    print('===========================开始发布文章==========================================开始发布文章=========================')
     if resultData:
-        print('===========================开始发布文章==========================================开始发布文章=========================')
         o_id =  resultData.get('o_id')
         website_backstage = resultData.get('website_backstage')
         result_data = {}
-
         # 织梦后台
         if int(website_backstage) == 1:
+            print('-------/*****************************织梦后台发布文章**********************************/---------')
             website_backstage_url = resultData.get('website_backstage_url').strip()
             # print('====================================website_backstage_url', website_backstage_url)
             if 'http' in website_backstage_url:
@@ -159,36 +159,39 @@ def publishedArticles():
 
         # FTP
         elif int(website_backstage) == 3:
+            print('==================================================执行 FTP')
             data = {
                 'o_id':o_id,
                 'title':  resultData.get('title'),
                 'summary':resultData.get('summary'),
                 'content':resultData.get('content')
             }
-            url = 'http://xiongzhanghao.zhugeyingxiao.com:8003/api/articleScriptOper/?user_id=44&timestamp=1542788198850&rand_str=86b24054d91240d9559e369296af06cd'
+            url = 'http://xiongzhanghao.zhugeyingxiao.com:8003/api/FTPuploadHtml?user_id=44&timestamp=1542788198850&rand_str=86b24054d91240d9559e369296af06cd'
             ret = requests.post(url, data=data)
-            json_data = ret.json()
+            print('ret.text--------> ',ret.text )
+            json_data = ret.json().get('data')
             if json_data.get('return_path'):
-                pass
-
-            huilian = ''
-
-            resultData = {
-                'huilian': huilian,
-                'aid': 0,
-                'code': 200
-            }
+                huilian = json_data.get('return_path')
+                resultData = {
+                    'huilian': huilian,
+                    'aid': 0,
+                    'code': 200
+                }
+            else:
+                resultData = {
+                    'code': 500
+                }
             result_data = {
                 'resultData': json.dumps(resultData),
                 'o_id': o_id
             }
 
-
-        print('result_data==============================> ',resultData)
         # url = 'http://127.0.0.1:8003/api/articleScriptOper/sendArticleModels?user_id=17&timestamp=123&rand_str=4297f44b13955235245b2497399d7a93'
         url = 'http://xiongzhanghao.zhugeyingxiao.com:8003/api/articleScriptOper/sendArticleModels?user_id=44&timestamp=1542788198850&rand_str=86b24054d91240d9559e369296af06cd'
         requests.post(url, data=result_data)
 
+    else:
+        print('========================000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000')
 
 # if __name__ == '__main__':
 #     publishedArticles()

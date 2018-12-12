@@ -51,7 +51,6 @@ def articleScriptOper(request, oper_type):
                 response.data = result_data
         response.code = 200
 
-
     # 更改状态和备注
     elif oper_type == 'sendArticleModels':
         resultData = request.POST.get('resultData')
@@ -92,7 +91,7 @@ def articleScriptOper(request, oper_type):
 
             else:  # 发布失败
                 note_content = '发布失败'
-            print('note_content============> ', note_content)
+            # print('note_content============> ', note_content)
             objs.update(
                 article_status=article_status,
                 back_url=huilian,

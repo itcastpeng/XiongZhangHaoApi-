@@ -22,6 +22,7 @@ if __name__ == '__main__':
                 result_data = ret.json()
                 if result_data.get('data').get('flag'):
                     task_id = result_data['data']['task_id']
+                    print('============================================> 任务ID', task_id)
                     if task_id == 1:      # 查询老问答覆盖
                         print("--> 获取栏目")
                         userGetCookieOper.userGetCookieOper()
