@@ -38,7 +38,7 @@ def addFansGetTask(request, oper_type):
 
     # 加粉前后 查询 粉丝数量
     elif oper_type == 'queryFollowersNum':
-        objs = models.xzh_add_fans.objects.all().exclude(status=4)
+        objs = models.xzh_add_fans.objects.all().exclude(status__in=[4,5])
         for obj in objs:
             appid = obj.xiongzhanghaoID
             if appid:

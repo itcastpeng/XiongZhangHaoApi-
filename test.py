@@ -409,16 +409,50 @@ cookies = {
 # #     print(i.get('pecent'))           # 点展比
 # print(ret_list)
 
+from ftplib import FTP
+import logging.config
+
+# 将日志写入文件
+# logger = logging.getLogger(__name__)
+# handler = logging.FileHandler("log.txt")
+# handler.setLevel(logging.INFO)
+# formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
+# handler.setFormatter(formatter)
+# logger.addHandler(handler)
+
+
+host = '61.188.39.201'
+port = 1987
+username = 'kmxzh'
+password = 'kmdyzXZH123'
+file = '1.txt'
+
+f = FTP()  # 实例化FTP对象
+f.connect(host, port)
+f.login(username, password)  # 登录
+
+# pwd_path = f.pwd()
+# print("FTP当前路径:", pwd_path)
+#
+#
+# file_remote = '1.txt'
+# file_local = 'D:\\test_data\\ftp_download.txt'
+# bufsize = 1024
+#
+# fp = open(file_local, 'wb')
+#
+# f.retrbinary('RETR %s' % file_remote, fp.write, bufsize)
+#
+# fp.close()
 
 
 
-
-
-
-
-
-
-
+file_remote = 'ftp_upload.txt'
+file_local = 'D:\\test_data\\ftp_upload.txt'
+bufsize = 1024  # 设置缓冲器大小
+fp = open(file_local, 'rb')
+f.storbinary('STOR ' + file_remote, fp, bufsize)
+fp.close()
 
 
 

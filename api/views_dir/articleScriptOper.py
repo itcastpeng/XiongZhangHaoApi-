@@ -74,9 +74,10 @@ def articleScriptOper(request, oper_type):
             is_audit = False
             if code == 200:  # 发布成功
                 article_status = 2
-                if int(website_backstage) == 2:
-                    article_status = 4        # 如果是pcv9不需要审核
+                if int(website_backstage) == 2 or int(website_backstage) == 3:
+                    article_status = 4        # 如果是 pcv9 或 FTP 不需要审核
                     is_audit=1
+
                 huilian = resultData.get('huilian')
                 aid = resultData.get('aid')
 

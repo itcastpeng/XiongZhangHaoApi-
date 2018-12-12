@@ -38,7 +38,8 @@ class xzh_userprofile(models.Model):
 
     website_backstage_choices = (
         (1, '织梦'),
-        (2, 'PvC9')
+        (2, 'PvC9'),
+        (3, 'FTP')
     )
     website_backstage = models.SmallIntegerField(verbose_name='网站后台类型', choices=website_backstage_choices, default=1)
     website_backstage_url = models.CharField(verbose_name='客户后台网站地址', max_length=128, null=True, blank=True)

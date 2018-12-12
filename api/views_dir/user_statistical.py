@@ -363,7 +363,7 @@ def user_statistical(request, oper_type):
         elif oper_type == 'seleniumGetTask':
             q = Q()
             now = datetime.datetime.now()
-            time_Y_M_D = (now - datetime.timedelta(hours=5)).strftime('%Y-%m-%d %H:%M:%S')
+            time_Y_M_D = (now - datetime.timedelta(hours=2)).strftime('%Y-%m-%d %H:%M:%S')
             q.add(Q(role_id=61) & Q(website_backstage_appid__isnull=False) & Q(
                 xiong_zhang_hao_pwd__isnull=False) & Q(xiong_zhang_hao_user__isnull=False), Q.AND)
             q.add(Q(xiong_zhang_hao_admin_select_time__isnull=True) | Q(xiong_zhang_hao_admin_select_time__lte=time_Y_M_D), Q.AND)
