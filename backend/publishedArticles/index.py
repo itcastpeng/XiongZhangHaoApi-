@@ -159,135 +159,20 @@ def publishedArticles():
 
         # FTP
         elif int(website_backstage) == 3:
-            title = resultData.get('title')
-            summary = resultData.get('summary')
-            content = resultData.get('content')
-
-            innerHtml = """                       
-                 <dl class="jj">
-                 <h3 style="text-align: center">{title}</h3>
-                        <div><p>{summary}</p></div> 
-                        <div class="jj2"><p>{content}</p></div>
-                </dl>
-                """.format(title=title, summary=summary, content=content)
-
-            # 开始HTML
-            headHTML = """
-            
-                <!doctype html>
-                <html>
-                <head>
-                <meta charset="utf-8">
-                <title>Dr.acne痘院长团队</title>
-                <link href="http://m.dracne.net/images/css.css" rel="stylesheet" type="text/css">
-                <link href="http://m.dracne.net/images/bottom.css" rel="stylesheet" type="text/css">
-                <script src="http://m.dracne.net/images/phonecommon.js"></script>
-                <script type="text/javascript" src="http://m.dracne.net/images/jquery-1.7.1.min.js"></script>
-                <script type="text/javascript" src="http://m.dracne.net/images/jquery-1.10.1.min.js"></script>
-                <script type="text/javascript" src="http://m.dracne.net/images/nav.js"></script>
-                <script type="text/javascript" src="http://m.dracne.net/images/tj.js"></script>
-                <meta http-equiv="Cache-Control" content="no-cache"/>
-                <meta name="viewport" content="width=device-width, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no"/>
-                <script type="application/ld+json">
-                    {
-                        "@context": "https://ziyuan.baidu.com/contexts/cambrian.jsonld",
-                        "@id": "http://m.dracne.net/zj.html",
-                        "appid": "1619456659599101",
-                        "title": "Dr.acne痘院长团队",
-                        "pubDate": "2018-12-01T08:00:01"
-                    }
-                </script>
-                <script src="//msite.baidu.com/sdk/c.js?appid=1619456659599101"></script>
-                </head>
-                <body>
-                
-                <div id='header'>
-                    <div id='header_memu' style='display: block;'>
-                        <div id='header_memu_left'><img src='http://m.dracne.net/images/imgx1.png'></div>
-                        <div id='header_menu_content'><div id='logo'><a href='http://m.dracne.cn/'><img src='http://m.dracne.net/images/imgx3.png' alt='痘院长首页'></a></div></div>
-                        <div id='header_menu_right'><a href='tel:18088270124' onclick='ClickPhone()' target='_self'><img src='http://m.dracne.net/images/imgx2.png'></a></div>
-                    </div>
-                    <div id='header_nav_box' style='display: none;'>
-                        <div id='header_nav_left' style='left: -100%;'>
-                        <div id='header_nav_top'>
-                            <div class='header_nav_top_close'><img src='http://m.dracne.net/images/imgx1_1.png'></div>
-                            <a href='http://m.dracne.cn/'><i></i>首页〉</a>
-                        </div>
-                            <div id='header_nav_content'>
-                                <div class='header_nav_title'><h2><a href='http://m.dracne.net/jj.html'>About Dr.acne</a></h2></div>
-                                <div class='header_nav_title'><h2><a href='http://m.dracne.net/ls.html'>百家连锁</a></h2></div>
-                                <div class='header_nav_title'><h2><a href='http://m.dracne.net/kj.html'>核心科技</a></h2></div>
-                                <div class='header_nav_title'><h2><a href='#'>顾客保障</a></h2></div>
-                                <div class='header_nav_title'><h2><a href='http://m.dracne.net/zj.html'>美肤顾问</a></h2></div>
-                                <div class='header_nav_title'><h2><a href='https://rgbk2.kuaishang.cn/bs/im.htm?cas=59154___718795&fi=70539&ism=1&ref=m.dracne.cn'>新闻动态</a></h2></div>
-                                <div class='header_hd'>
-                                    <h2 style='font-size:1.3rem;color:#fff;line-height:4.5rem;text-indent:1.6rem;'>本月活动</h2>
-                                    <a class='per_activity act'><img src='http://m.dracne.net/images/hdx1.jpg' width='100%'></a>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <dl class='ban'>
-                    <div id='two_xg1' class='two_xg1'>
-                        <div class='two_xg_nr1'>
-                            <ul><li><a href='https://rgbk2.kuaishang.cn/bs/im.htm?cas=59154___718795&fi=70539&ism=1&ref=m.dracne.cn'><img src='http://m.dracne.net/images/banner_01.jpg'/></a></li></ul>
-                            <ul><li><a href='https://rgbk2.kuaishang.cn/bs/im.htm?cas=59154___718795&fi=70539&ism=1&ref=m.dracne.cn'><img src='http://m.dracne.net/images/banner_02.jpg'/></a></li></ul>
-                            <ul><li><a href='https://rgbk2.kuaishang.cn/bs/im.htm?cas=59154___718795&fi=70539&ism=1&ref=m.dracne.cn'><img src='http://m.dracne.net/images/banner_03.jpg'/></a></li></ul>
-                            <ul><li><a href='https://rgbk2.kuaishang.cn/bs/im.htm?cas=59154___718795&fi=70539&ism=1&ref=m.dracne.cn'><img src='http://m.dracne.net/images/banner_04.jpg'/></a></li></ul>
-                        </div>
-                        <div class='two_xg_tit1'>
-                            <ul>
-                                <li></li>
-                                <li></li>
-                                <li></li>
-                                <li></li>
-                            </ul>
-                        </div>
-                    </div>
-                <script type='text/javascript'>
-                    phonecommon({
-                        id: '#two_xg1',
-                        titkj: '.two_xg_tit1 li',
-                        contkj: '.two_xg_nr1',
-                        xiaoguo: 'leftauto',
-                        autoplay: true,
-                        cxtime: 200,
-                        jgtime: 3000,
-                        morenindex: 0,
-                        tjclass: 'hover',
-                        autopage: false,
-                        leftarr: '.xiaoguo2prev',
-                        rightarr: '.xiaoguo2next',
-                        showpage: '.showpage',
-                        arrauto: 'false',
-                        startfn: null,
-                        endfn: null,
-                        changeload: null
-                    });
-                </script>
-                </dl>                
-               """
-
-            # 结束HTML
-            tailHtml = """
-                    <dl class="dy">
-                        <h3>连锁分布<span>The distribution chain</span></h3>
-                        <div class="dy1"><img src="http://m.dracne.net/images/imgx29.jpg"></div>
-                        <div class="dy2"><a href="http://m.dracne.net/ls.html">连锁详情</a><a href="https://rgbk2.kuaishang.cn/bs/im.htm?cas=59154___718795&fi=70539&ism=1&ref=m.dracne.cn" class="a1">预约附近门店</a></div>
-                    </dl>
-                    <script language="javascript" type="text/javascript" src="http://m.dracne.net/images/footer.js"></script>
-                    </body>
-                    </html>
-                        """
-
-            HTML = headHTML + innerHtml + tailHtml
-
-            # return render(request, 'index.html', {
-            #     'my_message': objs.DomainNameText
-            # })
+            data = {
+                'o_id':o_id,
+                'title':  resultData.get('title'),
+                'summary':resultData.get('summary'),
+                'content':resultData.get('content')
+            }
+            url = 'http://xiongzhanghao.zhugeyingxiao.com:8003/api/articleScriptOper/?user_id=44&timestamp=1542788198850&rand_str=86b24054d91240d9559e369296af06cd'
+            ret = requests.post(url, data=data)
+            json_data = ret.json()
+            if json_data.get('return_path'):
+                pass
 
             huilian = ''
+
             resultData = {
                 'huilian': huilian,
                 'aid': 0,

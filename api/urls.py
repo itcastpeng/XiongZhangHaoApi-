@@ -35,6 +35,7 @@ urlpatterns = [
     # 二级域名
     url(r'SearchSecondary/(?P<article>\w+).html$', generateThePage.SearchSecondaryDomainName),  # 查询二级域名
     url(r'specialUserGenerateThePage$', generateThePage.specialUserGenerateThePage),  # 生成二级域名
+    url(r'FTPuploadHtml', generateThePage.FTPuploadHtml),                             # FTP上传html
 
     # 获取栏目及cookie
     url(r'userGetCookieOper/(?P<oper_type>\w+)$', getCookieAndColumn.userGetCookieOper),
