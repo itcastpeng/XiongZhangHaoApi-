@@ -31,7 +31,7 @@ def article(request):
             start_time = request.GET.get('start_time')
             field_dict = {
                 'id': '',
-                'title': '__contains',
+                # 'title': '__contains',
                 'create_date': '',
                 'summary': '__contains',
                 'content': '__contains',
@@ -40,6 +40,9 @@ def article(request):
             }
             q = conditionCom(request, field_dict)
             print('start_time============>',start_time)
+            title = request.GET.get('title')
+            if title:
+                q.add(Q(title__contains=title), Q.AND)
             if start_time:
                 start_time = json.loads(start_time)
                 stop_time = start_time[1]

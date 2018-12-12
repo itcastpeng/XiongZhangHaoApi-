@@ -28,7 +28,7 @@ def user(request):
         field_dict = {
             'id': '',
             'role_id': '',
-            'username': '__contains',
+            # 'username': '__contains',
             'create_date': '',
             'oper_user__username': '__contains',
             'is_debug': 'bool',
@@ -38,7 +38,9 @@ def user(request):
         if role_id:
             q.add(Q(role_id=role_id), Q.AND)
         print('q -->', q)
-
+        username = request.GET.get('username')
+        if username:
+            q.add(Q(username__contains=username), Q.AND)
         user_objs = models.xzh_userprofile.objects.select_related('role').filter(q)
         if userObj.role_id == 64:
             objs = user_objs.order_by(order)
