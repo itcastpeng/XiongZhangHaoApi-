@@ -135,7 +135,6 @@ def user_billing_oper(request, oper_type, o_id):
                             stop_time=stop_time,
                             create_user_id=user_id,
                             note_text=note_text,
-
                         )
                         response.code = 200
                         response.msg = '修改成功'
