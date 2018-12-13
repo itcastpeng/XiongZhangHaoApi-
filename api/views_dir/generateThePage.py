@@ -140,7 +140,16 @@ def FTPuploadHtml(request):
         summary = request.POST.get('summary')
         content = request.POST.get('content')
         o_id = request.POST.get('o_id')
-        print('o_id===> ', o_id, title )
+
+        str_num = str(o_id) + str(int(time.time()))
+        fileName = str_num + '.html'  # 文件名
+        return_path = 'http://m.dracne.net/xiongzhanghao/{}'.format(fileName) # 回链
+
+        article_objs = models.xzh_article.objects.filter(id=o_id)
+        article_obj = article_objs[0]
+        appid = article_obj.belongToUser.website_backstage_appid
+        create_time = article_obj.create_date.strftime('%Y-%m-%dT%H:%M:%S')
+
         innerHtml = """                       
                    <dl class="jj">
                    <h3 style="text-align: center">{title}</h3>
@@ -165,19 +174,36 @@ def FTPuploadHtml(request):
                   <script type="text/javascript" src="http://m.dracne.net/images/tj.js"></script>
                   <meta http-equiv="Cache-Control" content="no-cache"/>
                   <meta name="viewport" content="width=device-width, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no"/>
-                  <script type="application/ld+json">
-                      {
-                          "@context": "https://ziyuan.baidu.com/contexts/cambrian.jsonld",
-                          "@id": "http://m.dracne.net/zj.html",
-                          "appid": "1619456659599101",
-                          "title": "Dr.acne痘院长团队",
-                          "pubDate": "2018-12-01T08:00:01"
-                      }
-                  </script>
-                  <script src="//msite.baidu.com/sdk/c.js?appid=1619456659599101"></script>
-                  </head>
-                  <body>
-                
+                  """
+
+        data = """ "@context": "https://ziyuan.baidu.com/contexts/cambrian.jsonld",
+                               "@id": "{return_path}",
+                               "appid": "{appid}",
+                               "title": "{title}",                        
+                               "pubDate": "{create_time}"
+                               """.format(
+                                return_path=return_path,
+                                appid=appid,
+                                title=title,
+                                create_time=create_time
+                            )
+        innerData = """            
+                <script type="application/ld+json">
+                    {
+                        %s
+                    }                                                         
+                   """ % data
+
+        # 熊掌号代码
+        xiongzhanghaoHtml = """             
+                </script>   
+                <link rel="canonical" href="{back_url}"/>             
+                <script src="//msite.baidu.com/sdk/c.js?appid={appid}"></script>                
+              </head>
+                     """.format(appid=appid, back_url=return_path)
+
+        # body代码
+        bodyHtml = """    <body>
                   <div id='header'>
                       <div id='header_memu' style='display: block;'>
                           <div id='header_memu_left'><img src='http://m.dracne.net/images/imgx1.png'></div>
@@ -243,8 +269,7 @@ def FTPuploadHtml(request):
                           changeload: null
                       });
                   </script>
-                  </dl>                
-                     """
+                  </dl>          """
 
         # 结束HTML
         tailHtml = """
@@ -257,11 +282,13 @@ def FTPuploadHtml(request):
                         <p>24H电话咨询热线: 400-1099588                
                         <br/>地址：青年路与人民路交叉口美亚大厦1楼(必胜客旁边)</p>
                     </dl>
-                </body>
-                </html>
+                  </body>
+                </html>  
                 """
 
-        HTML = headHTML + innerHtml + tailHtml
+
+
+        HTML = headHTML + innerData + xiongzhanghaoHtml + bodyHtml + innerHtml + tailHtml
 
         host = '61.188.39.201'
         port = 1987
@@ -272,7 +299,7 @@ def FTPuploadHtml(request):
         F.connect(host, port)
         F.login(username, password)  # 登录
 
-        fileName = str(o_id) + str(int(time.time())) + '.html'
+
         path = 'statics/xiongzhanghao/{}'.format(fileName)
 
         print('path-----------> ',path)
@@ -290,7 +317,6 @@ def FTPuploadHtml(request):
         F.storbinary('STOR ' + fileName, ft, bufsize)  # 写入FTP文件
         ft.close()
 
-        return_path = 'http://m.dracne.net/xiongzhanghao/{}'.format(fileName)
         print('return_path============> ',return_path)
         response.code = 200
         response.msg = '上传成功'

@@ -52,12 +52,10 @@ def xiongzhanghao_index_num(now, appid, url_list):
             created_time = time.localtime(created_at)
             created_time = time.strftime("%m-%d", created_time)
             if now == created_time:
-                # print('-------------------------> ', now)
                 url = item.get('url')
                 title = item.get('title')
                 for i in url_list:
-                    if title == i['title'] or title in i['title']:
-                        # print('title===>',title)
+                    if title.strip() == i['title'].strip() or title.strip() in i['title'].strip():
                         index_num += 1
                         url_data.append(url)
     data = {
@@ -75,13 +73,13 @@ def user_statistical(request, oper_type):
     # appid = 1611292686377463
     if request.method == 'POST':
 
-        # 查询所有用户七天内数据
+        # 查询所有用户天内数据
         if oper_type == 'user_statistical':
             user_objs = models.xzh_userprofile.objects
             article_objs = models.xzh_article.objects
-
+            days_num = 2
             deletionTime = datetime.datetime.now()
-            for date_i in range(7):          # 获取近七天数据
+            for date_i in range(days_num):          # 获取近天数据
                 now = deletionTime.strftime('%Y-%m-%d')
                 start_now = deletionTime.strftime('%Y-%m-%d 00:00:00')    # 今天开始时间
                 stop_now = deletionTime.strftime('%Y-%m-%d 23:59:59')     # 当前时间(年月日 时分秒)
@@ -116,7 +114,6 @@ def user_statistical(request, oper_type):
                     data['public_num'] = articleObjs.count() # 该用户今日发布总数
 
                     url_list = []
-
                     for articleObj in articleObjs:
                         url_list.append({
                             'back_url':articleObj.back_url,
@@ -130,7 +127,6 @@ def user_statistical(request, oper_type):
                     data['index_show_url'] = data_list['url_data']       # 熊掌号主页 url
 
                     statisticsObjs = models.user_statistics.objects.filter(belong_user_id=userObj_id, create_date=now)   # 判断今天 该用户是否有数据 有则更新 无则创建
-                    print('data====================> ',data)
                     if statisticsObjs:
                         if int(data['fans_num']) == 0:  # 粉丝数量 如果为0则不更改粉丝数量
                             data = {
@@ -145,6 +141,7 @@ def user_statistical(request, oper_type):
                     else:
                         statisticsObjs.create(**data)
                         msg = '创建成功'
+                    # print('data=> ',data)
                     response.code = 200
                     response.msg = msg
                 deletionTime = (deletionTime - datetime.timedelta(days=1))  # 当前时间(年月日)
@@ -207,6 +204,7 @@ def user_statistical(request, oper_type):
                 userObj = models.xzh_userprofile.objects.filter(id=user_id)
                 if userObj:
                     userObj.update(xiong_zhang_hao_admin_select_time=None)
+
         else:
             response.code = 402
             response.msg = '请求异常'
@@ -392,6 +390,7 @@ def user_statistical(request, oper_type):
             else:
                 response.code = 301
                 response.msg = '无任务'
+
         else:
             response.code = 402
             response.msg = '请求异常'

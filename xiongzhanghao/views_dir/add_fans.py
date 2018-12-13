@@ -64,8 +64,8 @@ def fans(request):
                     'befor_add_fans':obj.befor_add_fans,    # 加粉前 粉丝数量
                     'after_add_fans':obj.after_add_fans,    # 加分后 粉丝数量
                     'add_fans_num':obj.add_fans_num,        # 添加的粉丝数量
-                    'xiongzhanghaoID':obj.xiongzhanghaoID,  # 熊掌号ID
-                    'search_keyword':obj.search_keyword,    # 熊掌号搜索关键词
+                    # 'xiongzhanghaoID':obj.xiongzhanghaoID,  # 熊掌号ID
+                    # 'search_keyword':obj.search_keyword,    # 熊掌号搜索关键词
                     'status':obj.get_status_display(),
                     'status_id':obj.status,
                     'create_date':obj.create_date.strftime('%Y-%m-%d'),
@@ -100,8 +100,8 @@ def fans_oper(request, oper_type, o_id):
             'oper_user_id': request.GET.get('user_id'),
             'belong_user_id': request.POST.get('belong_user_id'),
             'add_fans_num': request.POST.get('add_fans_num'),
-            'xiongzhanghaoID': request.POST.get('xiongzhanghaoID'),
-            'search_keyword': request.POST.get('search_keyword'),
+            # 'xiongzhanghaoID': request.POST.get('xiongzhanghaoID'),
+            # 'search_keyword': '',
         }
         if oper_type == "add":
             print('form_data----->',form_data)
@@ -126,10 +126,7 @@ def fans_oper(request, oper_type, o_id):
                 print("验证通过")
                 formObjs = forms_obj.cleaned_data
                 models.xzh_add_fans.objects.filter(id=o_id).update(
-                    belong_user_id=formObjs.get('belong_user_id'),
                     add_fans_num=formObjs.get('add_fans_num'),
-                    xiongzhanghaoID=formObjs.get('xiongzhanghaoID'),
-                    search_keyword=formObjs.get('search_keyword'),
                 )
                 response.code = 200
                 response.msg = "修改成功"
@@ -143,20 +140,16 @@ def fans_oper(request, oper_type, o_id):
 
         elif oper_type == "delete":
             # 删除 ID
-            if o_id == user_id:
-                response.code = 301
-                response.msg = '不能删除自己'
+            objs = models.xzh_add_fans.objects.filter(id=o_id)
+            if objs:
+                obj = objs[0]
+                obj.delete()
+                response.code = 200
+                response.msg = "删除成功"
             else:
-                objs = models.xzh_add_fans.objects.filter(id=o_id)
-                if objs:
-                    obj = objs[0]
-                    obj.delete()
-                    response.code = 200
-                    response.msg = "删除成功"
-                else:
-                    response.code = 302
-                    response.msg = '删除ID不存在'
-            response.data = {}
+                response.code = 302
+                response.msg = '删除ID不存在'
+        response.data = {}
 
     else:
         if oper_type == 'update_status':
@@ -225,7 +218,7 @@ def fans_oper(request, oper_type, o_id):
                 for addObj in addObjs:
                     yingjiafen_num += addObj.add_fans_num
                     print('addObj.create_date===========================> ',addObj.create_date)
-                    ws.cell(row=row, column=1, value="{}".format(addObj.search_keyword))
+                    ws.cell(row=row, column=1, value="{}".format(addObj.belong_user.fans_search_keyword))
                     ws.cell(row=row, column=2, value="{}".format(addObj.befor_add_fans))
                     ws.cell(row=row, column=3, value="{}".format(addObj.add_fans_num))
                     ws.cell(row=row, column=4, value="{}".format(addObj.after_add_fans))

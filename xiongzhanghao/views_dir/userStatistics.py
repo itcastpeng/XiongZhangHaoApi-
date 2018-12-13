@@ -60,7 +60,7 @@ def userStatistics(request):
             ret_data.append({
                 'id': obj.id,
                 'belong_user_id':obj.belong_user_id,    # 归属人ID
-                'belong_user':obj.belong_user.username, # 归属人名字
+                # 'belong_user':obj.belong_user.username, # 归属人名字
                 'public_num':obj.public_num,            # 发布数量
                 'fans_num':obj.fans_num,                # 粉丝数量
                 'zhishu':obj.zhishu,                    # 指数
@@ -114,12 +114,7 @@ def userStatistics_oper(request, oper_type, o_id):
             now = datetime.datetime.now()
             nowDate = now.strftime('%Y-%m-%d')
             stop = nowDate
-            if int(days) == 7:
-                time_Y_M_D = (now - datetime.timedelta(days=6)).strftime('%Y-%m-%d')
-            else:
-                time_Y_M_D = (now - datetime.timedelta(days=30)).strftime('%Y-%m-%d')
-            start = time_Y_M_D
-
+            start = (now - datetime.timedelta(days=int(days))).strftime('%Y-%m-%d')
             q = Q()
             id = request.POST.get('id')
             if id:

@@ -33,7 +33,7 @@ def addFansGetTask(request, oper_type):
             obj.status = 2
             response.code = 200
             response.msg = '查询成功'
-            response.data = obj.search_keyword
+            response.data = obj.belong_user.fans_search_keyword
             obj.save()
 
     # 加粉前后 查询 粉丝数量
@@ -58,7 +58,7 @@ def addFansGetTask(request, oper_type):
                 result = result[:-2]
                 if result:
                     html = json.loads(result).get('html')
-                    keyword = obj.search_keyword.split('熊掌号')[0].strip()
+                    keyword = obj.belong_user.fans_search_keyword.split('熊掌号')[0].strip()
                     print('html---------------------> ',html, keyword)
                     if html and keyword in html:
                         soup = BeautifulSoup(html, 'lxml')

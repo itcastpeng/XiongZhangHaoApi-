@@ -100,7 +100,12 @@ class AddForm(forms.Form):
             'required': "熊掌号后台密码不能为空"
         }
     )
-
+    fans_search_keyword = forms.CharField(
+        required=False,
+        error_messages={
+            'required': "粉丝搜索关键词类型错误"
+        }
+    )
     # 查询名称是否存在
     def clean_username(self):
         username = self.data['username']
@@ -247,6 +252,12 @@ class UpdateForm(forms.Form):
         required=True,
         error_messages={
             'required': "熊掌号后台密码不能为空"
+        }
+    )
+    fans_search_keyword = forms.CharField(
+        required=False,
+        error_messages={
+            'required': "粉丝搜索关键词类型错误"
         }
     )
 

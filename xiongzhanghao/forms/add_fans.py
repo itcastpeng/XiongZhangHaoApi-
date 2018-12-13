@@ -28,19 +28,19 @@ class AddForm(forms.Form):
         }
     )
 
-    xiongzhanghaoID = forms.CharField(
-        required=True,
-        error_messages={
-            'required': "熊掌号ID不能为空"
-        }
-    )
-
-    search_keyword = forms.CharField(
-        required=True,
-        error_messages={
-            'required': "搜索关键词不能为空"
-        }
-    )
+    # xiongzhanghaoID = forms.CharField(
+    #     required=True,
+    #     error_messages={
+    #         'required': "熊掌号ID不能为空"
+    #     }
+    # )
+    #
+    # search_keyword = forms.CharField(
+    #     required=True,
+    #     error_messages={
+    #         'required': "搜索关键词不能为空"
+    #     }
+    # )
 
     def clean_belong_user_id(self):
         belong_user_id = self.data.get('belong_user_id')
@@ -70,12 +70,12 @@ class UpdateForm(forms.Form):
         }
     )
 
-    belong_user_id = forms.IntegerField(
-        required=False,
-        error_messages={
-            'required': "用户名不能为空"
-        }
-    )
+    # belong_user_id = forms.IntegerField(
+    #     required=False,
+    #     error_messages={
+    #         'required': "用户名不能为空"
+    #     }
+    # )
 
     add_fans_num = forms.IntegerField(
         required=True,
@@ -84,12 +84,12 @@ class UpdateForm(forms.Form):
         }
     )
 
-    search_keyword = forms.CharField(
-        required=True,
-        error_messages={
-            'required': "搜索关键词不能为空"
-        }
-    )
+    # search_keyword = forms.CharField(
+    #     required=True,
+    #     error_messages={
+    #         'required': "搜索关键词不能为空"
+    #     }
+    # )
     def clean_belong_user_id(self):
         belong_user_id = self.data.get('belong_user_id')
         objs = models.xzh_userprofile.objects.filter(id=belong_user_id)

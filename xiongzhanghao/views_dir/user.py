@@ -95,6 +95,7 @@ def user(request):
                 'secondaryDomainName': obj.secondaryDomainName,
                 'xiong_zhang_hao_user': obj.xiong_zhang_hao_user,
                 'xiong_zhang_hao_pwd': obj.xiong_zhang_hao_pwd,
+                'fans_search_keyword': obj.fans_search_keyword,
                 'index':index,
             })
             index += 1
@@ -139,7 +140,7 @@ def user_oper(request, oper_type, o_id):
                 'secondaryDomainName': request.POST.get('secondaryDomainName'),
                 'xiong_zhang_hao_user': request.POST.get('xiong_zhang_hao_user'),
                 'xiong_zhang_hao_pwd': request.POST.get('xiong_zhang_hao_pwd'),
-                # 'xiongzhanghaoID': request.POST.get('xiongzhanghaoID'),
+                'fans_search_keyword': request.POST.get('fans_search_keyword'),
             }
             print('form_data----->',form_data)
             #  创建 form验证 实例（参数默认转成字典）
@@ -182,6 +183,7 @@ def user_oper(request, oper_type, o_id):
                 'xiongZhangHaoIndex': request.POST.get('xiongZhangHaoIndex'),
                 'xiong_zhang_hao_user': request.POST.get('xiong_zhang_hao_user'),
                 'xiong_zhang_hao_pwd': request.POST.get('xiong_zhang_hao_pwd'),
+                'fans_search_keyword': request.POST.get('fans_search_keyword'),
             }
             flag = False
             if int(form_data.get('role_id')) == 64 or int(form_data.get('role_id')) ==  66:
@@ -211,7 +213,7 @@ def user_oper(request, oper_type, o_id):
                         xiongZhangHaoIndex = forms_obj.cleaned_data['xiongZhangHaoIndex']
                         xiong_zhang_hao_pwd = forms_obj.cleaned_data['xiong_zhang_hao_pwd']
                         xiong_zhang_hao_user = forms_obj.cleaned_data['xiong_zhang_hao_user']
-                        # xiongzhanghaoID = forms_obj.cleaned_data['xiongzhanghaoID']
+                        fans_search_keyword = forms_obj.cleaned_data['fans_search_keyword']
                         print('website_backstage_token, website_backstage_appid---------------> ',website_backstage_token, website_backstage_appid)
                         #  查询数据库  用户id
                         objs.update(
@@ -226,6 +228,7 @@ def user_oper(request, oper_type, o_id):
                             xiongZhangHaoIndex=xiongZhangHaoIndex,
                             xiong_zhang_hao_user=xiong_zhang_hao_user,
                             xiong_zhang_hao_pwd=xiong_zhang_hao_pwd,
+                            fans_search_keyword=fans_search_keyword,
                         )
                     else:
                         objs.update(

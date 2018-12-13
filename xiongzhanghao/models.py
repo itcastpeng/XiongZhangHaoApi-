@@ -67,6 +67,7 @@ class xzh_userprofile(models.Model):
     xiong_zhang_hao_user = models.CharField(verbose_name='熊掌号用户名', max_length=32, null=True, blank=True)
     xiong_zhang_hao_pwd = models.CharField(verbose_name='熊掌号密码', max_length=32, null=True, blank=True)
     xiong_zhang_hao_admin_select_time = models.DateTimeField(verbose_name='熊掌号后台查询时间', null=True, blank=True)   # 间隔时间
+    fans_search_keyword = models.CharField(verbose_name='搜索关键词', max_length=64, null=True, blank=True)
 
 # 文章表
 class xzh_article(models.Model):
@@ -150,8 +151,8 @@ class xzh_add_fans(models.Model):
     after_add_fans = models.IntegerField(verbose_name='加粉后 粉丝数量', null=True, blank=True)
     add_fans_num = models.IntegerField(verbose_name='加粉数量', default=1)
     # xiongzhanghao_url = models.CharField(verbose_name='熊掌号官微', max_length=128, null=True, blank=True)
-    xiongzhanghaoID = models.CharField(verbose_name='熊掌号官微id', max_length=128, null=True, blank=True)
-    search_keyword = models.CharField(verbose_name='搜索关键词', max_length=64, null=True, blank=True)
+    # xiongzhanghaoID = models.CharField(verbose_name='熊掌号官微id', max_length=128, null=True, blank=True)
+    # search_keyword = models.CharField(verbose_name='搜索关键词', max_length=64, null=True, blank=True)
     create_date = models.DateField(verbose_name="创建时间", auto_now_add=True)
     taskTimeBetween = models.DateTimeField(verbose_name="获取任务间隔", null=True, blank=True)
     status_choices = (
