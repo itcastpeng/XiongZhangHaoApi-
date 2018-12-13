@@ -99,6 +99,7 @@ def user_billing_oper(request, oper_type, o_id):
                 start_time = objForm.get('start_time')
                 stop_time = objForm.get('stop_time')
                 belong_user_id = objForm.get('belong_user_id')
+                note_text = objForm.get('note_text')
 
                 start_date_time = start_time
                 billing_cycle_id = billing_cycle
@@ -120,7 +121,8 @@ def user_billing_oper(request, oper_type, o_id):
                             billing_cycle=billing_cycle_id,
                             start_time=start_date_time,
                             stop_time=stop_time,
-                            create_user_id=user_id
+                            create_user_id=user_id,
+                            note_text=note_text
                         )
                         response.code = 200
                         response.msg = '创建成功'
@@ -131,7 +133,8 @@ def user_billing_oper(request, oper_type, o_id):
                             billing_cycle=billing_cycle_id,
                             start_time=start_date_time,
                             stop_time=stop_time,
-                            create_user_id=user_id
+                            create_user_id=user_id,
+                            note_text=note_text
                         )
                         response.code = 200
                         response.msg = '修改成功'

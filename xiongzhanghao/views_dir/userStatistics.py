@@ -24,7 +24,7 @@ def userStatistics(request):
         length = forms_obj.cleaned_data['length']
         print('forms_obj.cleaned_data -->', forms_obj.cleaned_data)
         order = request.GET.get('order', '-create_date')
-        days = request.GET.get('days', 7)
+        days = request.GET.get('days', 30)
         field_dict = {
             'id': '',
             'username': '__contains',
