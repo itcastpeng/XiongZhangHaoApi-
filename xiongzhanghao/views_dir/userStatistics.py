@@ -57,6 +57,9 @@ def userStatistics(request):
 
         for obj in objs:
             #  将查询出来的数据 加入列表
+            create_date = obj.create_date.strftime('%Y-%m-%d')
+            if obj.zhoumo:
+                create_date = create_date + ' ' + '(周末)'
             ret_data.append({
                 'id': obj.id,
                 'belong_user_id':obj.belong_user_id,    # 归属人ID
@@ -72,7 +75,7 @@ def userStatistics(request):
                 # 'index_show_url':obj.index_show_url,  # 熊掌号主页展示url
                 'admin_shoulu':obj.admin_shoulu,        # 熊掌号后台收录条数
                 # 'admin_shoulu_url':obj.admin_shoulu_url,  # 熊掌号后台收录url
-                'create_date':obj.create_date.strftime('%Y-%m-%d'), # 创建时间
+                'create_date': create_date,# 创建时间
             })
 
         userObj = models.user_statistics.objects.values('belong_user_id', 'belong_user__username').distinct()  # 查询所有用户
@@ -135,7 +138,7 @@ def userStatistics_oper(request, oper_type, o_id):
             ws.cell(row=3, column=8, value="展现量").font = Font('宋体', size=11, b=True)
 
             # print('设置列宽')
-            ws.column_dimensions['A'].width = 15
+            ws.column_dimensions['A'].width = 20
             ws.column_dimensions['B'].width = 15
             ws.column_dimensions['C'].width = 15
             ws.column_dimensions['D'].width = 15
@@ -165,6 +168,10 @@ def userStatistics_oper(request, oper_type, o_id):
             ws.cell(row=1, column=2, value="{}".format(obj.belong_user.username)).font = Font('宋体', size=11, b=True)
 
             for obj in objs:
+                create_date = obj.create_date
+                if obj.zhoumo:
+                    create_date = str(create_date) + ' ' + '(周末)'
+
                 zhanxianliang = obj.zhanxianliang
                 dianjiliang = obj.dianjiliang
                 if obj.create_date.strftime('%Y-%m-%d') == now:
@@ -185,7 +192,7 @@ def userStatistics_oper(request, oper_type, o_id):
                 ws['G' + str(row)].alignment = Alignment(horizontal='center', vertical='center')
                 ws['H' + str(row)].alignment = Alignment(horizontal='center', vertical='center')
 
-                ws.cell(row=row, column=1, value="{}".format(obj.create_date)).font = Font('宋体', size=10, b=True)
+                ws.cell(row=row, column=1, value="{}".format(create_date)).font = Font('宋体', size=10, b=True)
                 ws.cell(row=row, column=2, value="{}".format(obj.zhishu)).font = Font('宋体', size=10, b=True)
                 ws.cell(row=row, column=3, value="{}".format(obj.fans_num)).font = Font('宋体', size=10, b=True)
                 ws.cell(row=row, column=4, value="{}".format(obj.public_num)).font = Font('宋体', size=10, b=True)

@@ -19,3 +19,10 @@ l = url.split('/')[-1]
 
 
 print(l)
+
+import datetime
+d = datetime.datetime.now()
+
+deletionTime = (d + datetime.timedelta(days=3))
+
+print(deletionTime.weekday())

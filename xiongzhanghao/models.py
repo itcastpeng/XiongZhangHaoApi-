@@ -188,6 +188,8 @@ class user_statistics(models.Model):
     admin_shoulu = models.IntegerField(verbose_name='熊掌号后后台收录', default=0)                 # 熊掌号后台 收录条数
     admin_shoulu_url = models.TextField(verbose_name='熊掌号后台收录详情', null=True, blank=True)  # 熊掌号后台 收录详情
 
+    zhoumo = models.BooleanField(verbose_name='是否为周末', default=False)
+
 # 用户 计费
 class user_billing(models.Model):
     create_date = models.DateField(verbose_name="创建时间", auto_now_add=True)

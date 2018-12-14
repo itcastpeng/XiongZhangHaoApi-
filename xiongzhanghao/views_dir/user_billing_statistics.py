@@ -42,7 +42,7 @@ def user_billing(request):
                 'id': obj.id,
                 'belong_user_id':obj.belong_user_id,    # 归属人ID
                 'belong_user':obj.belong_user.username,
-                'create_date': obj.create_date.strftime('%Y-%m-%d %H:%M:%S'),
+                'create_date': obj.create_date.strftime('%Y-%m-%d'),
                 'create_user_id': obj.create_user_id,
                 'create_user': obj.create_user.username,
                 'start_time': obj.start_time,
