@@ -89,7 +89,7 @@ def user_billing_oper(request, oper_type, o_id):
             return JsonResponse(response.__dict__)
 
         # 添加
-        if oper_type == 'add' or oper_type == 'update':
+        if oper_type == 'add':
             forms_obj = AddForm(form_data)
             if forms_obj.is_valid():
                 print('验证成功')
@@ -127,17 +127,7 @@ def user_billing_oper(request, oper_type, o_id):
                         response.code = 200
                         response.msg = '创建成功'
 
-                    if oper_type == 'update':
-                        models.user_billing.objects.filter(id=o_id).update(
-                            belong_user_id=belong_user_id,
-                            billing_cycle=billing_cycle_id,
-                            start_time=start_date_time,
-                            stop_time=stop_time,
-                            create_user_id=user_id,
-                            note_text=note_text,
-                        )
-                        response.code = 200
-                        response.msg = '修改成功'
+
                 else:
                     response.code = 301
                     response.msg = '请选择一项周期'
@@ -145,6 +135,16 @@ def user_billing_oper(request, oper_type, o_id):
                 response.code = 301
                 response.msg = json.loads(forms_obj.errors.as_json())
 
+        if oper_type == 'update':
+            if request.POST.get('note_text'):
+                models.user_billing.objects.filter(id=o_id).update(
+                    note_text=request.POST.get('note_text'),
+                )
+                response.code = 200
+                response.msg = '修改成功'
+            else:
+                response.code = 301
+                response.msg = '修改失败'
         # 删除
         elif oper_type == 'delete':
             userObj = models.xzh_userprofile.objects.filter(id=user_id)

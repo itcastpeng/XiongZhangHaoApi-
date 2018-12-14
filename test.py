@@ -10,13 +10,13 @@ from backend.lianzhongDama import LianZhongDama
 
 
 
-data = {
-    'dosubmit':'',
-    'username':'Ymexiongzhanghao',
-    'password':'Yme@evercare20181126',
-    'code':''
-
-}
+# data = {
+#     'dosubmit':'',
+#     'username':'Ymexiongzhanghao',
+#     'password':'Yme@evercare20181126',
+#     'code':''
+#
+# }
 
 
 
@@ -421,15 +421,15 @@ import logging.config
 # logger.addHandler(handler)
 
 
-host = '61.188.39.201'
-port = 1987
-username = 'kmxzh'
-password = 'kmdyzXZH123'
-file = '1.txt'
+# host = '61.188.39.201'
+# port = 1987
+# username = 'kmxzh'
+# password = 'kmdyzXZH123'
+# file = '1.txt'
 
-f = FTP()  # 实例化FTP对象
-f.connect(host, port)
-f.login(username, password)  # 登录
+# f = FTP()  # 实例化FTP对象
+# f.connect(host, port)
+# f.login(username, password)  # 登录
 
 # pwd_path = f.pwd()
 # print("FTP当前路径:", pwd_path)
@@ -447,12 +447,23 @@ f.login(username, password)  # 登录
 
 
 
-file_remote = 'ftp_upload.txt'
-file_local = 'D:\\test_data\\ftp_upload.txt'
-bufsize = 1024  # 设置缓冲器大小
-fp = open(file_local, 'rb')
-f.storbinary('STOR ' + file_remote, fp, bufsize)
-fp.close()
+# file_remote = 'ftp_upload.txt'
+# file_local = 'D:\\test_data\\ftp_upload.txt'
+# bufsize = 1024  # 设置缓冲器大小
+# fp = open(file_local, 'rb')
+# f.storbinary('STOR ' + file_remote, fp, bufsize)
+# fp.close()
 
-
-
+data = {
+    'keywords': '宁波男科有问必答',
+    'url': 'https://m.120ask.com/askg/mip_detail/29325308',
+    'keywords_id': 12602,
+    'user_id': 45,
+    'rank': 1
+}
+# rand_str': '70082f1db65defc85072f83972d7fb84', 'timestamp': '1544750106540', 'user_id': 44
+import requests, json
+url = 'http://xiongzhanghao.zhugeyingxiao.com:8003/api/keyword_article_back_url/judgeLink?user_id=44&timestamp=1544750106540&rand_str=70082f1db65defc85072f83972d7fb84'
+ret= requests.post(url)
+json_data = ret.json().get('data')
+print(json_data)
