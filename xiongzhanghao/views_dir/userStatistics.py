@@ -13,7 +13,7 @@ from django.db.models import Q
 
 
 
-# cerf  token验证 用户展示模块
+# cerf  token验证 用户统计
 @csrf_exempt
 @account.is_token(models.xzh_userprofile)
 def userStatistics(request):
@@ -31,69 +31,83 @@ def userStatistics(request):
             'create_date': '__contains',
             'belong_user_id': '',
         }
-        q = conditionCom(request, field_dict)
+        user_id = request.GET.get('user_id')
+        print('user_id-------------------> ', user_id)
+        userObjs = models.xzh_userprofile.objects.filter(id=user_id)
+        if userObjs:
+            userObj = userObjs[0]
+            userObjRole = userObj.role_id
 
-        now = datetime.datetime.now()
-        nowDate = now.strftime('%Y-%m-%d')
-        if days:
-            stop = nowDate
-            if int(days) == 7:
-                time_Y_M_D = (now - datetime.timedelta(days=6)).strftime('%Y-%m-%d')
-            else:
-                time_Y_M_D = (now - datetime.timedelta(days=30)).strftime('%Y-%m-%d')
-            start = time_Y_M_D
-            q.add(Q(create_date__lte=stop) & Q(create_date__gte=start), Q.AND)
-        print('q -->', q)
-        objs = models.user_statistics.objects.select_related('belong_user').filter(q).order_by(order)
-        count = objs.count()
+            q = conditionCom(request, field_dict)
 
-        if length != 0:
-            start_line = (current_page - 1) * length
-            stop_line = start_line + length
-            objs = objs[start_line: stop_line]
+            now = datetime.datetime.now()
+            nowDate = now.strftime('%Y-%m-%d')
+            if days:
+                stop = nowDate
+                if int(days) == 7:
+                    time_Y_M_D = (now - datetime.timedelta(days=6)).strftime('%Y-%m-%d')
+                else:
+                    time_Y_M_D = (now - datetime.timedelta(days=30)).strftime('%Y-%m-%d')
+                start = time_Y_M_D
+                q.add(Q(create_date__lte=stop) & Q(create_date__gte=start), Q.AND)
+            print('q -->', q)
+            if int(userObjRole) == 61:
+                q.add(Q(belong_user_id=userObj.id), Q.AND)
+            objs = models.user_statistics.objects.select_related('belong_user').filter(q).order_by(order)
+            count = objs.count()
 
-        # 返回的数据
-        ret_data = []
+            if length != 0:
+                start_line = (current_page - 1) * length
+                stop_line = start_line + length
+                objs = objs[start_line: stop_line]
 
-        for obj in objs:
-            #  将查询出来的数据 加入列表
-            create_date = obj.create_date.strftime('%Y-%m-%d')
-            if obj.zhoumo:
-                create_date = create_date + ' ' + '(周末)'
-            ret_data.append({
-                'id': obj.id,
-                'belong_user_id':obj.belong_user_id,    # 归属人ID
-                # 'belong_user':obj.belong_user.username, # 归属人名字
-                'public_num':obj.public_num,            # 发布数量
-                'fans_num':obj.fans_num,                # 粉丝数量
-                'zhishu':obj.zhishu,                    # 指数
-                'zhanxianliang':obj.zhanxianliang,      # 展现量
-                'dianjiliang':obj.dianjiliang,          # 点击量
-                'baidu_shoulu':obj.baidu_shoulu,        # 百度收录数量
-                # 'baidu_shoulu_url':obj.baidu_shoulu_url,  # 百度收录链接
-                'index_show':obj.index_show,            # 熊掌号主页展示条数 （主页收录）
-                # 'index_show_url':obj.index_show_url,  # 熊掌号主页展示url
-                'admin_shoulu':obj.admin_shoulu,        # 熊掌号后台收录条数
-                # 'admin_shoulu_url':obj.admin_shoulu_url,  # 熊掌号后台收录url
-                'create_date': create_date,# 创建时间
-            })
+            # 返回的数据
+            ret_data = []
 
-        userObj = models.user_statistics.objects.values('belong_user_id', 'belong_user__username').distinct()  # 查询所有用户
-        userList = []
-        for i in userObj:
-            userList.append({
-                'id':i.get('belong_user_id'),
-                'name':i.get('belong_user__username')
-            })
-        #  查询成功 返回200 状态码
-        response.code = 200
-        response.msg = '查询成功'
-        response.data = {
-            'ret_data': ret_data,
-            'count':count,
-            'userList':userList
-        }
+            for obj in objs:
+                #  将查询出来的数据 加入列表
+                create_date = obj.create_date.strftime('%Y-%m-%d')
+                if obj.zhoumo:
+                    create_date = create_date + ' ' + '(周末)'
+                ret_data.append({
+                    'id': obj.id,
+                    'belong_user_id':obj.belong_user_id,    # 归属人ID
+                    # 'belong_user':obj.belong_user.username, # 归属人名字
+                    'public_num':obj.public_num,            # 发布数量
+                    'fans_num':obj.fans_num,                # 粉丝数量
+                    'zhishu':obj.zhishu,                    # 指数
+                    'zhanxianliang':obj.zhanxianliang,      # 展现量
+                    'dianjiliang':obj.dianjiliang,          # 点击量
+                    'baidu_shoulu':obj.baidu_shoulu,        # 百度收录数量
+                    # 'baidu_shoulu_url':obj.baidu_shoulu_url,  # 百度收录链接
+                    'index_show':obj.index_show,            # 熊掌号主页展示条数 （主页收录）
+                    # 'index_show_url':obj.index_show_url,  # 熊掌号主页展示url
+                    'admin_shoulu':obj.admin_shoulu,        # 熊掌号后台收录条数
+                    # 'admin_shoulu_url':obj.admin_shoulu_url,  # 熊掌号后台收录url
+                    'create_date': create_date,# 创建时间
+                })
 
+            user_obj = models.user_statistics.objects.values('belong_user_id', 'belong_user__username').distinct()  # 查询所有用户
+            if int(userObjRole) == 61:
+                user_obj = user_obj.filter(belong_user_id=userObj.id)
+
+            userList = []
+            for i in user_obj:
+                userList.append({
+                    'id':i.get('belong_user_id'),
+                    'name':i.get('belong_user__username')
+                })
+            #  查询成功 返回200 状态码
+            response.code = 200
+            response.msg = '查询成功'
+            response.data = {
+                'ret_data': ret_data,
+                'count':count,
+                'userList':userList
+            }
+        else:
+            response.code = 500
+            response.msg = '非法用户'
     else:
         response.code = 301
         response.data = json.loads(forms_obj.errors.as_json())

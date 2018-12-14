@@ -7,7 +7,7 @@ from xiongzhanghao.publicFunc.condition_com import conditionCom
 from xiongzhanghao.forms.user_billing import SelectForm, AddForm
 import json, requests, datetime, time
 
-# cerf  token验证 用户展示模块
+# cerf  token验证 用户计费
 @csrf_exempt
 @account.is_token(models.xzh_userprofile)
 def user_billing(request):

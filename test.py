@@ -454,16 +454,30 @@ import logging.config
 # f.storbinary('STOR ' + file_remote, fp, bufsize)
 # fp.close()
 
-data = {
-    'keywords': '宁波男科有问必答',
-    'url': 'https://m.120ask.com/askg/mip_detail/29325308',
-    'keywords_id': 12602,
-    'user_id': 45,
-    'rank': 1
+# data = {
+#     'keywords': '宁波男科有问必答',
+#     'url': 'https://m.120ask.com/askg/mip_detail/29325308',
+#     'keywords_id': 12602,
+#     'user_id': 45,
+#     'rank': 1
+# }
+# # rand_str': '70082f1db65defc85072f83972d7fb84', 'timestamp': '1544750106540', 'user_id': 44
+# import requests, json
+# url = 'http://xiongzhanghao.zhugeyingxiao.com:8003/api/keyword_article_back_url/judgeLink?user_id=44&timestamp=1544750106540&rand_str=70082f1db65defc85072f83972d7fb84'
+# ret= requests.post(url)
+# json_data = ret.json().get('data')
+# print(json_data)
+
+
+
+token = 'ac4d70746bfb1011d2e391b2c9a8562a'
+user_id = 42
+timestamp = str(int(time.time() * 1000))
+params = {
+    'user_id': user_id,
+    'rand_str': str_encrypt(timestamp + token),
+    'timestamp': timestamp,
 }
-# rand_str': '70082f1db65defc85072f83972d7fb84', 'timestamp': '1544750106540', 'user_id': 44
-import requests, json
-url = 'http://xiongzhanghao.zhugeyingxiao.com:8003/api/keyword_article_back_url/judgeLink?user_id=44&timestamp=1544750106540&rand_str=70082f1db65defc85072f83972d7fb84'
-ret= requests.post(url)
-json_data = ret.json().get('data')
-print(json_data)
+
+print(params)
+

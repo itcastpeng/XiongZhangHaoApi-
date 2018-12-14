@@ -52,9 +52,12 @@ def xiongzhanghao_index_num(now, appid, url_list):
             created_time = time.localtime(created_at)
             created_time = time.strftime("%m-%d", created_time)
             if now == created_time:
+                # print('item========> ',item)
                 url = item.get('url')
                 title = item.get('title')
+                # print('===url_list========> ',url_list)
                 for i in url_list:
+                    # print(i['title'], title)
                     if title.strip() == i['title'].strip() or title.strip() in i['title'].strip():
                         index_num += 1
                         url_data.append(url)
@@ -63,6 +66,7 @@ def xiongzhanghao_index_num(now, appid, url_list):
         'index_num':index_num,
         'url_data':url_data
     }
+    # print('data============> ',data)
     return data
 
 
@@ -77,12 +81,16 @@ def user_statistical(request, oper_type):
         if oper_type == 'user_statistical':
             user_objs = models.xzh_userprofile.objects
             article_objs = models.xzh_article.objects
-            days_num = 2
+            days_num = 10
             deletionTime = datetime.datetime.now()
             for date_i in range(days_num):          # 获取近天数据
+            # if 1+1==2:
                 now = deletionTime.strftime('%Y-%m-%d')
                 start_now = deletionTime.strftime('%Y-%m-%d 00:00:00')    # 今天开始时间
                 stop_now = deletionTime.strftime('%Y-%m-%d 23:59:59')     # 当前时间(年月日 时分秒)
+
+                # start_now = deletionTime.strftime('%Y-%m-10 00:00:00')    # 今天开始时间
+                # stop_now = deletionTime.strftime('%Y-%m-10 23:59:59')     # 当前时间(年月日 时分秒)
 
                 print('now---> ',now, start_now, stop_now)
                 userObjs = user_objs.filter(
@@ -94,6 +102,7 @@ def user_statistical(request, oper_type):
                 )  # 查询所有用户
                 for userObj in userObjs:  # 遍历所有用户
                     userObj_id = userObj.id
+                    # print('user-----------------> ', userObj_id)
                     appid = userObj.website_backstage_appid
                     data = {                    # 构造数据
                         'public_num': '',           # 发布数量
@@ -120,7 +129,8 @@ def user_statistical(request, oper_type):
                             'title':articleObj.title
                         })
                     # 传入now 月日%m-%d
-                    now_m_d = deletionTime.strftime('%m-%d')
+                    now_m_d = deletionTime.strftime('%m-10')
+                    # if int(userObj_id) == 65:
                     data_list = xiongzhanghao_index_num(now_m_d, appid, url_list)
                     data['fans_num'] = data_list['fans_num']
                     data['index_show'] = data_list['index_num']
