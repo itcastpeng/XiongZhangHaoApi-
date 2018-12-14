@@ -123,13 +123,12 @@ def keyword_article_back_url(request, oper_type):
         if oper_type == 'judgeLink':
             flag = False
             if user_id and rank and keywords_id and keywords and url:
-                articleObjs = models.xzh_article.objects.filter(belongToUser_id=user_id)
+                articleObjs = models.xzh_article.objects.filter(belongToUser_id=user_id, back_url__isnull=False)
                 for i in articleObjs:
                     back_url = i.back_url
-                    if back_url:
-                        if url in back_url or url == back_url or back_url in url:
-                            flag = True
-                            break
+                    if url in back_url or url == back_url or back_url in url:
+                        flag = True
+                        break
             response.code = 200
             response.msg = '查询成功'
             response.data = flag
