@@ -119,43 +119,43 @@ def fugai_baobiao_oper(request, oper_type, o_id):
         else:
             # 覆盖报表展开详情
             if oper_type == 'detail':
-                baobiao_obj = models.xzh_fugai_baobiao.objects.filter(id=o_id, user_id=user_id)
-                if baobiao_obj:
-                    objs = models.xzh_fugai_baobiao_detail.objects.filter(xzh_fugai_baobiao_id=o_id).order_by('-create_date')
+                # baobiao_obj = models.xzh_fugai_baobiao.objects.filter(id=o_id, user_id=user_id)
+                # if baobiao_obj:
+                objs = models.xzh_fugai_baobiao_detail.objects.filter(xzh_fugai_baobiao_id=o_id).order_by('-create_date')
 
-                    # 返回的数据
-                    ret_data = []
+                # 返回的数据
+                ret_data = []
 
-                    forms_obj = SelectForm(request.GET)
-                    if forms_obj.is_valid():
-                        current_page = forms_obj.cleaned_data['current_page']
-                        length = forms_obj.cleaned_data['length']
+                forms_obj = SelectForm(request.GET)
+                if forms_obj.is_valid():
+                    current_page = forms_obj.cleaned_data['current_page']
+                    length = forms_obj.cleaned_data['length']
 
-                        if length != 0:
-                            start_line = (current_page - 1) * length
-                            stop_line = start_line + length
-                            objs = objs[start_line: stop_line]
-                        data_count = objs.count()
-                        for obj in objs:
-                            
-                            #  将查询出来的数据 加入列表
-                            ret_data.append({
-                                'id': obj.id,
-                                'link_num': obj.link_num,
-                                'cover_num': obj.cover_num,
-                                'baobiao_url': obj.baobiao_url,
-                                'create_date': obj.create_date.strftime('%Y-%m-%d')
-                            })
-                        #  查询成功 返回200 状态码
-                        response.code = 200
-                        response.msg = '查询成功'
-                        response.data = {
-                            'ret_data': ret_data,
-                            'data_count':data_count,
-                    }
-                else:
-                    response.code = 301
-                    response.msg = '数据异常'
+                    if length != 0:
+                        start_line = (current_page - 1) * length
+                        stop_line = start_line + length
+                        objs = objs[start_line: stop_line]
+                    data_count = objs.count()
+                    for obj in objs:
+
+                        #  将查询出来的数据 加入列表
+                        ret_data.append({
+                            'id': obj.id,
+                            'link_num': obj.link_num,
+                            'cover_num': obj.cover_num,
+                            'baobiao_url': obj.baobiao_url,
+                            'create_date': obj.create_date.strftime('%Y-%m-%d')
+                        })
+                    #  查询成功 返回200 状态码
+                    response.code = 200
+                    response.msg = '查询成功'
+                    response.data = {
+                        'ret_data': ret_data,
+                        'data_count':data_count,
+                }
+                # else:
+                #     response.code = 301
+                #     response.msg = '数据异常'
             # 停查
             elif oper_type == 'stopCheck':
                 if int(userObjRole) != 61:
