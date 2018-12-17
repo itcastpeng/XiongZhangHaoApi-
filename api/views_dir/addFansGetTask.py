@@ -40,7 +40,7 @@ def addFansGetTask(request, oper_type):
     elif oper_type == 'queryFollowersNum':
         objs = models.xzh_add_fans.objects.all().exclude(status__in=[4,5])
         for obj in objs:
-            appid = obj.xiongzhanghaoID
+            appid = obj.belong_user.website_backstage_appid
             if appid:
                 requests_obj = requests.session()
                 url = 'https://author.baidu.com/home/{}?from=dusite_sresults'.format(appid)

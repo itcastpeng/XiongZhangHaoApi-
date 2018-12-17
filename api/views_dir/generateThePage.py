@@ -153,11 +153,11 @@ def FTPuploadHtml(request):
         innerHtml = """                       
                    <dl class="jj">
                    <h3 style="text-align: center">{title}</h3>
-                          <div style="padding:30px 30px 0px 30px"><p>{summary}</p></div> 
+                               
                           <div class="jj2"><p>{content}</p></div>
                   </dl>
-                  """.format(title=title, summary=summary, content=content)
-
+                  """.format(title=title, content=content)
+        #     <div style="padding:30px 30px 0px 30px"><p>{summary}</p></div>
         # 开始HTML
         headHTML = """
                   <!doctype html>
