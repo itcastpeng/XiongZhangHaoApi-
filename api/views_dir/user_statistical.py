@@ -242,7 +242,7 @@ def user_statistical(request, oper_type):
             q.add(Q(belongToUser__role_id=61) & Q(belongToUser__website_backstage_appid__isnull=False), Q.AND)
             print('q===> ',q)
             articleObjs = models.xzh_article.objects.filter(q)
-            if articleObjs:
+            if articleObjs and articleObjs[0].belongToUser.xiong_zhang_hao_pwd:
                 for articleObj in articleObjs:
                     articleObj.select_tongji_shoulu_time = time_Y_M_D
                     articleObj.save()

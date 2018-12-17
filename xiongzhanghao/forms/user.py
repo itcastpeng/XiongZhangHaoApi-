@@ -76,9 +76,9 @@ class AddForm(forms.Form):
         }
     )
     xiongZhangHaoIndex = forms.CharField(
-        required=True,
+        required=False,
         error_messages={
-            'required': "熊掌号主页不能为空"
+            'required': "熊掌号主页类型错误"
         }
     )
     secondaryDomainName = forms.CharField(
@@ -104,6 +104,12 @@ class AddForm(forms.Form):
         required=False,
         error_messages={
             'required': "粉丝搜索关键词类型错误"
+        }
+    )
+    guanwang = forms.CharField(
+        required=False,
+        error_messages={
+            'required': "官网类型错误"
         }
     )
     # 查询名称是否存在
@@ -237,9 +243,9 @@ class UpdateForm(forms.Form):
         }
     )
     xiongZhangHaoIndex = forms.CharField(
-        required=True,
+        required=False,
         error_messages={
-            'required': "熊掌号主页不能为空"
+            'required': "熊掌号主页类型错误"
         }
     )
     xiong_zhang_hao_user = forms.CharField(
@@ -258,6 +264,12 @@ class UpdateForm(forms.Form):
         required=False,
         error_messages={
             'required': "粉丝搜索关键词类型错误"
+        }
+    )
+    guanwang = forms.CharField(
+        required=False,
+        error_messages={
+            'required': "官网类型错误"
         }
     )
 

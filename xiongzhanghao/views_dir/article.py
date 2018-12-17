@@ -44,7 +44,6 @@ def article(request):
             if userObjs:
                 userObj = userObjs[0]
                 userObjRole = userObj.role_id
-
                 q = conditionCom(request, field_dict)
                 print('start_time============>',start_time)
                 title = request.GET.get('title')
@@ -89,6 +88,12 @@ def article(request):
                     if obj.belongToUser:
                         belongToUser_id = obj.belongToUser_id
                         belongToUser = obj.belongToUser.username
+                    create_user_id = obj.user.id
+                    create_user_name = obj.user.username
+                    if int(userObjRole) == 61:
+                        create_user_id = 0
+                        create_user_name = ''
+
                     ret_data.append({
                         'id': obj.id,
                         'title':obj.title,
@@ -97,8 +102,8 @@ def article(request):
                         'column_id':column.get('Id'),
                         'column_name':column.get('name'),
                         'create_date':obj.create_date.strftime('%Y-%m-%d %H:%M:%S'),
-                        'user_id':obj.user.id,
-                        'user_name':obj.user.username,
+                        'user_id': create_user_id,
+                        'user_name': create_user_name,
                         'belongToUser_id':belongToUser_id,
                         'belongToUser_name': belongToUser,
                         'article_status': obj.get_article_status_display(),

@@ -216,6 +216,7 @@ def user_oper(request, oper_type, o_id):
                         'xiong_zhang_hao_user': request.POST.get('xiong_zhang_hao_user'),
                         'xiong_zhang_hao_pwd': request.POST.get('xiong_zhang_hao_pwd'),
                         'fans_search_keyword': request.POST.get('fans_search_keyword'),
+                        'guanwang': request.POST.get('guanwang'),                       # 官网
                     }
                     print('form_data----->',form_data)
                     #  创建 form验证 实例（参数默认转成字典）
@@ -260,6 +261,7 @@ def user_oper(request, oper_type, o_id):
                         'xiong_zhang_hao_user': request.POST.get('xiong_zhang_hao_user'),
                         'xiong_zhang_hao_pwd': request.POST.get('xiong_zhang_hao_pwd'),
                         'fans_search_keyword': request.POST.get('fans_search_keyword'),
+                        'guanwang': request.POST.get('guanwang'),  # 官网
                     }
                     flag = False
                     if int(form_data.get('role_id')) == 64 or int(form_data.get('role_id')) ==  66:
@@ -278,7 +280,6 @@ def user_oper(request, oper_type, o_id):
                         )
                         #  更新 数据
                         if objs:
-                            print('===========================================')
                             if flag:
                                 website_backstage = forms_obj.cleaned_data['website_backstage']
                                 website_backstage_url = forms_obj.cleaned_data['website_backstage_url']
@@ -290,7 +291,8 @@ def user_oper(request, oper_type, o_id):
                                 xiong_zhang_hao_pwd = forms_obj.cleaned_data['xiong_zhang_hao_pwd']
                                 xiong_zhang_hao_user = forms_obj.cleaned_data['xiong_zhang_hao_user']
                                 fans_search_keyword = forms_obj.cleaned_data['fans_search_keyword']
-                                print('website_backstage_token, website_backstage_appid---------------> ',website_backstage_token, website_backstage_appid)
+                                guanwang = forms_obj.cleaned_data['guanwang']
+                                # print('website_backstage_token, website_backstage_appid---------------> ',website_backstage_token, website_backstage_appid)
                                 #  查询数据库  用户id
                                 objs.update(
                                     username=username,
@@ -305,6 +307,7 @@ def user_oper(request, oper_type, o_id):
                                     xiong_zhang_hao_user=xiong_zhang_hao_user,
                                     xiong_zhang_hao_pwd=xiong_zhang_hao_pwd,
                                     fans_search_keyword=fans_search_keyword,
+                                    guanwang=guanwang,
                                 )
                             else:
                                 objs.update(

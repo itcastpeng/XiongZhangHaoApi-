@@ -16,6 +16,7 @@ def statisticalReports(request):
     response = Response.ResponseObj()
     objs = models.xzh_fugai_baobiao.objects.filter(user__role=61)
     print(objs)
+    data_lsit = []
     for obj in objs:
 
         print('=------=-=-=-=-==-=--=-=-==-=-obj.user_id=-----> ', obj.user_id)
@@ -47,7 +48,14 @@ def statisticalReports(request):
             now_date = datetime.datetime.now()
             now = now_date.strftime("%Y-%m-%d")
             q = Q(select_date__lt=now) | Q(select_date__isnull=True)
-            if keywordObjs.filter(q).count() == 0:
+            keyword_count = keywordObjs.filter(q).count()
+            # 关键词查询 情况
+            data_lsit.append({
+                'user_id': obj.user_id,
+                'keywords_num': keywords_num,
+                'keyword_count': keyword_count
+            })
+            if int(keyword_count) == 0:
                 print('------------------------------------------------已经全部查完----------------------------------------------')
                 keywordDetail = models.xzh_keywords_detail.objects.filter(
                     xzh_keywords__user_id=obj.user_id,
@@ -69,7 +77,7 @@ def statisticalReports(request):
 
                 urlNum = len(url_list)
                 timestamp = str(time.time()) + str(obj.id) + str(time.time()).split('.')[1][2:-1]
-                xlsx_url = 'statics/fugai_baobiao_xlsx/{}.xlsx'.format(timestamp)
+                xlsx_url = 'statics/fugai_baobiao_xlsx/{}.xlsx'.format(obj.user.username + timestamp)
                 print('xlsx_url==============================> ',xlsx_url)
                 wb.save(xlsx_url)
                 # baobiao_url = '127.0.0.1:8003' + '/' + xlsx_url
@@ -89,6 +97,7 @@ def statisticalReports(request):
                     fugai_baobiao_detail.create(**data)
     response.code = 200
     response.msg = '更新数据完成'
+    response.data = data_lsit
     return JsonResponse(response.__dict__)
 
 

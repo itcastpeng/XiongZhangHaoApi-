@@ -470,7 +470,7 @@ import logging.config
 
 
 
-token = 'ac4d70746bfb1011d2e391b2c9a8562a'
+token = '04cc2239df30876106031e53711b6a12'
 user_id = 42
 timestamp = str(int(time.time() * 1000))
 params = {

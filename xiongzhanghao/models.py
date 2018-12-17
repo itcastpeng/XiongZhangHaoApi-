@@ -68,6 +68,7 @@ class xzh_userprofile(models.Model):
     xiong_zhang_hao_pwd = models.CharField(verbose_name='熊掌号密码', max_length=32, null=True, blank=True)
     xiong_zhang_hao_admin_select_time = models.DateTimeField(verbose_name='熊掌号后台查询时间', null=True, blank=True)   # 间隔时间
     fans_search_keyword = models.CharField(verbose_name='搜索关键词', max_length=64, null=True, blank=True)
+    guanwang = models.CharField(verbose_name='用户官网', max_length=64, null=True, blank=True)
 
 # 文章表
 class xzh_article(models.Model):

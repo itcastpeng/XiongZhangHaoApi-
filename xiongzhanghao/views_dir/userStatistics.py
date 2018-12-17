@@ -69,23 +69,43 @@ def userStatistics(request):
                 create_date = obj.create_date.strftime('%Y-%m-%d')
                 if obj.zhoumo:
                     create_date = create_date + ' ' + '(周末)'
-                ret_data.append({
-                    'id': obj.id,
-                    'belong_user_id':obj.belong_user_id,    # 归属人ID
-                    # 'belong_user':obj.belong_user.username, # 归属人名字
-                    'public_num':obj.public_num,            # 发布数量
-                    'fans_num':obj.fans_num,                # 粉丝数量
-                    'zhishu':obj.zhishu,                    # 指数
-                    'zhanxianliang':obj.zhanxianliang,      # 展现量
-                    'dianjiliang':obj.dianjiliang,          # 点击量
-                    'baidu_shoulu':obj.baidu_shoulu,        # 百度收录数量
-                    # 'baidu_shoulu_url':obj.baidu_shoulu_url,  # 百度收录链接
-                    'index_show':obj.index_show,            # 熊掌号主页展示条数 （主页收录）
-                    # 'index_show_url':obj.index_show_url,  # 熊掌号主页展示url
-                    'admin_shoulu':obj.admin_shoulu,        # 熊掌号后台收录条数
-                    # 'admin_shoulu_url':obj.admin_shoulu_url,  # 熊掌号后台收录url
-                    'create_date': create_date,# 创建时间
-                })
+                if int(userObjRole) in [66, 64]:
+                    ret_data.append({
+                        'id': obj.id,
+                        'belong_user_id':obj.belong_user_id,    # 归属人ID
+                        # 'belong_user':obj.belong_user.username, # 归属人名字
+                        'public_num':obj.public_num,            # 发布数量
+                        'fans_num':obj.fans_num,                # 粉丝数量
+                        'zhishu':obj.zhishu,                    # 指数
+                        'zhanxianliang':obj.zhanxianliang,      # 展现量
+                        'dianjiliang':obj.dianjiliang,          # 点击量
+                        'index_show':obj.index_show,            # 熊掌号主页展示条数 （主页收录）
+                        # 'index_show_url':obj.index_show_url,  # 熊掌号主页展示url
+                        'create_date': create_date,# 创建时间
+                        'baidu_shoulu': obj.baidu_shoulu,  # 百度收录数量
+                        # 'baidu_shoulu_url':obj.baidu_shoulu_url,  # 百度收录链接
+                        'admin_shoulu': obj.admin_shoulu,  # 熊掌号后台收录条数
+                        # 'admin_shoulu_url':obj.admin_shoulu_url,  # 熊掌号后台收录url
+                    })
+                else:
+                    if obj.admin_shoulu > obj.baidu_shoulu:
+                        shoulu = obj.admin_shoulu
+                    else:
+                        shoulu = obj.baidu_shoulu
+                    if shoulu < obj.index_show:
+                        shoulu = obj.index_show
+
+                    ret_data.append({
+                        'id': obj.id,
+                        'belong_user_id':obj.belong_user_id,    # 归属人ID
+                        'public_num':obj.public_num,            # 发布数量
+                        'fans_num':obj.fans_num,                # 粉丝数量
+                        'zhishu':obj.zhishu,                    # 指数
+                        'zhanxianliang':obj.zhanxianliang,      # 展现量
+                        'dianjiliang':obj.dianjiliang,          # 点击量
+                        'index_show':obj.index_show,            # 熊掌号主页展示条数 （主页收录）
+                        'shoulu':shoulu
+                    })
 
             user_obj = models.user_statistics.objects.values('belong_user_id', 'belong_user__username').distinct()  # 查询所有用户
             if int(userObjRole) == 61:

@@ -124,6 +124,11 @@ def keyword_article_back_url(request, oper_type):
             flag = False
             if user_id and rank and keywords_id and keywords and url:
                 articleObjs = models.xzh_article.objects.filter(belongToUser_id=user_id, back_url__isnull=False)
+                if articleObjs and articleObjs[0].user.guanwang:
+                    articleObj = articleObjs[0]
+                    guanwang = articleObj.user.guanwang
+                    if url in guanwang or url == guanwang or guanwang in url:
+                        flag = True
                 for i in articleObjs:
                     back_url = i.back_url
                     if url in back_url or url == back_url or back_url in url:
