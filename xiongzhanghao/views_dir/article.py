@@ -141,7 +141,7 @@ def article_oper(request, oper_type, o_id):
     response = Response.ResponseObj()
     user_id = request.GET.get('user_id')
     user_objs = models.xzh_userprofile.objects.filter(id=user_id)
-    if user_objs and int(user_objs[0].role_id) == 61:
+    if user_objs and int(user_objs[0].role_id) in [64, 66]:
 
         if request.method == "POST":
             back_url = request.POST.get('back_url')  # 如果手动发布 回链必填
