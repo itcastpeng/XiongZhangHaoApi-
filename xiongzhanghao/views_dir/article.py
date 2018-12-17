@@ -17,9 +17,12 @@ import re
 @csrf_exempt
 @account.is_token(models.xzh_userprofile)
 def article(request):
+
     response = Response.ResponseObj()
+
     if request.method == "GET":
         forms_obj = SelectForm(request.GET)
+
         if forms_obj.is_valid():
             current_page = forms_obj.cleaned_data['current_page']
             length = forms_obj.cleaned_data['length']
@@ -37,6 +40,7 @@ def article(request):
                 'belongToUser_id': '',
             }
             userObjs = models.xzh_userprofile.objects.filter(id=user_id)
+
             if userObjs:
                 userObj = userObjs[0]
                 userObjRole = userObj.role_id
@@ -44,8 +48,10 @@ def article(request):
                 q = conditionCom(request, field_dict)
                 print('start_time============>',start_time)
                 title = request.GET.get('title')
+
                 if title:
                     q.add(Q(title__contains=title), Q.AND)
+
                 if start_time:
                     start_time = json.loads(start_time)
                     stop_time = start_time[1]
@@ -53,11 +59,13 @@ def article(request):
                     q.add(Q(create_date___gte=start_time) & Q(create_date__lte=stop_time), Q.AND)
 
                 print('q -->', q)
+
                 if int(userObjRole) == 61:
                     print('=====================')
                     q.add(Q(belongToUser_id=userObj.id), Q.AND)
                 objs = models.xzh_article.objects.select_related('user', 'belongToUser').filter(q).order_by(order)
                 count = objs.count()
+
                 if length != 0:
                     start_line = (current_page - 1) * length
                     stop_line = start_line + length
@@ -103,6 +111,7 @@ def article(request):
                         'manualRelease':obj.manualRelease,
                         'articlePicName':articlePicName,
                     })
+
                 #  查询成功 返回200 状态码
                 response.code = 200
                 response.msg = '查询成功'
@@ -111,13 +120,16 @@ def article(request):
                     'data_count': count,
                     'article_status':models.xzh_article.article_status_choices,
                 }
+
             else:
                 response.code = 500
                 response.msg = '非法用户'
+
         else:
             response.code = 402
             response.msg = "请求异常"
             response.data = json.loads(forms_obj.errors.as_json())
+
     return JsonResponse(response.__dict__)
 
 
@@ -130,13 +142,14 @@ def article_oper(request, oper_type, o_id):
     user_id = request.GET.get('user_id')
     user_objs = models.xzh_userprofile.objects.filter(id=user_id)
     if user_objs and int(user_objs[0].role_id) == 61:
+
         if request.method == "POST":
             back_url = request.POST.get('back_url')  # 如果手动发布 回链必填
             manualRelease = request.POST.get('manualRelease')
             user_id = request.GET.get('user_id')
             belongToUser_id = request.POST.get('belongToUser_id')
             articlePicName = request.POST.get('articlePicName')    # 文章缩略图
-            print('articlePicName=====================> ',articlePicName)
+
             if articlePicName:
                 if 'http://www.zjnbsznfk120.com' in articlePicName or 'http://www.zjsznnk.com' in articlePicName:
                     pass
@@ -144,6 +157,7 @@ def article_oper(request, oper_type, o_id):
                     response.code = 301
                     response.msg = '缩略图异常'
                     return JsonResponse(response.__dict__)
+
             form_data = {
                 'user_id': user_id,
                 'title': request.POST.get('title'),
@@ -484,9 +498,11 @@ def article_oper(request, oper_type, o_id):
                 response.msg = "请求异常"
 
     else:
+
         if int(user_objs[0].role_id) == 61:
             response.code = 301
             response.msg = '权限不足'
+
         else:
             response.code = 500
             response.msg = '非法用户'

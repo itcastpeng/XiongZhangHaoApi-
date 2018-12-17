@@ -18,6 +18,7 @@ import json, requests, datetime, time
 def user(request):
     response = Response.ResponseObj()
     forms_obj = SelectForm(request.GET)
+
     if forms_obj.is_valid():
         user_id = request.GET.get('user_id')
         userObj = models.xzh_userprofile.objects.get(id=user_id)
@@ -136,9 +137,11 @@ def user(request):
         else:
             response.code = 500
             response.msg = '非法用户'
+
     else:
         response.code = 301
         response.msg = json.loads(forms_obj.errors.as_json())
+
     return JsonResponse(response.__dict__)
 
 
@@ -149,6 +152,7 @@ def updatePwd(request):
     response = Response.ResponseObj()
     user_id = request.GET.get('user_id')
     user_objs = models.xzh_userprofile.objects.filter(id=user_id)
+
     if user_objs:
         user_obj = user_objs[0]
         user_obj_role = user_obj.role_id
@@ -170,11 +174,14 @@ def updatePwd(request):
         else:
             response.code = 301
             response.msg = '参数错误'
+
     else:
         response.code = 500
         response.msg = '非法请求'
 
     return JsonResponse(response.__dict__)
+
+
 #  增删改
 #  csrf  token验证
 @csrf_exempt
@@ -183,6 +190,7 @@ def user_oper(request, oper_type, o_id):
     response = Response.ResponseObj()
     user_id = request.GET.get('user_id')
     user_objs = models.xzh_userprofile.objects.filter(id=user_id)
+
     if user_objs:
         user_obj = user_objs[0]
         user_obj_role = user_obj.role_id
@@ -392,22 +400,10 @@ def user_oper(request, oper_type, o_id):
             else:
                 response.code = 402
                 response.msg = "请求异常"
+
     else:
         response.code = 500
         response.msg = '非法用户'
 
     return JsonResponse(response.__dict__)
-
-
-
-
-
-
-
-
-
-
-
-
-
 
