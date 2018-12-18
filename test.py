@@ -469,15 +469,53 @@ import logging.config
 # print(json_data)
 
 
+# 查询百度-PC网页排名
+def web_pc_page_rank(self, result_data):
+    keywords = result_data["keywords"]
+    keywords_id = result_data["keywords_id"]
+    user_id = result_data.get('user_id')
 
-token = '04cc2239df30876106031e53711b6a12'
-user_id = 42
-timestamp = str(int(time.time() * 1000))
-params = {
-    'user_id': user_id,
-    'rand_str': str_encrypt(timestamp + token),
-    'timestamp': timestamp,
-}
+    url = "http://www.baidu.com/s?wd={keywords}".format(
+        keywords=parse.quote(keywords)
+    )
+    # print(url)
 
-print(params)
+    headers = {
+        'User-Agent': pcRequestHeader[random.randint(0, len(pcRequestHeader) - 1)],
+    }
+    req_obj = requests.session()
+    while True:
+        try:
+            try:
+                ret = req_obj.get(url, headers=headers, timeout=30)
+                break
+            except ReadTimeout:
+                time.sleep(1)
+        except ConnectionError:
+            time.sleep(1)
 
+    page_source = ret.text
+    soup = BeautifulSoup(page_source, 'lxml')
+    flag = False
+
+    for rank_num in range(1, 11):
+
+        div_tag = soup.find('div', id=str(rank_num), class_='result')
+        if div_tag:
+            url = div_tag.find('a').attrs.get("href")
+            ret = requests.get(url, headers=headers)
+            url = ret.url
+            # print(rank_num, url)
+
+            data = {
+                "url": url,
+                "keywords_id": keywords_id,  # 搜索词id
+                "keywords": keywords,  # 搜索词
+                "rank": rank_num,
+                "user_id": user_id,
+            }
+
+            keyword_back_url = self.taskApiOper.keyword_back_url(data)  # 判断该链接是否为我们发布的
+            # print('keyword_back_url=-------------------------------------> ',keyword_back_url)
+            if keyword_back_url:
+                self.taskApiOper.keyword_back_url_save(data)  # 匹配成功保存结果.

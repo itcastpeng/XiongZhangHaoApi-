@@ -117,6 +117,12 @@ class xzh_keywords_detail(models.Model):
     create_date = models.DateField(verbose_name="创建时间", auto_now_add=True)
     # article_url = models.CharField(verbose_name="匹配到的链接", max_length=256, null=True, blank=True)  # 我们发布的文章匹配到 关键词链接
     # article_rank = models.SmallIntegerField(verbose_name='匹配的链接url', null=True, blank=True)
+    fugai_type_choices = (
+        (1, '移动端'),
+        (2, 'PC端')
+    )
+    fugai_type = models.SmallIntegerField(verbose_name='覆盖类型', choices=fugai_type_choices, default=1)
+
 
 # 覆盖报表
 class xzh_fugai_baobiao(models.Model):

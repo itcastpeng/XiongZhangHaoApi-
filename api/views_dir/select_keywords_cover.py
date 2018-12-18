@@ -119,6 +119,7 @@ def keyword_article_back_url(request, oper_type):
         rank = request.POST.get('rank')
         url = request.POST.get('url')
         user_id = request.POST.get('user_id')
+        fugai_type = request.POST.get('fugai_type')
         print('user_id, rank, keywords_id, keywords, url=========> ',user_id, rank, keywords_id, keywords, url)
         if oper_type == 'judgeLink':
             flag = False
@@ -130,6 +131,7 @@ def keyword_article_back_url(request, oper_type):
                     if url in guanwang or url == guanwang or guanwang in url:
                         flag = True
                 for i in articleObjs:
+                    # back_url = 'http://ask.39.net/question/36242269.html'
                     back_url = i.back_url
                     if url in back_url or url == back_url or back_url in url:
                         flag = True
@@ -140,13 +142,19 @@ def keyword_article_back_url(request, oper_type):
 
         elif oper_type == 'saveModels':
             if user_id and rank and keywords_id and keywords and url:
-                print('=-=----------------保存结果')
+                print('=-=----------------保存结果', fugai_type)
                 keywordObjs = models.xzh_keywords_detail.objects.filter(xzh_keywords_id=keywords_id)
+                # keywordObjs = models.xzh_keywords.objects.filter(id=keywords_id)
                 if keywordObjs:
+                    fugaiType = 1
+                    if fugai_type and int(fugai_type) == 2:# 判断是 移动端 还是 PC 端  2为PC
+                        fugaiType = 2
+
                     keywordObjs.create(
                         xzh_keywords_id=keywords_id,
                         url=url,
                         rank=rank,
+                        fugai_type=fugaiType
                     )
             response.code = 200
     else:

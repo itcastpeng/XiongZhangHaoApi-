@@ -29,6 +29,7 @@ def statisticalReports(request):
         # ws.cell(row=1, column=5, value="文章链接")
         # ws.cell(row=1, column=6, value="文章排名")
         ws.cell(row=1, column=5, value="创建时间")
+        ws.cell(row=1, column=6, value="覆盖类型")
 
         # # 合并单元格        开始行      结束行       用哪列          占用哪列
         ws.merge_cells(start_row=1, end_row=1, start_column=1, end_column=1)
@@ -39,6 +40,7 @@ def statisticalReports(request):
         ws.column_dimensions['C'].width = 45
         ws.column_dimensions['D'].width = 20
         ws.column_dimensions['E'].width = 20
+        ws.column_dimensions['F'].width = 20
         # ws.column_dimensions['F'].width = 20
         # ws.column_dimensions['G'].width = 20
         row = 2
@@ -66,6 +68,9 @@ def statisticalReports(request):
                 for i in keywordDetail:
                     if i.url not in url_list:
                         url_list.append(i.url)
+                    fugaiType = '移动端'
+                    if int(i.fugai_type) == 2:
+                        fugaiType = 'PC端'
                     ws.cell(row=row, column=1, value="{}".format(i.xzh_keywords.user.username))
                     ws.cell(row=row, column=2, value="{}".format(i.xzh_keywords.keywords))
                     ws.cell(row=row, column=3, value="{}".format(i.url))
@@ -73,6 +78,7 @@ def statisticalReports(request):
                     # ws.cell(row=row, column=5, value="{}".format(i.article_url))
                     # ws.cell(row=row, column=6, value="{}".format(i.article_rank))
                     ws.cell(row=row, column=5, value="{}".format(i.create_date))
+                    ws.cell(row=row, column=6, value="{}".format(fugaiType))
                     row += 1
 
                 urlNum = len(url_list)
@@ -121,10 +127,12 @@ def queryAgain(request):
     if int(role_id) in [64, 66]:
         user_obj = userObjs.filter(id=o_id)
         if user_obj:
-            models.xzh_keywords_detail.objects.filter(create_date=now).filter(xzh_keywords__user_id=o_id).delete()
-            obj = models.xzh_keywords.objects.filter(select_date__lte=stop, select_date__gte=start)
+            fugaiobj = models.xzh_fugai_baobiao.objects.filter(id=o_id)
+            fugaiobj.update(status=1)
+            models.xzh_keywords_detail.objects.filter(create_date=now).filter(xzh_keywords__user_id=fugaiobj[0].user_id).delete()
+            obj = models.xzh_keywords.objects.filter(user_id=fugaiobj[0].user_id).filter(select_date__lte=stop, select_date__gte=start)
             obj.update(select_date=None)
-            models.xzh_fugai_baobiao_detail.objects.filter(xzh_fugai_baobiao__user_id=o_id).filter(create_date=now).delete()
+            models.xzh_fugai_baobiao_detail.objects.filter(xzh_fugai_baobiao__user_id=fugaiobj[0].user_id).filter(create_date=now).delete()
             response.code = 200
             response.msg = '重查成功'
         else:
