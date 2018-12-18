@@ -29,7 +29,7 @@ def keywords(request):
             order = request.GET.get('order', '-create_date')
             user_id = request.GET.get('user_id')
             user_objs = models.xzh_userprofile.objects.filter(id=user_id)
-            if user_objs and int(user_objs) in [61, 64]:
+            if user_objs and int(user_objs[0].role_id) in [66, 64]:
                 field_dict = {
                     'id': '',
                     'create_date': '',
