@@ -146,9 +146,9 @@ def article_oper(request, oper_type, o_id):
     response = Response.ResponseObj()
     user_id = request.GET.get('user_id')
     user_objs = models.xzh_userprofile.objects.filter(id=user_id)
-    if user_objs and int(user_objs[0].role_id) in [64, 66]:
 
-        if request.method == "POST":
+    if request.method == "POST":
+        if user_objs and int(user_objs[0].role_id) in [64, 66]:
             back_url = request.POST.get('back_url')  # 如果手动发布 回链必填
             manualRelease = request.POST.get('manualRelease')
             user_id = request.GET.get('user_id')
@@ -279,95 +279,6 @@ def article_oper(request, oper_type, o_id):
                 response.code = 200
                 response.msg = '重新发布成功'
 
-            # 下载文章统计报表
-            elif oper_type == 'exportExcel':
-                o_id = request.POST.get('o_id')
-                date_time = request.POST.get('date_time')
-                start_time = request.POST.get('start_time')
-                stop_time = request.POST.get('stop_time')
-                if o_id:
-                    now_date = datetime.datetime.now()
-                    objs = models.xzh_article.objects.filter(belongToUser_id=o_id).order_by('create_date')
-                    obj = objs[0]
-                    q = Q()
-                    start = obj.create_date
-                    if date_time and int(date_time):
-                        stop_now = datetime.datetime.now().strftime('%Y-%m-%d 23:59:59')
-                        start_now = datetime.datetime.now().strftime('%Y-%m-%d 00:00:00')
-                        stop = stop_now
-                        if int(date_time) == 1:
-                            start = start_now
-                        elif int(date_time) == 7:
-                            start = (now_date - datetime.timedelta(days=7)).strftime('%Y-%m-%d %H:%M:%S')
-                        elif int(date_time) == 30:
-                            start = (now_date - datetime.timedelta(days=30)).strftime('%Y-%m-%d %H:%M:%S')
-                        q.add(Q(belongToUser_id=o_id) & Q(create_date__lte=stop) & Q(create_date__gte=start), Q.AND)
-                    elif start_time and stop_time:
-                        q.add(Q(belongToUser_id=o_id) & Q(create_date__lte=stop_time) & Q(create_date__gte=start_time), Q.AND)
-                    else:
-                        response.code = 301
-                        response.msg = '下载报表异常！'
-                    print('q-----------> ', q)
-                    wb = Workbook()
-                    ws = wb.active
-                    ws.title = '关键词覆盖查询'
-                    ws.cell(row=1, column=1, value="用户:")
-                    ws.cell(row=2, column=1, value="报表生成时间:")
-                    ws.cell(row=1, column=3, value="数据总数:")
-                    ws.cell(row=4, column=1, value="---创建时间---")
-                    ws.cell(row=4, column=2, value="---文章标题---")
-                    ws.cell(row=4, column=3, value="---所选栏目---")
-                    ws.cell(row=4, column=4, value="---回链地址---")
-
-                    # # 合并单元格        开始行      结束行       用哪列          占用哪列
-                    ws.merge_cells(start_row=1, end_row=1, start_column=1, end_column=1)
-
-                    # print('设置列宽')
-                    ws.column_dimensions['A'].width = 30
-                    ws.column_dimensions['B'].width = 30
-                    ws.column_dimensions['C'].width = 30
-                    ws.column_dimensions['D'].width = 50
-
-                    # 文本居中
-                    ws['A1'].alignment = Alignment(horizontal='right', vertical='center')
-                    ws['A2'].alignment = Alignment(horizontal='right', vertical='center')
-                    ws['C1'].alignment = Alignment(horizontal='right', vertical='center')
-
-                    objs = models.xzh_article.objects.filter(q)
-                    row = 5
-                    now_date = datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')
-                    if objs:
-                        username = objs[0].belongToUser.username
-                        ws.cell(row=1, column=2, value="{now_date}".format(now_date=username))
-                        ws.cell(row=2, column=2, value="{now_date}".format(now_date=now_date))
-                        ws.cell(row=1, column=4, value="{now_date}".format(now_date=objs.count()))
-                        for obj in objs:
-                            column = ''
-                            if obj.column_id:
-                                column = eval(obj.column_id)['name']
-                            ws.cell(row=row, column=1, value="{create_time}".format(create_time=obj.create_date))
-                            ws.cell(row=row, column=2, value="{title}".format(title=obj.title))
-                            ws.cell(row=row, column=3, value="{column_id}".format(column_id=column))
-                            ws.cell(row=row, column=4, value="{back_url}".format(back_url=obj.back_url))
-                            row += 1
-
-                        path_name = os.path.dirname(os.path.dirname(os.path.dirname(__file__)))
-                        name = username + '---' + datetime.datetime.now().strftime('%Y-%m-%d')
-                        path = os.path.join(path_name, 'statics', 'wenzhangbaobiao', name + '.xlsx')
-                        wb.save(path)
-                        # return_path = 'http://192.168.10.207:8003/statics/wenzhangbaobiao/' + name + '.xlsx'
-                        return_path = 'http://xiongzhanghao.zhugeyingxiao.com:8003/statics/wenzhangbaobiao/' + name + '.xlsx'
-                        print('return_path---> ', return_path)
-                        response.code = 200
-                        response.msg = '生成成功'
-                        response.data = return_path
-                    else:
-                        response.code = 301
-                        response.msg = '该用户没有发布任何文章！'
-                else:
-                    response.code = 301
-                    response.msg = '无该用户！'
-
             # celery 调用异步统计报表
             elif oper_type == 'celeryExportExcel':
                 start = request.POST.get('start')
@@ -432,60 +343,13 @@ def article_oper(request, oper_type, o_id):
                         response.code = 301
                         response.msg = '该用户没有发布任何文章！'
 
-            else:
-                response.code = 402
-                response.msg = '请求异常'
-
-        else:
-            if oper_type == 'thumbnail':   # 查询缩略图  妇科
-                # ===========================================该代码 爬取缩略图使用=====================================
-                # response.code = 200
-                # response.msg = '查询成功'
-                # cookie = {'DedeLoginTime': '1543226988', 'DedeUserID__ckMd5': 'eeead0cc3feb9247',
-                #           'PHPSESSID': 'aocgl1iqc56p18mm22epgglks4', 'DedeUserID': '1',
-                #           'DedeLoginTime__ckMd5': '36b39a5c7cf5c4d6'}
-                # pwd = 'tgb123qaz'
-                # userid = 'admin'
-                # domain = 'http://www.zjsznnk.com/'
-                # home_path = 's_z_n_yy'
-                #
-                # dede = DeDe(domain, home_path, userid, pwd, cookie)
-                # dede.login()
-                # data_list = dede.suoluetu()
-                # for i in data_list:
-                #     p = '/uploads' + i
-                #     models.xzh_suoluetu.objects.create(
-                #         man=p
-                #     )
-                # ============================================================================================
-                img_list = []
-                objs = models.xzh_suoluetu.objects.filter(man__isnull=True)
-                for obj in objs:
-                    suoluetu = str('http://www.zjnbsznfk120.com' + obj.woman)
-                    if suoluetu not in img_list:
-                        img_list.append(suoluetu)
-                response.code = 200
-                response.msg = '查询成功'
-                response.data = img_list
-
-            elif oper_type == 'thumbnailMan':  # 男科
-                img_list = []
-                objs = models.xzh_suoluetu.objects.filter(man__isnull=False)
-                for obj in objs:
-                    suoluetu = str('http://www.zjsznnk.com' + obj.man)
-                    # print('suoluetu-------> ',suoluetu)
-                    if suoluetu not in img_list:
-                        img_list.append(suoluetu)
-                response.code = 200
-                response.msg = '查询成功'
-                response.data = img_list
-
-            elif oper_type == 'stopRelease':  # 停止发布
+            # 停止发布
+            elif oper_type == 'stopRelease':
                 objs = models.xzh_article.objects.filter(id=o_id)
                 userObjs = models.xzh_userprofile.objects.filter(id=user_id)
                 userObj = userObjs[0]
                 article_status = objs[0].article_status
-                print('article_status--------------> ',article_status)
+                print('article_status--------------> ', article_status)
                 if int(article_status) not in [0, 5]:
                     error_text = '该文章被:{}暂停发布, 前状态为{}'.format(userObj.username, article_status)
                     objs.update(
@@ -500,17 +364,160 @@ def article_oper(request, oper_type, o_id):
 
             else:
                 response.code = 402
-                response.msg = "请求异常"
+                response.msg = '请求异常'
+        else:
 
+            if int(user_objs[0].role_id) == 61:
+                response.code = 301
+                response.msg = '权限不足'
+
+            else:
+                response.code = 500
+                response.msg = '非法用户'
     else:
+        # 查询缩略图  妇科
+        if oper_type == 'thumbnail':
+            # ===========================================该代码 爬取缩略图使用=====================================
+            # response.code = 200
+            # response.msg = '查询成功'
+            # cookie = {'DedeLoginTime': '1543226988', 'DedeUserID__ckMd5': 'eeead0cc3feb9247',
+            #           'PHPSESSID': 'aocgl1iqc56p18mm22epgglks4', 'DedeUserID': '1',
+            #           'DedeLoginTime__ckMd5': '36b39a5c7cf5c4d6'}
+            # pwd = 'tgb123qaz'
+            # userid = 'admin'
+            # domain = 'http://www.zjsznnk.com/'
+            # home_path = 's_z_n_yy'
+            #
+            # dede = DeDe(domain, home_path, userid, pwd, cookie)
+            # dede.login()
+            # data_list = dede.suoluetu()
+            # for i in data_list:
+            #     p = '/uploads' + i
+            #     models.xzh_suoluetu.objects.create(
+            #         man=p
+            #     )
+            # ============================================================================================
+            img_list = []
+            objs = models.xzh_suoluetu.objects.filter(man__isnull=True)
+            for obj in objs:
+                suoluetu = str('http://www.zjnbsznfk120.com' + obj.woman)
+                if suoluetu not in img_list:
+                    img_list.append(suoluetu)
+            response.code = 200
+            response.msg = '查询成功'
+            response.data = img_list
 
-        if int(user_objs[0].role_id) == 61:
-            response.code = 301
-            response.msg = '权限不足'
+        # 男科
+        elif oper_type == 'thumbnailMan':
+            img_list = []
+            objs = models.xzh_suoluetu.objects.filter(man__isnull=False)
+            for obj in objs:
+                suoluetu = str('http://www.zjsznnk.com' + obj.man)
+                # print('suoluetu-------> ',suoluetu)
+                if suoluetu not in img_list:
+                    img_list.append(suoluetu)
+            response.code = 200
+            response.msg = '查询成功'
+            response.data = img_list
+
+        # 下载文章统计报表
+        elif oper_type == 'exportExcel':
+            u_id = request.GET.get('u_id')
+            date_time = request.GET.get('date_time')
+            start_time = request.GET.get('start_time')
+            stop_time = request.GET.get('stop_time')
+            if u_id:
+                now_date = datetime.datetime.now()
+                objs = models.xzh_article.objects.filter(belongToUser_id=u_id).order_by('create_date')
+                if objs:
+                    obj = objs[0]
+                    q = Q()
+                    start = obj.create_date
+                    if date_time and int(date_time):
+                        stop_now = datetime.datetime.now().strftime('%Y-%m-%d 23:59:59')
+                        start_now = datetime.datetime.now().strftime('%Y-%m-%d 00:00:00')
+                        stop = stop_now
+                        if int(date_time) == 1:
+                            start = start_now
+                        elif int(date_time) == 7:
+                            start = (now_date - datetime.timedelta(days=7)).strftime('%Y-%m-%d %H:%M:%S')
+                        elif int(date_time) == 30:
+                            start = (now_date - datetime.timedelta(days=30)).strftime('%Y-%m-%d %H:%M:%S')
+                        q.add(Q(belongToUser_id=u_id) & Q(create_date__lte=stop) & Q(create_date__gte=start), Q.AND)
+                    elif start_time and stop_time:
+                        q.add(Q(belongToUser_id=u_id) & Q(create_date__lte=stop_time) & Q(create_date__gte=start_time),
+                            Q.AND)
+                    else:
+                        response.code = 301
+                        response.msg = '下载报表异常！'
+                    print('q-----------> ', q)
+                    wb = Workbook()
+                    ws = wb.active
+                    ws.title = '关键词覆盖查询'
+                    ws.cell(row=1, column=1, value="用户:")
+                    ws.cell(row=2, column=1, value="报表生成时间:")
+                    ws.cell(row=1, column=3, value="数据总数:")
+                    ws.cell(row=4, column=1, value="---创建时间---")
+                    ws.cell(row=4, column=2, value="---文章标题---")
+                    ws.cell(row=4, column=3, value="---所选栏目---")
+                    ws.cell(row=4, column=4, value="---回链地址---")
+
+                    # # 合并单元格        开始行      结束行       用哪列          占用哪列
+                    ws.merge_cells(start_row=1, end_row=1, start_column=1, end_column=1)
+
+                    # print('设置列宽')
+                    ws.column_dimensions['A'].width = 30
+                    ws.column_dimensions['B'].width = 30
+                    ws.column_dimensions['C'].width = 30
+                    ws.column_dimensions['D'].width = 50
+
+                    # 文本居中
+                    ws['A1'].alignment = Alignment(horizontal='right', vertical='center')
+                    ws['A2'].alignment = Alignment(horizontal='right', vertical='center')
+                    ws['C1'].alignment = Alignment(horizontal='right', vertical='center')
+                    print('q========> ',q)
+                    objs = models.xzh_article.objects.filter(q)
+                    row = 5
+                    now_date = datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')
+                    if objs:
+                        username = objs[0].belongToUser.username
+                        ws.cell(row=1, column=2, value="{now_date}".format(now_date=username))
+                        ws.cell(row=2, column=2, value="{now_date}".format(now_date=now_date))
+                        ws.cell(row=1, column=4, value="{now_date}".format(now_date=objs.count()))
+                        for obj in objs:
+                            column = ''
+                            if obj.column_id:
+                                column = eval(obj.column_id)['name']
+                            ws.cell(row=row, column=1, value="{create_time}".format(create_time=obj.create_date))
+                            ws.cell(row=row, column=2, value="{title}".format(title=obj.title))
+                            ws.cell(row=row, column=3, value="{column_id}".format(column_id=column))
+                            ws.cell(row=row, column=4, value="{back_url}".format(back_url=obj.back_url))
+                            row += 1
+
+                        path_name = os.path.dirname(os.path.dirname(os.path.dirname(__file__)))
+                        name = username + '---' + datetime.datetime.now().strftime('%Y-%m-%d')
+                        path = os.path.join(path_name, 'statics', 'wenzhangbaobiao', name + '.xlsx')
+                        wb.save(path)
+                        # return_path = 'http://192.168.10.207:8003/statics/wenzhangbaobiao/' + name + '.xlsx'
+                        return_path = 'http://xiongzhanghao.zhugeyingxiao.com:8003/statics/wenzhangbaobiao/' + name + '.xlsx'
+                        print('return_path---> ', return_path)
+                        response.code = 200
+                        response.msg = '生成成功'
+                        response.data = return_path
+                    else:
+                        response.code = 301
+                        response.msg = '该用户该时间段未发布文章'
+                else:
+                    response.code = 301
+                    response.msg = '该用户没有发布任何文章！'
+            else:
+                response.code = 301
+                response.msg = '无该用户！'
 
         else:
-            response.code = 500
-            response.msg = '非法用户'
+            response.code = 402
+            response.msg = "请求异常"
+
 
     return JsonResponse(response.__dict__)
 

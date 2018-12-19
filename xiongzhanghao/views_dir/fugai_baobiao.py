@@ -130,12 +130,12 @@ def fugai_baobiao_oper(request, oper_type, o_id):
                 if forms_obj.is_valid():
                     current_page = forms_obj.cleaned_data['current_page']
                     length = forms_obj.cleaned_data['length']
+                    data_count = objs.count()
 
                     if length != 0:
                         start_line = (current_page - 1) * length
                         stop_line = start_line + length
                         objs = objs[start_line: stop_line]
-                    data_count = objs.count()
                     for obj in objs:
 
                         #  将查询出来的数据 加入列表

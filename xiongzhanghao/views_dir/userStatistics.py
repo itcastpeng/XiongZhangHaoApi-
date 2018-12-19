@@ -104,7 +104,8 @@ def userStatistics(request):
                         'zhanxianliang':obj.zhanxianliang,      # 展现量
                         'dianjiliang':obj.dianjiliang,          # 点击量
                         'index_show':obj.index_show,            # 熊掌号主页展示条数 （主页收录）
-                        'shoulu':shoulu
+                        'shoulu':shoulu,
+                        'create_date': create_date,  # 创建时间
                     })
 
             user_obj = models.user_statistics.objects.values('belong_user_id', 'belong_user__username').distinct()  # 查询所有用户

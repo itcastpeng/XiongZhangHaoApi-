@@ -12,6 +12,7 @@ import datetime, requests, json, time, redis
 
 # 脚本 查询熊掌号主页 获取粉丝数量 和主页显示数量 (主页收录)
 def xiongzhanghao_index_num(now, appid, url_list):
+    print('appid======> ',appid)
     requests_obj = requests.session()
     url = 'https://author.baidu.com/home/{}?from=dusite_sresults'.format(appid)
     data = '%22from%22:%22dusite_sresults%22,%22app_id%22:%22{appid}%22'.format(appid=appid)
@@ -28,6 +29,7 @@ def xiongzhanghao_index_num(now, appid, url_list):
     result = ret1.text.split('BigPipe.onPageletArrive(')[1]
     result = result[:-2]
     if result:
+        print('now----> ', now, datetime.datetime.now().strftime('%m-%d'))
         if now == datetime.datetime.now().strftime('%m-%d'):  # 如果查询时间为 今天粉丝数量则查
             html = json.loads(result).get('html')
             soup = BeautifulSoup(html, 'lxml')
@@ -77,7 +79,7 @@ def user_statistical(request, oper_type):
     # appid = 1611292686377463
     if request.method == 'POST':
 
-        # 查询所有用户天内数据
+        # 查询所有用户10天内数据
         if oper_type == 'user_statistical':
             user_objs = models.xzh_userprofile.objects
             article_objs = models.xzh_article.objects
@@ -129,7 +131,7 @@ def user_statistical(request, oper_type):
                             'title':articleObj.title
                         })
                     # 传入now 月日%m-%d
-                    now_m_d = deletionTime.strftime('%m-10')
+                    now_m_d = deletionTime.strftime('%m-%d')
                     # if int(userObj_id) == 65:
                     data_list = xiongzhanghao_index_num(now_m_d, appid, url_list)
                     data['fans_num'] = data_list['fans_num']

@@ -122,6 +122,7 @@ def user(request):
                     'fans_search_keyword': obj.fans_search_keyword,
                     'index':index,
                     'dueTime':dueTime,
+                    'guanwang':obj.guanwang,
                 })
                 index += 1
 
