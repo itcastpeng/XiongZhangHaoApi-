@@ -51,7 +51,7 @@ def fugai_baobiao(request):
                 print('q -->', q)
                 if int(userObjRole) == 61:
                     q.add(Q(user_id=user_id), Q.AND)
-                objs = models.xzh_fugai_baobiao.objects.select_related('user').filter(q).filter(user__role_id=61).order_by(order)
+                objs = models.xzh_fugai_baobiao.objects.select_related('user').filter(q).filter(user__role_id=61).order_by('stop_check', order)
                 uid = request.GET.get('uid')
                 print('uid -->', uid)
                 if uid:

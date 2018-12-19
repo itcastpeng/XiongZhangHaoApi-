@@ -12,7 +12,7 @@ import datetime, requests, json, time, redis
 
 # 脚本 查询熊掌号主页 获取粉丝数量 和主页显示数量 (主页收录)
 def xiongzhanghao_index_num(now, appid, url_list):
-    print('appid======> ',appid)
+    # print('appid======> ',appid)
     requests_obj = requests.session()
     url = 'https://author.baidu.com/home/{}?from=dusite_sresults'.format(appid)
     data = '%22from%22:%22dusite_sresults%22,%22app_id%22:%22{appid}%22'.format(appid=appid)
@@ -29,7 +29,6 @@ def xiongzhanghao_index_num(now, appid, url_list):
     result = ret1.text.split('BigPipe.onPageletArrive(')[1]
     result = result[:-2]
     if result:
-        print('now----> ', now, datetime.datetime.now().strftime('%m-%d'))
         if now == datetime.datetime.now().strftime('%m-%d'):  # 如果查询时间为 今天粉丝数量则查
             html = json.loads(result).get('html')
             soup = BeautifulSoup(html, 'lxml')
@@ -54,10 +53,11 @@ def xiongzhanghao_index_num(now, appid, url_list):
             created_time = time.localtime(created_at)
             created_time = time.strftime("%m-%d", created_time)
             if now == created_time:
-                # print('item========> ',item)
                 url = item.get('url')
                 title = item.get('title')
-                # print('===url_list========> ',url_list)
+                if '-' in title:
+                    title = title.split('-')[0]
+                # print('=========================================================================', url, title, url_list)
                 for i in url_list:
                     # print(i['title'], title)
                     if title.strip() == i['title'].strip() or title.strip() in i['title'].strip():
@@ -76,7 +76,7 @@ def xiongzhanghao_index_num(now, appid, url_list):
 @account.is_token(models.xzh_userprofile)
 def user_statistical(request, oper_type):
     response = Response.ResponseObj()
-    # appid = 1611292686377463
+    # appid = 1607394310837075
     if request.method == 'POST':
 
         # 查询所有用户10天内数据
@@ -102,8 +102,10 @@ def user_statistical(request, oper_type):
                     xiong_zhang_hao_user__isnull=False,
                     xiong_zhang_hao_pwd__isnull=False
                 )  # 查询所有用户
+                # if 1+1==2:
                 for userObj in userObjs:  # 遍历所有用户
                     userObj_id = userObj.id
+                    # userObj_id = 49
                     # print('user-----------------> ', userObj_id)
                     appid = userObj.website_backstage_appid
                     data = {                    # 构造数据
@@ -130,6 +132,7 @@ def user_statistical(request, oper_type):
                             'back_url':articleObj.back_url,
                             'title':articleObj.title
                         })
+
                     # 传入now 月日%m-%d
                     now_m_d = deletionTime.strftime('%m-%d')
                     # if int(userObj_id) == 65:
@@ -137,7 +140,7 @@ def user_statistical(request, oper_type):
                     data['fans_num'] = data_list['fans_num']
                     data['index_show'] = data_list['index_num']
                     data['index_show_url'] = data_list['url_data']       # 熊掌号主页 url
-
+                    # print('data------> ',data)
                     statisticsObjs = models.user_statistics.objects.filter(belong_user_id=userObj_id, create_date=now)   # 判断今天 该用户是否有数据 有则更新 无则创建
                     if statisticsObjs:
                         if int(data['fans_num']) == 0:  # 粉丝数量 如果为0则不更改粉丝数量
