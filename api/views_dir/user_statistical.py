@@ -202,13 +202,12 @@ def user_statistical(request, oper_type):
                 for i in click_show_list:
                     click_show_obj = models.user_statistics.objects.filter(belong_user_id=user_id, create_date=i.get('date_time'))
                     if click_show_list:
-                        dayBefore = (now - datetime.timedelta(days=1)).strftime('%Y-%m-%d')
+                        days = (now - datetime.datetime.strptime(i.get('date_time'), "%Y-%m-%d")).days  # 转换为datetime
+                        dayBefore = (now - datetime.timedelta(days=days))                               # 当前时间减去获取到的天数
                         zhoumo = False # 周末
-                        if i.get('date_time') == dayBefore:
-                            deletionTime = (now + datetime.timedelta(days=3))
-                            if deletionTime.weekday() in [6, 0]:    # 判断是否为周末
-                                zhoumo = True
-                        print('zhoumo-=-------------------------> ',zhoumo)
+                        if dayBefore.weekday() in [5, 6]:    # 判断是否为周末
+                            zhoumo = True
+                        print('zhoumo-=-------------------------> ',zhoumo, dayBefore)
                         click_show_obj.update(zhanxianliang=i.get('show_num').replace(',', ''), dianjiliang=i.get('click_num').replace(',', ''), zhoumo=zhoumo)
                 for i in shoulu_list:
                     show_lu_obj = models.user_statistics.objects.filter(belong_user_id=user_id, create_date=i.get('shoulu_date'))
