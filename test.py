@@ -467,55 +467,96 @@ import logging.config
 # ret= requests.post(url)
 # json_data = ret.json().get('data')
 # print(json_data)
+pcRequestHeader = [
+    'Mozilla/5.0 (Windows NT 5.1; rv:6.0.2) Gecko/20100101 Firefox/6.0.2',
+    'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_7_5) AppleWebKit/537.17 (KHTML, like Gecko) Chrome/24.0.1312.52 Safari/537.17',
+    'Mozilla/5.0 (Windows; U; Windows NT 5.1; zh-CN; rv:1.9.1.16) Gecko/20101130 Firefox/3.5.16',
+    'Mozilla/4.0 (compatible; MSIE 7.0; Windows NT 6.0; .NET CLR 1.1.4322)',
+    'Mozilla/5.0 (compatible; MSIE 9.0; Windows NT 6.1; WOW64; Trident/5.0)',
+    'Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/45.0.2454.99 Safari/537.36',
+    'Mozilla/4.0 (compatible; MSIE 6.0; Windows NT 5.1; SV1; .NET CLR 1.1.4322)',
+    'Mozilla/4.0 (compatible; MSIE 8.0; Windows NT 5.2)',
+    'Mozilla/5.0 (Windows NT 5.1) AppleWebKit/537.13 (KHTML, like Gecko) Chrome/24.0.1290.1 Safari/537.13',
+    'Mozilla/5.0 (compatible; MSIE 9.0; Windows NT 6.1; Trident/5.0)',
+    'Mozilla/5.0 (Windows NT 6.1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/45.0.2454.85 Safari/537.36',
+    'Mozilla/5.0 (Windows; U; Windows NT 5.2; zh-CN; rv:1.9.0.19) Gecko/2010031422 Firefox/3.0.19 (.NET CLR 3.5.30729)',
+    'Mozilla/4.0 (compatible; MSIE 7.0; Windows NT 5.2)',
+    'Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.17 (KHTML, like Gecko) Chrome/24.0.1312.57 Safari/537.17',
+    'Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/31.0.1650.63 Safari/537.36',
+    'Mozilla/5.0 (Windows NT 6.1; WOW64; rv:24.0) Gecko/20100101 Firefox/24.0',
+    'Mozilla/5.0 (Windows NT 6.1; Win64; x64; rv:2.0b13pre) Gecko/20110307 Firefox/4.0b13'
+]
 
 
-# 查询百度-PC网页排名
-def web_pc_page_rank(self, result_data):
-    keywords = result_data["keywords"]
-    keywords_id = result_data["keywords_id"]
-    user_id = result_data.get('user_id')
+from urllib import parse
+import random
+from requests.exceptions import ReadTimeout,  ConnectionError
 
-    url = "http://www.baidu.com/s?wd={keywords}".format(
-        keywords=parse.quote(keywords)
-    )
-    # print(url)
+keywords = '太原时光美容医院地址'
 
-    headers = {
-        'User-Agent': pcRequestHeader[random.randint(0, len(pcRequestHeader) - 1)],
-    }
-    req_obj = requests.session()
-    while True:
+url = "http://www.baidu.com/s?wd={keywords}".format(
+    keywords=parse.quote(keywords)
+)
+print(url)
+
+headers = {
+    'User-Agent': pcRequestHeader[random.randint(0, len(pcRequestHeader) - 1)],
+}
+req_obj = requests.session()
+while True:
+    try:
         try:
-            try:
-                ret = req_obj.get(url, headers=headers, timeout=30)
-                break
-            except ReadTimeout:
-                time.sleep(1)
-        except ConnectionError:
+            ret = req_obj.get(url, headers=headers, timeout=10)
+            break
+        except ReadTimeout:
             time.sleep(1)
+    except ConnectionError:
+        time.sleep(1)
 
-    page_source = ret.text
-    soup = BeautifulSoup(page_source, 'lxml')
-    flag = False
+page_source = ret.text
+soup = BeautifulSoup(page_source, 'lxml')
 
-    for rank_num in range(1, 11):
+for rank_num in range(1, 11):
 
-        div_tag = soup.find('div', id=str(rank_num), class_='result')
-        if div_tag:
+    div_tag = soup.find('div', id=str(rank_num), class_='result')
+    if div_tag:
+        f13 = div_tag.find('div', class_='f13')
+        panduan_url = f13.find('a').get_text()
+        if 'http://' not in panduan_url:
+            panduan_url = 'http://' + panduan_url
+        url_list = [
+            'http://4g.scgcyy.com',
+            'http://m.chyy120.com',
+            'http://m.szwk120.com',
+            'http://3g.ynttb.net/index.html',
+            'http://www.zjsznnk.com',
+            'http://www.zjnbsznfk120.com',
+            'http://www.bjwletyy.com',
+            'http://m.gzgbyy120.com',
+            'http://wap.tysgmr.com',
+            'http://m.oy120.com',
+            'http://5g.dzfyyy.com',
+            'http://m.glamzx.com',
+            'http://3g.meilianchen.cn',
+            'http://m.evercarebj.com',
+            'http://xzh.nk-hospital.mobi',
+            'http://m.28552855.com'
+        ]
+        flag = False
+        for i in url_list:
+            print(i, 'panduan_url--> ',panduan_url)
+            if i in panduan_url:
+                flag = True
+        if flag:
             url = div_tag.find('a').attrs.get("href")
-            ret = requests.get(url, headers=headers)
+            while True:
+                try:
+                    try:
+                        ret = requests.get(url, headers=headers, timeout=30)
+                        break
+                    except ReadTimeout:
+                        time.sleep(1)
+                except ConnectionError:
+                    time.sleep(1)
             url = ret.url
-            # print(rank_num, url)
-
-            data = {
-                "url": url,
-                "keywords_id": keywords_id,  # 搜索词id
-                "keywords": keywords,  # 搜索词
-                "rank": rank_num,
-                "user_id": user_id,
-            }
-
-            keyword_back_url = self.taskApiOper.keyword_back_url(data)  # 判断该链接是否为我们发布的
-            # print('keyword_back_url=-------------------------------------> ',keyword_back_url)
-            if keyword_back_url:
-                self.taskApiOper.keyword_back_url_save(data)  # 匹配成功保存结果.
+            print(rank_num, url)
