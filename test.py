@@ -492,7 +492,7 @@ from urllib import parse
 import random
 from requests.exceptions import ReadTimeout,  ConnectionError
 
-keywords = '太原时光美容医院地址'
+keywords = '宁波送子鸟男科医院官网'
 
 url = "http://www.baidu.com/s?wd={keywords}".format(
     keywords=parse.quote(keywords)
@@ -559,4 +559,4 @@ for rank_num in range(1, 11):
                 except ConnectionError:
                     time.sleep(1)
             url = ret.url
-            print(rank_num, url)
+            print('rank_num------------------------------------------------> ',rank_num , url)
