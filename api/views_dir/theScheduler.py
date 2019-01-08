@@ -45,19 +45,19 @@ def theScheduler(request):
             resule_data['task_id'] = 3
             print('判断是否审核')
 
-    if not resule_data['flag']:
-        now = datetime.datetime.now()
-        deletionTime = (now - datetime.timedelta(hours=2)).strftime('%Y-%m-%d %H:%M:%S')
-        deletionTime = datetime.datetime.strptime(deletionTime, '%Y-%m-%d %H:%M:%S')
-        q = Q(Q(deletionTime__isnull=True) | Q(deletionTime__lte=deletionTime))
-        q.add(Q(role_id=61) & Q(userType=1) & Q(website_backstage_url__isnull=False), Q.AND)
-        q.add(Q(website_backstage=1), Q.AND) # 暂时
-        deleteQuery = models.xzh_userprofile.objects.select_related('role').filter(q)
-        if deleteQuery:
-            print('deleteQuery---------------> ',deleteQuery[0].id)
-            resule_data['flag'] = True
-            resule_data['task_id'] = 4
-            print('爬取客户网站，判断文章是否删除')
+    # if not resule_data['flag']:
+    #     now = datetime.datetime.now()
+    #     deletionTime = (now - datetime.timedelta(hours=2)).strftime('%Y-%m-%d %H:%M:%S')
+    #     deletionTime = datetime.datetime.strptime(deletionTime, '%Y-%m-%d %H:%M:%S')
+    #     q = Q(Q(deletionTime__isnull=True) | Q(deletionTime__lte=deletionTime))
+    #     q.add(Q(role_id=61) & Q(userType=1) & Q(website_backstage_url__isnull=False), Q.AND)
+    #     q.add(Q(website_backstage=1), Q.AND) # 暂时
+    #     deleteQuery = models.xzh_userprofile.objects.select_related('role').filter(q)
+    #     if deleteQuery:
+    #         print('deleteQuery---------------> ',deleteQuery[0].id)
+    #         resule_data['flag'] = True
+    #         resule_data['task_id'] = 4
+    #         print('爬取客户网站，判断文章是否删除')
 
 
     response.code = 200

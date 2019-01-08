@@ -87,7 +87,7 @@ def keywords_oper(request, oper_type, o_id):
     response = Response.ResponseObj()
 
     user_id = request.GET.get('user_id')
-    user_objs = models.xzh_userprofile.objects.filter(id=user_id)
+    user_objs = models.xzh_userprofile.objects.get(id=user_id)
     if user_objs and int(user_objs.role_id) in [66, 64]:
         if request.method == "POST":
             if oper_type == "add":

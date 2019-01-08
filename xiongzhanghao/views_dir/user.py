@@ -54,9 +54,9 @@ def user(request):
                 q.add(Q(id=user_id), Q.AND)
 
             user_objs = models.xzh_userprofile.objects.select_related('role').filter(q)
-            if userObj.role_id == 64:
+            if userObj.role_id == 64:                 # 超级管理员
                 objs = user_objs.order_by(order)
-            elif userObj.role_id == 66:
+            elif userObj.role_id == 66:                 # 管理员
                 objs = user_objs.order_by(order).exclude(role_id=64)
             else:
                 objs = user_objs.order_by(order).exclude(role_id__in=[64,66])
@@ -229,21 +229,13 @@ def user_oper(request, oper_type, o_id):
                     if forms_obj.is_valid():
                         print("验证通过")
                         models.xzh_userprofile.objects.create(**forms_obj.cleaned_data)
-                        # print(forms_obj.cleaned_data)
-                        #  添加数据库
 
-                        # url = 'http://xiongzhanghao.zhugeyingxiao.com:8003/getTheDebugUser'
-                        # requests.get(url)
-
-                        # celeryGetDebugUser.delay()  # 异步调用
                         response.code = 200
                         response.msg = "添加成功"
 
                     else:
                         print("验证不通过")
-                        # print(forms_obj.errors)
                         response.code = 301
-                        # print(forms_obj.errors.as_json())
                         response.msg = json.loads(forms_obj.errors.as_json())
 
                 elif oper_type == "update":
@@ -265,7 +257,7 @@ def user_oper(request, oper_type, o_id):
                         'guanwang': request.POST.get('guanwang'),  # 官网
                     }
                     flag = False
-                    if int(form_data.get('role_id')) == 64 or int(form_data.get('role_id')) ==  66:
+                    if int(form_data.get('role_id')) in [64, 66]:
                         forms_obj = AdminUpdateForm(form_data)
                     else:
                         flag = True
@@ -293,7 +285,7 @@ def user_oper(request, oper_type, o_id):
                                 xiong_zhang_hao_user = forms_obj.cleaned_data['xiong_zhang_hao_user']
                                 fans_search_keyword = forms_obj.cleaned_data['fans_search_keyword']
                                 guanwang = forms_obj.cleaned_data['guanwang']
-                                # print('website_backstage_token, website_backstage_appid---------------> ',website_backstage_token, website_backstage_appid)
+
                                 #  查询数据库  用户id
                                 objs.update(
                                     username=username,
@@ -345,13 +337,9 @@ def user_oper(request, oper_type, o_id):
                                 response.code = 301
                                 response.msg = '含有文章子级,请先删除该用户文章'
                             else:
-                                if objs.id == user_id:
-                                    response.code = 301
-                                    response.msg = '不可删除自己'
-                                else:
-                                    objs.delete()
-                                    response.code = 200
-                                    response.msg = "删除成功"
+                                objs.delete()
+                                response.code = 200
+                                response.msg = "删除成功"
                         else:
                             response.code = 302
                             response.msg = '删除ID不存在'

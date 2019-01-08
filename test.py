@@ -488,75 +488,85 @@ pcRequestHeader = [
 ]
 
 
-from urllib import parse
-import random
-from requests.exceptions import ReadTimeout,  ConnectionError
+# from urllib import parse
+# import random
+# from requests.exceptions import ReadTimeout,  ConnectionError
+#
+# keywords = '宁波送子鸟男科医院官网'
+#
+# url = "http://www.baidu.com/s?wd={keywords}".format(
+#     keywords=parse.quote(keywords)
+# )
+# print(url)
+#
+# headers = {
+#     'User-Agent': pcRequestHeader[random.randint(0, len(pcRequestHeader) - 1)],
+# }
+# req_obj = requests.session()
+# while True:
+#     try:
+#         try:
+#             ret = req_obj.get(url, headers=headers, timeout=10)
+#             break
+#         except ReadTimeout:
+#             time.sleep(1)
+#     except ConnectionError:
+#         time.sleep(1)
+#
+# page_source = ret.text
+# soup = BeautifulSoup(page_source, 'lxml')
+#
+# for rank_num in range(1, 11):
+#
+#     div_tag = soup.find('div', id=str(rank_num), class_='result')
+#     if div_tag:
+#         f13 = div_tag.find('div', class_='f13')
+#         panduan_url = f13.find('a').get_text()
+#         if 'http://' not in panduan_url:
+#             panduan_url = 'http://' + panduan_url
+#         url_list = [
+#             'http://4g.scgcyy.com',
+#             'http://m.chyy120.com',
+#             'http://m.szwk120.com',
+#             'http://3g.ynttb.net/index.html',
+#             'http://www.zjsznnk.com',
+#             'http://www.zjnbsznfk120.com',
+#             'http://www.bjwletyy.com',
+#             'http://m.gzgbyy120.com',
+#             'http://wap.tysgmr.com',
+#             'http://m.oy120.com',
+#             'http://5g.dzfyyy.com',
+#             'http://m.glamzx.com',
+#             'http://3g.meilianchen.cn',
+#             'http://m.evercarebj.com',
+#             'http://xzh.nk-hospital.mobi',
+#             'http://m.28552855.com'
+#         ]
+#         flag = False
+#         for i in url_list:
+#             print(i, 'panduan_url--> ',panduan_url)
+#             if i in panduan_url:
+#                 flag = True
+#         if flag:
+#             url = div_tag.find('a').attrs.get("href")
+#             while True:
+#                 try:
+#                     try:
+#                         ret = requests.get(url, headers=headers, timeout=30)
+#                         break
+#                     except ReadTimeout:
+#                         time.sleep(1)
+#                 except ConnectionError:
+#                     time.sleep(1)
+#             url = ret.url
+#             print('rank_num------------------------------------------------> ',rank_num , url)
 
-keywords = '宁波送子鸟男科医院官网'
 
-url = "http://www.baidu.com/s?wd={keywords}".format(
-    keywords=parse.quote(keywords)
-)
-print(url)
 
-headers = {
-    'User-Agent': pcRequestHeader[random.randint(0, len(pcRequestHeader) - 1)],
-}
-req_obj = requests.session()
-while True:
-    try:
-        try:
-            ret = req_obj.get(url, headers=headers, timeout=10)
-            break
-        except ReadTimeout:
-            time.sleep(1)
-    except ConnectionError:
-        time.sleep(1)
 
-page_source = ret.text
-soup = BeautifulSoup(page_source, 'lxml')
 
-for rank_num in range(1, 11):
 
-    div_tag = soup.find('div', id=str(rank_num), class_='result')
-    if div_tag:
-        f13 = div_tag.find('div', class_='f13')
-        panduan_url = f13.find('a').get_text()
-        if 'http://' not in panduan_url:
-            panduan_url = 'http://' + panduan_url
-        url_list = [
-            'http://4g.scgcyy.com',
-            'http://m.chyy120.com',
-            'http://m.szwk120.com',
-            'http://3g.ynttb.net/index.html',
-            'http://www.zjsznnk.com',
-            'http://www.zjnbsznfk120.com',
-            'http://www.bjwletyy.com',
-            'http://m.gzgbyy120.com',
-            'http://wap.tysgmr.com',
-            'http://m.oy120.com',
-            'http://5g.dzfyyy.com',
-            'http://m.glamzx.com',
-            'http://3g.meilianchen.cn',
-            'http://m.evercarebj.com',
-            'http://xzh.nk-hospital.mobi',
-            'http://m.28552855.com'
-        ]
-        flag = False
-        for i in url_list:
-            print(i, 'panduan_url--> ',panduan_url)
-            if i in panduan_url:
-                flag = True
-        if flag:
-            url = div_tag.find('a').attrs.get("href")
-            while True:
-                try:
-                    try:
-                        ret = requests.get(url, headers=headers, timeout=30)
-                        break
-                    except ReadTimeout:
-                        time.sleep(1)
-                except ConnectionError:
-                    time.sleep(1)
-            url = ret.url
-            print('rank_num------------------------------------------------> ',rank_num , url)
+
+
+
+
