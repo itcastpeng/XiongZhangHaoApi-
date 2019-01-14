@@ -36,12 +36,11 @@ class PcV9(object):
 
 
     def login(self):
-        url = 'http://m.evercarebj.com/api.php?op=checkcode&code_len=4&font_size=20&width=130&height=50&font_color=&background='  # 获取验证码
-        login_url = 'http://m.evercarebj.com/index.php?m=admin&c=index&a=login&dosubmit=1'  # 登录
+        url = 'http://m.5iyme.com/api.php?op=checkcode&code_len=4&font_size=20&width=130&height=50&font_color=&background='  # 获取验证码
+        login_url = 'http://m.5iyme.com/index.php?m=admin&c=index&a=login&dosubmit=1'  # 登录
         if self.cookies:
             pc_hash = self.is_login(login_url)
             return self.cookies, pc_hash
-
         while True:
             try:
                 yzmRet = self.requests_obj.get(url)
@@ -64,7 +63,7 @@ class PcV9(object):
         soup = BeautifulSoup(ret.text, 'lxml')
         pc_hash = soup.find('a', text='如果您的浏览器没有自动跳转，请点击这里')
         pc_hash = pc_hash.attrs.get('href').split('pc_hash=')[-1]
-        # print('ret.text----------->',ret.text)
+        print('ret.text----------->',ret.text)
         # print('self.requests_obj.cookies---------> ',self.requests_obj.cookies)
         # print('self.requests_obj.cookies---------> ',self.requests_obj.headers)
         cookies = requests.utils.dict_from_cookiejar(self.requests_obj.cookies)
@@ -129,16 +128,16 @@ class PcV9(object):
         if self.article_test_title(catid, title):
             print('增加文章')
             data['pc_hash'] = pc_hash
-            # url ='http://m.evercarebj.com/index.php?m=content&c=content&a=add&menuid=&catid={}&pc_hash=XfRWUu&pc_hash=XfRWUu'.format(catid)
-            url = 'http://m.evercarebj.com/index.php?m=content&c=content&a=add'
+            url = 'http://m.5iyme.com/index.php?m=content&c=content&a=add'
             print('发布url==================> ',url)
             ret = self.requests_obj.post(url, data=data, cookies=self.cookies)
-            # print('========> ', ret.text.strip())
+            print('ret.text--> ', ret.text)
             if '数据添加成功' in ret.text:
-                url = 'http://m.evercarebj.com/index.php?m=content&c=content&a=init&menuid=822&catid={}&pc_hash={}'.format(data.get('info[catid]'), pc_hash)
+                'http://m.5iyme.com/index.php?m=admin&c=index&pc_hash=G0Snyn'
+                url = 'http://m.5iyme.com/index.php?m=content&c=content&a=init&menuid=822&catid={}&pc_hash={}'.format(
+                    data.get('info[catid]'), pc_hash)
                 print('url--------------------> ',url)
                 ret = self.requests_obj.get(url, cookies=self.cookies)
-                # print(ret.text)
                 title = data.get('info[title]')
                 print('=============title================title=================> ',title)
                 if title in ret.text:
@@ -209,62 +208,62 @@ class PcV9(object):
         return data_list
 
 import datetime
-# if __name__ == '__main__':
-#     catid = 115
-#     title = '测试标题'
-#     user_id = 'Ymexiongzhanghao'
-#     password = 'Yme@evercare20181126'
-#     cookie = {'PHPSESSID': 'q5981m9bglfllmc3bib4lvuti6',
-#               'Hhuvt_sys_lang': 'a5e0FMsBPHEjViLciHcdIze2UdMxPOkOwJq4edMDAAwEiw',
-#               'Hhuvt_admin_username': 'e242V5S-mKfYXHGRRUODNuUI42_b-YJ_XHZcoxfaiEzJ03n62WyVb9vuZ-d9',
-#               'Hhuvt_siteid': '9222HgxnLMBETl68Jcw2DQcV_cAY8T3ZF6KeueBl',
-#               'Hhuvt_admin_email': '0e467jj9jrpv_NDlXj-m_73TUGIWn3ab4iKirTA4qN-ElYcCtAZcBwx-w_Y',
-#               'Hhuvt_userid': '9b82AUqls4zcOtqf33LDiw-ZpeOSjZIx9gLE6NOFAA'}
-#     now = datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')
-#     data = {
-#         'info[thumb]':'',
-#         'info[relation]':'',
-#         'info[inputtime]':now,
-#         'info[islink]':0,
-#         'info[template]':'',
-#         'info[allow_comment]':1,
-#         'info[readpoint]':'',
-#         'info[paytype]':0,
-#         'info[catid]':catid,
-#         'info[title]':title,
-#         'style_color':'',
-#         'style_font_weight':'',
-#         'info[keywords]':'',
-#         'info[copyfrom]':'',
-#         'copyfrom_data':0,
-#         'info[description]':'测试摘要====',
-#         'info[content]':'测试内容----内容',
-#         'page_title_value':'',
-#         'add_introduce':1,
-#         'introcude_length':200,
-#         'auto_thumb':1,
-#         'auto_thumb_no':1,
-#         'info[paginationtype]':0,
-#         'info[maxcharperpage]':10000,
-#         'info[posids][]':-1,
-#         'info[groupids_view]':1,
-#         'info[voteid]':'',
-#         'dosubmit':'保存后自动关闭',
-#     }
-#     # objs = PcV9(user_id, password, cookie)
-#     # cookie, pc_hash = objs.login()
-#     # print('pc_hash========> ',pc_hash)
-#     # objs.getClassInfo()
-#     # objs.sendArticle(data, title, pc_hash)
-#     # 判断是否删除
-#     maxtime = '2018-11-20'
-#
-#     # url = 'http://m.evercarebj.com/index.php?m=content&c=content&a=init&menuid=822&catid={}&pc_hash={}'.format(
-#     #     catid, pc_hash)
-#     data_list = []
-#     # data_list = objs.deleteQuery(url, maxtime, data_list)
-#     # objs.getClassInfo(pc_hash)
-#     print(data_list)
+if __name__ == '__main__':
+    catid = 115
+    title = '测试标题'
+    user_id = 'Ymexiongzhanghao'
+    password = 'Yme@evercare20181126'
+    cookie = {'PHPSESSID': 'q5981m9bglfllmc3bib4lvuti6',
+              'Hhuvt_sys_lang': 'a5e0FMsBPHEjViLciHcdIze2UdMxPOkOwJq4edMDAAwEiw',
+              'Hhuvt_admin_username': 'e242V5S-mKfYXHGRRUODNuUI42_b-YJ_XHZcoxfaiEzJ03n62WyVb9vuZ-d9',
+              'Hhuvt_siteid': '9222HgxnLMBETl68Jcw2DQcV_cAY8T3ZF6KeueBl',
+              'Hhuvt_admin_email': '0e467jj9jrpv_NDlXj-m_73TUGIWn3ab4iKirTA4qN-ElYcCtAZcBwx-w_Y',
+              'Hhuvt_userid': '9b82AUqls4zcOtqf33LDiw-ZpeOSjZIx9gLE6NOFAA'}
+    now = datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')
+    data = {
+        'info[thumb]':'',
+        'info[relation]':'',
+        'info[inputtime]':now,
+        'info[islink]':0,
+        'info[template]':'',
+        'info[allow_comment]':1,
+        'info[readpoint]':'',
+        'info[paytype]':0,
+        'info[catid]':catid,
+        'info[title]':title,
+        'style_color':'',
+        'style_font_weight':'',
+        'info[keywords]':'',
+        'info[copyfrom]':'',
+        'copyfrom_data':0,
+        'info[description]':'测试摘要====',
+        'info[content]':'测试内容----内容',
+        'page_title_value':'',
+        'add_introduce':1,
+        'introcude_length':200,
+        'auto_thumb':1,
+        'auto_thumb_no':1,
+        'info[paginationtype]':0,
+        'info[maxcharperpage]':10000,
+        'info[posids][]':-1,
+        'info[groupids_view]':1,
+        'info[voteid]':'',
+        'dosubmit':'保存后自动关闭',
+    }
+    objs = PcV9(user_id, password, cookie)
+    cookie, pc_hash = objs.login()
+    # print('pc_hash========> ',cookie, pc_hash)
+    # objs.getClassInfo()
+    objs.sendArticle(data, title, pc_hash)
+    # 判断是否删除
+    # maxtime = '2018-11-20'
+
+    # url = 'http://m.evercarebj.com/index.php?m=content&c=content&a=init&menuid=822&catid={}&pc_hash={}'.format(
+    #     catid, pc_hash)
+    # data_list = []
+    # data_list = objs.deleteQuery(url, maxtime, data_list)
+    # objs.getClassInfo(pc_hash)
+    # print(data_list)
 # import time
 #
 # from xiongzhanghao.publicFunc.account import str_encrypt
@@ -467,25 +466,25 @@ import logging.config
 # ret= requests.post(url)
 # json_data = ret.json().get('data')
 # print(json_data)
-pcRequestHeader = [
-    'Mozilla/5.0 (Windows NT 5.1; rv:6.0.2) Gecko/20100101 Firefox/6.0.2',
-    'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_7_5) AppleWebKit/537.17 (KHTML, like Gecko) Chrome/24.0.1312.52 Safari/537.17',
-    'Mozilla/5.0 (Windows; U; Windows NT 5.1; zh-CN; rv:1.9.1.16) Gecko/20101130 Firefox/3.5.16',
-    'Mozilla/4.0 (compatible; MSIE 7.0; Windows NT 6.0; .NET CLR 1.1.4322)',
-    'Mozilla/5.0 (compatible; MSIE 9.0; Windows NT 6.1; WOW64; Trident/5.0)',
-    'Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/45.0.2454.99 Safari/537.36',
-    'Mozilla/4.0 (compatible; MSIE 6.0; Windows NT 5.1; SV1; .NET CLR 1.1.4322)',
-    'Mozilla/4.0 (compatible; MSIE 8.0; Windows NT 5.2)',
-    'Mozilla/5.0 (Windows NT 5.1) AppleWebKit/537.13 (KHTML, like Gecko) Chrome/24.0.1290.1 Safari/537.13',
-    'Mozilla/5.0 (compatible; MSIE 9.0; Windows NT 6.1; Trident/5.0)',
-    'Mozilla/5.0 (Windows NT 6.1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/45.0.2454.85 Safari/537.36',
-    'Mozilla/5.0 (Windows; U; Windows NT 5.2; zh-CN; rv:1.9.0.19) Gecko/2010031422 Firefox/3.0.19 (.NET CLR 3.5.30729)',
-    'Mozilla/4.0 (compatible; MSIE 7.0; Windows NT 5.2)',
-    'Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.17 (KHTML, like Gecko) Chrome/24.0.1312.57 Safari/537.17',
-    'Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/31.0.1650.63 Safari/537.36',
-    'Mozilla/5.0 (Windows NT 6.1; WOW64; rv:24.0) Gecko/20100101 Firefox/24.0',
-    'Mozilla/5.0 (Windows NT 6.1; Win64; x64; rv:2.0b13pre) Gecko/20110307 Firefox/4.0b13'
-]
+# pcRequestHeader = [
+#     'Mozilla/5.0 (Windows NT 5.1; rv:6.0.2) Gecko/20100101 Firefox/6.0.2',
+#     'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_7_5) AppleWebKit/537.17 (KHTML, like Gecko) Chrome/24.0.1312.52 Safari/537.17',
+#     'Mozilla/5.0 (Windows; U; Windows NT 5.1; zh-CN; rv:1.9.1.16) Gecko/20101130 Firefox/3.5.16',
+#     'Mozilla/4.0 (compatible; MSIE 7.0; Windows NT 6.0; .NET CLR 1.1.4322)',
+#     'Mozilla/5.0 (compatible; MSIE 9.0; Windows NT 6.1; WOW64; Trident/5.0)',
+#     'Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/45.0.2454.99 Safari/537.36',
+#     'Mozilla/4.0 (compatible; MSIE 6.0; Windows NT 5.1; SV1; .NET CLR 1.1.4322)',
+#     'Mozilla/4.0 (compatible; MSIE 8.0; Windows NT 5.2)',
+#     'Mozilla/5.0 (Windows NT 5.1) AppleWebKit/537.13 (KHTML, like Gecko) Chrome/24.0.1290.1 Safari/537.13',
+#     'Mozilla/5.0 (compatible; MSIE 9.0; Windows NT 6.1; Trident/5.0)',
+#     'Mozilla/5.0 (Windows NT 6.1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/45.0.2454.85 Safari/537.36',
+#     'Mozilla/5.0 (Windows; U; Windows NT 5.2; zh-CN; rv:1.9.0.19) Gecko/2010031422 Firefox/3.0.19 (.NET CLR 3.5.30729)',
+#     'Mozilla/4.0 (compatible; MSIE 7.0; Windows NT 5.2)',
+#     'Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.17 (KHTML, like Gecko) Chrome/24.0.1312.57 Safari/537.17',
+#     'Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/31.0.1650.63 Safari/537.36',
+#     'Mozilla/5.0 (Windows NT 6.1; WOW64; rv:24.0) Gecko/20100101 Firefox/24.0',
+#     'Mozilla/5.0 (Windows NT 6.1; Win64; x64; rv:2.0b13pre) Gecko/20110307 Firefox/4.0b13'
+# ]
 
 
 # from urllib import parse

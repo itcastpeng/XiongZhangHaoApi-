@@ -398,8 +398,8 @@ class PcV9(object):
         self.cookies = cookies
 
     def login(self):
-        url = 'http://m.evercarebj.com/api.php?op=checkcode&code_len=4&font_size=20&width=130&height=50&font_color=&background='  # 获取验证码
-        login_url = 'http://m.evercarebj.com/index.php?m=admin&c=index&a=login&dosubmit=1'  # 登录
+        url = 'http://m.5iyme.com/api.php?op=checkcode&code_len=4&font_size=20&width=130&height=50&font_color=&background='  # 获取验证码
+        login_url = 'http://m.5iyme.com/index.php?m=admin&c=index&a=login&dosubmit=1'  # 登录
         if self.cookies:
             pc_hash = self.is_login(login_url)
             return self.cookies, pc_hash
@@ -455,7 +455,7 @@ class PcV9(object):
 
     # 获取栏目信息
     def getClassInfo(self, pc_hash):
-        url = 'http://m.evercarebj.com/index.php?m=content&c=content&a=public_categorys&type=add&menuid=822&pc_hash={}'.format(
+        url = 'http://m.5iyme.com/index.php?m=content&c=content&a=public_categorys&type=add&menuid=822&pc_hash={}'.format(
             pc_hash)
         ret = self.requests_obj.get(url, cookies=self.cookies)
         soup = BeautifulSoup(ret.text, 'lxml')
@@ -479,7 +479,7 @@ class PcV9(object):
     # # 判断标题是否可用
     def article_test_title(self, catid, title):
         print("判断标题是否可用")
-        url = 'http://m.evercarebj.com/index.php?m=content&c=content&a=public_check_title&catid={}&sid=2.037687345459017&data={}'.format(
+        url = 'http://m.5iyme.com/index.php?m=content&c=content&a=public_check_title&catid={}&sid=2.037687345459017&data={}'.format(
             catid, title)
         ret = self.requests_obj.get(url, cookies=self.cookies)
         print(ret.text)
@@ -494,12 +494,12 @@ class PcV9(object):
             print('增加文章')
             data['pc_hash'] = pc_hash
             # url ='http://m.evercareb j.com/index.php?m=content&c=content&a=add&menuid=&catid={}&pc_hash=XfRWUu&pc_hash=XfRWUu'.format(catid)
-            url = 'http://m.evercarebj.com/index.php?m=content&c=content&a=add'
+            url = 'http://m.5iyme.com/index.php?m=content&c=content&a=add'
             print('发布url==================> ', url)
             ret = self.requests_obj.post(url, data=data, cookies=self.cookies)
             # print('========> ', ret.text.strip())
             if '数据添加成功' in ret.text:
-                url = 'http://m.evercarebj.com/index.php?m=content&c=content&a=init&menuid=822&catid={}&pc_hash={}'.format(
+                url = 'http://m.5iyme.com/index.php?m=content&c=content&a=init&menuid=822&catid={}&pc_hash={}'.format(
                     data.get('info[catid]'), pc_hash)
                 print('url--------------------> ', url)
                 ret = self.requests_obj.get(url, cookies=self.cookies)
