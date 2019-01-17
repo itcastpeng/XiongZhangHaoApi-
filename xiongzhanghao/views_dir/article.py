@@ -374,6 +374,7 @@ def article_oper(request, oper_type, o_id):
             else:
                 response.code = 500
                 response.msg = '非法用户'
+
     else:
         # 查询缩略图  妇科
         if oper_type == 'thumbnail':
@@ -423,8 +424,10 @@ def article_oper(request, oper_type, o_id):
         # 下载文章统计报表
         elif oper_type == 'exportExcel':
             u_id = request.GET.get('u_id')
+            print('u_id-----> ', u_id)
             date_time = request.GET.get('date_time')
             start_time = request.GET.get('start_time')
+            print('start_time--------> ', date_time)
             stop_time = request.GET.get('stop_time')
             if u_id:
                 now_date = datetime.datetime.now()
@@ -432,7 +435,6 @@ def article_oper(request, oper_type, o_id):
                 if objs:
                     obj = objs[0]
                     q = Q()
-                    start = obj.create_date
                     if date_time and int(date_time):
                         stop_now = datetime.datetime.now().strftime('%Y-%m-%d 23:59:59')
                         start_now = datetime.datetime.now().strftime('%Y-%m-%d 00:00:00')
@@ -443,7 +445,13 @@ def article_oper(request, oper_type, o_id):
                             start = (now_date - datetime.timedelta(days=7)).strftime('%Y-%m-%d %H:%M:%S')
                         elif int(date_time) == 30:
                             start = (now_date - datetime.timedelta(days=30)).strftime('%Y-%m-%d %H:%M:%S')
+                        elif int(date_time) == 90:
+                            start = (now_date - datetime.timedelta(days=90)).strftime('%Y-%m-%d %H:%M:%S')
+                        else:
+                            print('------------------,', obj.create_date, type(obj.create_date))
+                            start = obj.create_date
                         q.add(Q(belongToUser_id=u_id) & Q(create_date__lte=stop) & Q(create_date__gte=start), Q.AND)
+
                     elif start_time and stop_time:
                         q.add(Q(belongToUser_id=u_id) & Q(create_date__lte=stop_time) & Q(create_date__gte=start_time),
                             Q.AND)

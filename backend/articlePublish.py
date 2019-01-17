@@ -487,7 +487,7 @@ class PcV9(object):
             return True  # 不重复
         return False
 
-    # # 发布文章
+    # 发布文章
     def sendArticle(self, data, title, pc_hash):
         catid = data.get('info[catid]')
         if self.article_test_title(catid, title):
