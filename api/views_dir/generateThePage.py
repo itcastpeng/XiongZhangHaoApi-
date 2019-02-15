@@ -164,7 +164,7 @@ def FTPuploadHtml(request):
                   <html>
                   <head>
                   <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
-                  <title>Dr.acne痘院长团队</title>
+                  <title>{}</title>
                   <link href="http://m.dracne.net/images/css.css" rel="stylesheet" type="text/css">
                   <link href="http://m.dracne.net/images/bottom.css" rel="stylesheet" type="text/css">
                   <script src="http://m.dracne.net/images/phonecommon.js"></script>
@@ -174,7 +174,7 @@ def FTPuploadHtml(request):
                   <script type="text/javascript" src="http://m.dracne.net/images/tj.js"></script>
                   <meta http-equiv="Cache-Control" content="no-cache"/>
                   <meta name="viewport" content="width=device-width, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no"/>
-                  """
+                  """.format(title)
 
         data = """ "@context": "https://ziyuan.baidu.com/contexts/cambrian.jsonld",
                                "@id": "{return_path}",
