@@ -280,7 +280,7 @@ def FTPuploadHtml(request):
                     </dl>
                     <dl class='wb'>
                         <p>24H电话咨询热线: 400-1099588                
-                        <br/>地址：青年路与人民路交叉口美亚大厦1楼(必胜客旁边)</p>
+                        <br/>眉山市东坡区石堰街4-8双号4幢1层</p>
                     </dl>
                   </body>
                 </html>  
