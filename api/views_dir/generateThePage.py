@@ -279,7 +279,7 @@ def FTPuploadHtml(request):
                         <div class="dy2"><a href="http://m.dracne.net/ls.html">连锁详情</a><a href="https://rgbk2.kuaishang.cn/bs/im.htm?cas=59154___718795&fi=70539&ism=1&ref=m.dracne.cn" class="a1">预约附近门店</a></div>
                     </dl>
                     <dl class='wb'>
-                        <p>24H电话咨询热线: 400-1099588                
+                        <p>24H电话咨询热线: 13320952137                
                         <br/>眉山市东坡区石堰街4-8双号4幢1层</p>
                     </dl>
                   </body>
